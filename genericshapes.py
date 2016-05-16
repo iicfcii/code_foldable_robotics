@@ -12,8 +12,9 @@ import numpy
 from matplotlib.patches import PathPatch
 from matplotlib.path import Path
 import csg_shapely
+import shapely_algebra 
 
-class GenericPoly(genericshapebase.GenericShapeBase):
+class GenericPoly(genericshapebase.GenericShapeBase,shapely_algebra.ClassAlgebra):
 
     def to_shapely(self):
         obj = sg.Polygon(self.exterior, self.interiors)
@@ -42,10 +43,11 @@ if __name__=='__main__':
     b = GenericPoly(exterior2,[])
     a.plot()
     b.plot()
-    A=a.to_shapely()
-    B=b.to_shapely()
-    C = A.difference(B)
-    c=csg_shapely.to_generic(C)
+#    A=a.to_shapely()
+#    B=b.to_shapely()
+#    C = A.difference(B)
+#    c=csg_shapely.to_generic(C)
+    c = a-b
     
     plt.figure()
     c.plot()
