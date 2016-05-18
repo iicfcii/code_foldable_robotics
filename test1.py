@@ -17,4 +17,3 @@ if __name__=='__main__':
     
 #    plt.figure()
 #    c.plot()
-    raise AttributeError
