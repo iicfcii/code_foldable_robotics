@@ -8,7 +8,7 @@ import csg_shapely
 
 class ClassAlgebra(object):
 
-    def __add__(self,other):
+    def __or__(self,other):
         a = self.to_shapely()
         b = other.to_shapely()
         c = a.union(b)
@@ -20,8 +20,14 @@ class ClassAlgebra(object):
         c = a.difference(b)
         return csg_shapely.to_generic(c)
     
-    def __mul__(self,other):
+    def __and__(self,other):
         a = self.to_shapely()
         b = other.to_shapely()
         c = a.intersection(b)
         return csg_shapely.to_generic(c)
+        
+    def __xor__(self,other):
+        a = self.to_shapely()
+        b = other.to_shapely()
+        c = a.symmetric_difference(b)
+        return csg_shapely.to_generic(c)        
