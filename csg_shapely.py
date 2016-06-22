@@ -43,18 +43,28 @@ def condition_shapely_entities(*entities):
 #    entities = [item for item in entities if not item.is_valid]
     return entities
 
-def get_shapely_vertices(entity,scaling = 1.0):
+def get_shapely_vertices(entity):
     import shapely.geometry as sg
-    import numpy
     
+    exterior = []
+    interiors = []
     if isinstance(entity,sg.Polygon):
-        exterior = (numpy.array([coord for coord in entity.exterior.coords])*scaling).tolist()
-        interiors = [(numpy.array([coord for coord in interior.coords])*scaling).tolist()
-                     for interior in entity.interiors]
-
+        try:
+            for coord in entity.exterior.coords:
+                exterior.append(coord)
+            for interior in entity.interiors:
+                interiors.append([coord for coord in interior.coords])
+        except AttributeError:
+            if entity.exterior is None:
+                pass
     elif isinstance(entity,sg.LineString) or isinstance(entity,sg.Point):
-        exterior = (numpy.array([coord for coord in entity.coords])*scaling).tolist()
-        interiors = []
+        try:
+            for coord in entity.exterior.coords:
+                exterior.append(coord)
+        except AttributeError:
+            if entity.exterior is None:
+                pass
+
     else:
         raise GeometryNotHandled()
 
@@ -63,13 +73,17 @@ def get_shapely_vertices(entity,scaling = 1.0):
 def to_generic(entity):
     import shapely.geometry as sg
     from genericshapes import GenericPoly
+#    from genericshapes import GenericPolyline
 
-    exterior, interiors = get_shapely_vertices(entity,1)
+    if isinstance(entity, sg.MultiPolygon):
+        return [to_generic(item) for item in entity.geoms]
+
+    exterior, interiors = get_shapely_vertices(entity)
 
     if isinstance(entity, sg.Polygon):
         subclass = GenericPoly
-    elif isinstance(entity, sg.LineString):
-        subclass = GenericPolyline
+#    elif isinstance(entity, sg.LineString):
+#        subclass = GenericPolyline
 #    elif isinstance(entity, sg.Point):
 #        s = DrawnPoint(exterior_p[0])
 #        return s

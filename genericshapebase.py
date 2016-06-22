@@ -317,4 +317,23 @@ class GenericShapeBase(object):
 
     def __lt__(self,other):
         return self.exteriorpoints()[0]<other.exteriorpoints()[0]
+        
+    def copy_into_me(self,other):
+        self.exterior = other.get_exterior.copy()
+        self.interiors = [item.copy() for item in other.get_interiors()]
+        self.construction = other.is_construction()
+        
+    def __ior__(self,other):
+        new = self.__or__(other)
+        self.copy_into_me(new)
+    def __iand__(self,other):
+        new = self.__and__(other)
+        self.copy_into_me(new)
+    def __ixor__(self,other):
+        new = self.__xor__(other)
+        self.copy_into_me(new)
+    def __isub__(self,other):
+        new = self.__sub__(other)
+        self.copy_into_me(new)
+
 
