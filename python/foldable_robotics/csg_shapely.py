@@ -57,13 +57,20 @@ def get_shapely_vertices(entity):
         except AttributeError:
             if entity.exterior is None:
                 pass
-    elif isinstance(entity,sg.LineString) or isinstance(entity,sg.Point):
+    elif isinstance(entity,sg.LineString):
         try:
-            for coord in entity.exterior.coords:
+            for coord in entity.coords:
                 exterior.append(coord)
         except AttributeError:
             if entity.exterior is None:
                 pass
+#    elif isinstance(entity,sg.Point):
+#        try:
+#            for coord in entity.exterior.coords:
+#                exterior.append(coord)
+#        except AttributeError:
+#            if entity.exterior is None:
+#                pass
 
     else:
         raise GeometryNotHandled()
@@ -71,27 +78,29 @@ def get_shapely_vertices(entity):
     return exterior, interiors
 
 def to_generic(entity):
-    import shapely.geometry as sg
-    from genericshapes import GenericPoly
+#    import shapely.geometry as sg
+    from .polygon import Polygon,Polyline
 #    from genericshapes import GenericPolyline
 
     if isinstance(entity, sg.MultiPolygon):
-        return [to_generic(item) for item in entity.geoms]
+        return [item2 for item in entity.geoms for item2 in to_generic(item)]
+    elif isinstance(entity, sg.GeometryCollection):
+        return [item2 for item in entity.geoms for item2 in to_generic(item)]
 
     exterior, interiors = get_shapely_vertices(entity)
 
     if isinstance(entity, sg.Polygon):
-        subclass = GenericPoly
-#    elif isinstance(entity, sg.LineString):
-#        subclass = GenericPolyline
+        subclass = Polygon
+    elif isinstance(entity, sg.LineString):
+        subclass = Polyline
 #    elif isinstance(entity, sg.Point):
 #        s = DrawnPoint(exterior_p[0])
 #        return s
     else:
         raise GeometryNotHandled()
-    return subclass(exterior, interiors)
+    return [subclass(exterior, interiors)]
         
-def unary_union_safe(listin):
+def unary_union_safe(*listin):
     '''try to perform a unary union.  if that fails, fall back to iterative union'''
     import shapely
     import shapely.ops as so

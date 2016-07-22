@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 plt.ion()
-from genericshapes import GenericPoly
+from foldable_robotics.polygon import Polygon,Polyline
+from foldable_robotics.layer import Layer
+from foldable_robotics.laminate import Laminate
 
 #import popupcad.filetypes.genericshapes as pg
 #from popupcad.geometry.vertex import ShapeVertex
@@ -10,9 +12,14 @@ if __name__=='__main__':
     exterior = [[0,0],[0,1],[1,2],[2,1],[2,-1],[1,-2],[0,-1]]
     exterior = [tuple(item) for item in exterior]
     exterior2 = [(.5,0),(1,3**.5/2),(1.5,0)]
-    a = GenericPoly(exterior,[])
-    b = GenericPoly(exterior2,[])
-
+    a = Polygon(exterior,[])
+    b = Polygon(exterior2,[])
+    e = Polyline(exterior2,[])
+    g = e.shift(-3,0)
+    f = b.shift(1,1)
+    h = e.shift(-1,0)
+    c = (a-b)[0]
+    d = a.shift(0.1,-2)
 #    aa = pg.GenericPoly([ShapeVertex(item) for item in exterior],[])
 #    bb = pg.GenericPoly([ShapeVertex(item) for item in exterior2],[])
 
@@ -22,7 +29,22 @@ if __name__=='__main__':
 #    B=b.to_shapely()
 #    C = A.difference(B)
 #    c=csg_shapely.to_generic(C)
-    c = a-b
+#    l = Layer.new(c,f,d,e,g,h)
+    l = Layer.new(a,g)
+#    m = Layer.new(c)
+#    m = l.dilate(.5)
+#    l.plot()
+#    plt.figure()
+#    m.plot()
+    n = (l.dilate(.5,4))-(l.dilate(.1,4))
+    m = n.shift(1,0)|l
+#    m.plot()
+    
+    lam = Laminate(l,n,m)
+    lam.plot()
+    plt.figure()
+    m.plot()
+#    plt.axis('equal')
 #    cc = popupcad.algorithms.csg_shapely.to_generic(aa.to_shapely().difference(bb.to_shapely()).buffer(-1000))
 #    c = c.erode(.3,8)
 #    
@@ -34,3 +56,4 @@ if __name__=='__main__':
 #    plt.figure()
 #    for item in d:
 #        item.plot()
+
