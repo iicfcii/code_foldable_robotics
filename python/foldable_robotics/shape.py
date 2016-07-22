@@ -169,6 +169,12 @@ class Polygon(Base):
         return cls(exterior.tolist(),[])
 
     @classmethod    
+    def make_rect_center(cls,width,height):
+        center = numpy.array([0,0])
+        exterior = numpy.array([center+[-width/2,-height/2],center+[-width/2,height/2],center+[width/2,height/2],center+[width/2,-height/2],])
+        return cls(exterior.tolist(),[])
+
+    @classmethod    
     def make_circle_r(cls,center,radius,resolution = None):
         resolution = resolution or cls.circle_resolution
         p = Point([center],[])
