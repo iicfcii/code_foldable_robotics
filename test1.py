@@ -47,7 +47,7 @@ if __name__=='__main__':
     lam.plot()
     plt.figure()
     m.plot()
-#    plt.axis('equal')
+    plt.axis('equal')
 #    cc = popupcad.algorithms.csg_shapely.to_generic(aa.to_shapely().difference(bb.to_shapely()).buffer(-1000))
 #    c = c.erode(.3,8)
 #    
