@@ -12,17 +12,15 @@ from .class_algebra import ClassAlgebra
 class Layer(ClassAlgebra):
 
     def __init__(self, *geoms):
-        geoms = Base.unary_union(*geoms)
+        geoms = self.flatten(geoms)
         self.geoms = geoms
         self.id = id(self)
 
     @classmethod
     def new(cls,*geoms):
-        geoms = Base.unary_union(*geoms)
+        geoms = cls.flatten(geoms)
         new = cls(*geoms)
         return new
-
-
 
     def copy(self,identical = True):
         new = type(self)(*[geom.copy(identical) for geom in self.geoms])        
@@ -40,8 +38,12 @@ class Layer(ClassAlgebra):
         function = getattr(a,function_name)
         c = function(b)
         d = Base.from_shapely(c)
-        e = Base.unary_union(*d)
+        e = self.flatten(d)
         return type(self)(*e)
+
+    @staticmethod
+    def flatten(geoms):
+        return Base.unary_union(*geoms)
 
     def union(self,other):
         return self.binary_operation(other,'union')
@@ -55,6 +57,18 @@ class Layer(ClassAlgebra):
     def intersection(self,other):
         return self.binary_operation(other,'intersection')
     
+    def dilate(self,value,resolution = None):
+        new_geoms = [item for geom in self.geoms for item in geom.dilate(value,resolution)]
+        new_geoms = self.flatten(new_geoms)        
+        new_layer = type(self)(*new_geoms)
+        return new_layer
+
+    def erode(self,value,resolution = None):
+        new_geoms = [item for geom in self.geoms for item in geom.dilate(-value,resolution)]
+        new_geoms = self.flatten(new_geoms)        
+        new_layer = type(self)(*new_geoms)
+        return new_layer
+
     def translate(self,dx,dy):
         new_geoms = [geom.translate(dx,dy) for geom in self.geoms]
         new_layer = type(self)(*new_geoms)
@@ -64,29 +78,4 @@ class Layer(ClassAlgebra):
         new_geoms = [geom.rotate(angle,about) for geom in self.geoms]
         new_layer = type(self)(*new_geoms)
         return new_layer
-
-    def dilate(self,value,resolution = None):
-        new_geoms = [item for geom in self.geoms for item in geom.dilate(value,resolution)]
-        new_geoms = Base.unary_union(*new_geoms)        
-        new_layer = type(self)(*new_geoms)
-        return new_layer
-
-    def erode(self,value,resolution = None):
-        new_geoms = [item for geom in self.geoms for item in geom.dilate(-value,resolution)]
-        new_geoms = Base.unary_union(*new_geoms)        
-        new_layer = type(self)(*new_geoms)
-        return new_layer
-
-#    def difference(self,other):
-#        new_geoms = []
-#        for item1 in self.geoms:
-#            result = [item1]
-#            for item2 in other.geoms:
-#                result = [item3 for item in result for item3 in item-item2 ]
-#            new_geoms.extend(result)                
-#        new_geoms = Base.unary_union(*new_geoms)        
-#        new_layer = type(self)(*new_geoms)
-#        return new_layer
-        
-    
         

@@ -4,8 +4,6 @@ Created on Mon May 16 09:55:55 2016
 
 @author: danb0b
 """
-from . import csg_shapely
-
 class ClassAlgebra(object):
     def __or__(self,other):
         return self.union(other)

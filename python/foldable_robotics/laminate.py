@@ -92,7 +92,3 @@ class Laminate(IterableLaminate,ClassAlgebra):
         
     def rotate(self,angle,about=None):
         return self.unary_operation('rotate',angle,about=about)
-
-#    @list.setter
-#    def list(self,v):
-#        self.layers = v
