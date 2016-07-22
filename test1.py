@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 plt.ion()
-from foldable_robotics.polygon import Polygon,Polyline
+from foldable_robotics.shape import Polygon,Polyline,Point
 from foldable_robotics.layer import Layer
 from foldable_robotics.laminate import Laminate
 
@@ -10,7 +10,7 @@ from foldable_robotics.laminate import Laminate
 
 if __name__=='__main__':
     exterior = [[0,0],[0,1],[1,2],[2,1],[2,-1],[1,-2],[0,-1]]
-    exterior = [tuple(item) for item in exterior]
+#    exterior = [tuple(item) for item in exterior]
     exterior2 = [(.5,0),(1,3**.5/2),(1.5,0)]
     a = Polygon(exterior,[])
     b = Polygon(exterior2,[])
@@ -20,6 +20,8 @@ if __name__=='__main__':
     h = e.shift(-1,0)
     c = (a-b)[0]
     d = a.shift(0.1,-2)
+    p = Point([(-1,-1)],[])
+
 #    aa = pg.GenericPoly([ShapeVertex(item) for item in exterior],[])
 #    bb = pg.GenericPoly([ShapeVertex(item) for item in exterior2],[])
 
@@ -30,9 +32,10 @@ if __name__=='__main__':
 #    C = A.difference(B)
 #    c=csg_shapely.to_generic(C)
 #    l = Layer.new(c,f,d,e,g,h)
-    l = Layer.new(a,g)
+    l = Layer.new(a,g,p)
 #    m = Layer.new(c)
 #    m = l.dilate(.5)
+    
 #    l.plot()
 #    plt.figure()
 #    m.plot()

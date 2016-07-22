@@ -6,7 +6,7 @@ Please see LICENSE for full license.
 """
 #import shapely.geometry as sg
 from . import csg_shapely
-from .polygon import Base
+from .shape import Base
 from .class_algebra import ClassAlgebra
 
 class Layer(ClassAlgebra):
@@ -36,7 +36,7 @@ class Layer(ClassAlgebra):
         b = csg_shapely.unary_union_safe(*[item.to_shapely() for item in other.geoms])
         function = getattr(a,function_name)
         c = function(b)
-        e = csg_shapely.to_generic(c)
+        e = Base.from_shapely(c)
         return type(self)(*e)
 
     def union(self,other):

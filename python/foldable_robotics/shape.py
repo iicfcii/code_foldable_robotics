@@ -14,6 +14,9 @@ from . import csg_shapely
 from .class_algebra import ClassAlgebra
 import shapely.geometry
 
+class GeometryNotHandled(Exception):
+    pass
+
 class Base(ClassAlgebra):
     resolution = 1
     
@@ -47,62 +50,75 @@ class Base(ClassAlgebra):
         a = self.to_shapely()
         b = other.to_shapely()
         c = a.union(b)
-        return csg_shapely.to_generic(c)
+        return self.from_shapely(c)
 
     def difference(self,other):
         a = self.to_shapely()
         b = other.to_shapely()
         c = a.difference(b)
-        return csg_shapely.to_generic(c)
+        return self.from_shapely(c)
 
     def intersection(self,other):
         a = self.to_shapely()
         b = other.to_shapely()
         c = a.intersection(b)
-        return csg_shapely.to_generic(c)
+        return self.from_shapely(c)
         
     def symmetric_difference(self,other):
         a = self.to_shapely()
         b = other.to_shapely()
         c = a.symmetric_difference(b)
-        return csg_shapely.to_generic(c)        
+        return self.from_shapely(c)
     
     def dilate(self,value,resolution = None):
         resolution = resolution or self.resolution
         a = self.to_shapely()
         b = a.buffer(value,resolution = resolution)
-        return csg_shapely.to_generic(b)
+        return self.from_shapely(b)
 
     def erode(self,value,resolution = None):
         resolution = resolution or self.resolution
         a = self.to_shapely()
         b = a.buffer(-value,resolution = resolution)
-        return csg_shapely.to_generic(b)
+        return self.from_shapely(b)
 
     @staticmethod    
     def unary_union(*items):
         csg_items = [item.to_shapely() for item in items]        
         a = csg_shapely.unary_union_safe(*csg_items)
-        b = csg_shapely.to_generic(a)
+        b = Base.from_shapely(a)
         return b
         
     def shift(self,dx,dy):
-        exterior = numpy.array(self.exterior)+numpy.array([dx,dy]).tolist()      
-        interiors = [numpy.array(interior)+numpy.array([dx,dy]).tolist() for interior in self.interiors]        
+        exterior = (numpy.array(self.exterior)+numpy.array([dx,dy])).tolist()      
+        interiors = [(numpy.array(interior)+numpy.array([dx,dy])).tolist() for interior in self.interiors]        
         new = type(self)(exterior,interiors)
         return new
+
+    @staticmethod
+    def from_shapely(entity,outputlist=None):
+        import shapely.geometry as sg
+        from .shape import Polygon,Polyline,Point
+    
+        entities = csg_shapely.condition_shapely_entities(entity)
+
+        outputlist = outputlist or []
+        for entity in entities:
+            if isinstance(entity, sg.Polygon):
+                outputlist.append(Polygon._from_shapely(entity))    
+            elif isinstance(entity, sg.LineString):
+                outputlist.append(Polyline._from_shapely(entity))    
+            elif isinstance(entity, sg.Point):
+                outputlist.append(Point._from_shapely(entity))    
+            else:
+                raise GeometryNotHandled()
+        return outputlist
+
         
 class Polygon(Base):
     def to_shapely(self):
         obj = shapely.geometry.Polygon(self.exterior, self.interiors)
         return obj
-#    def plot(self):
-#        plt.fill(*numpy.array(self.exterior).T,color=(1,0,0,.25))
-#        ext = numpy.array(self.exterior)
-#        ints =[numpy.array(interior) for interior in self.interiors]
-#        plt.plot(*self.closepath(ext).T)
-#        [plt.plot(*self.closepath(interior).T) for interior in ints]
-#        plt.axis('equal')
         
     def plot(self):
         from matplotlib.patches import PathPatch
@@ -114,18 +130,42 @@ class Polygon(Base):
             vertices.extend(item+[(0,0)])
             codes.extend([Path.MOVETO]+([Path.LINETO]*(len(item)-1))+[Path.CLOSEPOLY])
         path = Path(vertices,codes)
-        patch = PathPatch(path,color=(1,0,0,.25))        
+        patch = PathPatch(path,facecolor=(1,0,0,.25),edgecolor=(1,0,0,.5))        
         axes.add_patch(patch)
         plt.axis('equal')
 
+    @classmethod
+    def _from_shapely(cls,entity):
+        exterior = [coord for coord in entity.exterior.coords]        
+        interiors = [[coord for coord in interior.coords] for interior in entity.interiors]
+        return cls(exterior, interiors)
+        
 class Polyline(Base):
     def to_shapely(self):
         obj = shapely.geometry.LineString(self.exterior)
         return obj
+
     def plot(self):
-        plt.plot(*numpy.array(self.exterior).T,color=(0,1,0,.5))
+        plt.plot(*numpy.array(self.exterior).T,color=(0,1,0,.5),linewidth=2)
 #        [plt.plot(*numpy.array(interior).T) for interior in self.interiors]
         plt.axis('equal')
-        
+
+    @classmethod
+    def _from_shapely(cls,entity):
+        exterior = [coord for coord in entity.coords]        
+        return cls(exterior, [])
+
+class Point(Base):
+    def to_shapely(self):
+        obj = shapely.geometry.Point(*self.exterior[0])
+        return obj
+    def plot(self):
+        plt.plot(*numpy.array(self.exterior).T,marker = 'o',color=(0,0,1,.5))
+#        [plt.plot(*numpy.array(interior).T) for interior in self.interiors]
+        plt.axis('equal')
+    @classmethod
+    def _from_shapely(cls,entity):
+        exterior = [coord for coord in entity.coords]        
+        return cls(exterior, [])        
 if __name__=='__main__':
   pass
