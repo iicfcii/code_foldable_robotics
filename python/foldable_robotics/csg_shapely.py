@@ -7,15 +7,7 @@ Please see LICENSE for full license.
 
 import shapely.geometry as sg
 
-filter_list = [sg.Polygon,sg.LineString,sg.Point]
-
-class GeometryNotHandled(Exception):
-    pass
-
-def entity_is_handled(entity):
-    return any([isinstance(entity,item) for item in filter_list])
-    
-def iscollection(item):
+def is_collection(item):
     collections = [
         sg.MultiPolygon,
         sg.GeometryCollection,
@@ -25,20 +17,17 @@ def iscollection(item):
     iscollection = [isinstance(item, cls) for cls in collections]
     return any(iscollection)
     
-def extract_individual_entities_recursive(list_in,entity_in):
-    if iscollection(entity_in):
-        [extract_individual_entities_recursive(list_in,item) for item in entity_in.geoms]
+def extract_r(item,list_in = None):
+    list_in = list_in or []
+    if is_collection(item):
+        list_in.extend([item3 for item2 in item.geoms for item3 in extract_r(item2,list_in)])
     else:
-        list_in.append(entity_in)
-            
-def extract_individual_entities(entities):
-    entities_out = []
-    [extract_individual_entities_recursive(entities_out,item) for item in entities]
-    return entities_out
-
+        list_in.append(item)
+    return list_in
+    
 def condition_shapely_entities(*entities):
-    entities = extract_individual_entities(entities)
-    entities = [item for item in entities if any([isinstance(item,classitem) for classitem in filter_list])]
+    entities = [item for item2 in entities for item in extract_r(item2)]
+    entities = [item for item in entities if any([isinstance(item,classitem) for classitem in [sg.Polygon,sg.LineString,sg.Point]])]
     entities = [item for item in entities if not item.is_empty]
 #    entities = [item for item in entities if not item.is_valid]
     return entities
