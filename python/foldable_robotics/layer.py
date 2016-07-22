@@ -5,8 +5,8 @@ Email: danaukes<at>asu.edu.
 Please see LICENSE for full license.
 """
 #import shapely.geometry as sg
-from . import csg_shapely
 from .shape import Base
+from . import shape
 from .class_algebra import ClassAlgebra
 
 class Layer(ClassAlgebra):
@@ -35,8 +35,8 @@ class Layer(ClassAlgebra):
             geom.plot()
 
     def binary_operation(self,other,function_name):
-        a = csg_shapely.unary_union_safe(*[item.to_shapely() for item in self.geoms])
-        b = csg_shapely.unary_union_safe(*[item.to_shapely() for item in other.geoms])
+        a = shape.unary_union_safe(*[item.to_shapely() for item in self.geoms])
+        b = shape.unary_union_safe(*[item.to_shapely() for item in other.geoms])
         function = getattr(a,function_name)
         c = function(b)
         d = Base.from_shapely(c)
