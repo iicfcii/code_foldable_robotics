@@ -15,11 +15,11 @@ if __name__=='__main__':
     a = Polygon(exterior,[])
     b = Polygon(exterior2,[])
     e = Polyline(exterior2,[])
-    g = e.shift(-3,0)
-    f = b.shift(1,1)
-    h = e.shift(-1,0)
+    g = e.translate(-3,0)
+    f = b.translate(1,1)
+    h = e.translate(-1,0)
     c = (a-b)[0]
-    d = a.shift(0.1,-2)
+    d = a.translate(0.1,-2)
     p = Point([(-1,-1)],[])
 
 #    aa = pg.GenericPoly([ShapeVertex(item) for item in exterior],[])
@@ -40,14 +40,23 @@ if __name__=='__main__':
 #    plt.figure()
 #    m.plot()
     n = (l.dilate(.5,4))-(l.dilate(.1,4))
-    m = n.shift(1,0)|l
+    m = n.translate(1,0)|l
 #    m.plot()
     
     lam = Laminate(l,n,m)
     lam.plot()
     plt.figure()
-    m.plot()
-    plt.axis('equal')
+    m.rotate(15,about=(1,-2)).plot()
+    plt.figure()
+    a.rotate(15,about=(1,-2)).plot()
+    
+    plt.figure()
+    a = Polygon.make_rect_bl((0,0),1,.5)
+    b = a.erode(.1)[0]
+    d = Polygon.make_circle_r((0,0),.3,3)
+    c = ((a-b)[0]|d)[0]
+    c.plot()
+#    plt.axis('equal')
 #    cc = popupcad.algorithms.csg_shapely.to_generic(aa.to_shapely().difference(bb.to_shapely()).buffer(-1000))
 #    c = c.erode(.3,8)
 #    

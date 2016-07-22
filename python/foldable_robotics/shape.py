@@ -19,7 +19,7 @@ class GeometryNotHandled(Exception):
 
 class Base(ClassAlgebra):
     resolution = 1
-    
+    circle_resolution = 8
     def __init__(self,exterior,interiors):
         self.id = id(self)
         self.exterior = exterior
@@ -89,10 +89,32 @@ class Base(ClassAlgebra):
         b = Base.from_shapely(a)
         return b
         
-    def shift(self,dx,dy):
+    def translate(self,dx,dy):
         exterior = (numpy.array(self.exterior)+numpy.array([dx,dy])).tolist()      
         interiors = [(numpy.array(interior)+numpy.array([dx,dy])).tolist() for interior in self.interiors]        
         new = type(self)(exterior,interiors)
+        return new
+
+    def R(self,t):
+        import numpy
+        from math import sin,cos
+        cost = cos(t)
+        sint = sin(t)
+        R = numpy.array([[cost,-sint],[sint,cost]])
+        return R
+    
+    def rotate(self,angle,about=None):
+        from math import pi
+        t = pi*angle/180
+        R = self.R(t)
+        
+        if about is not None:
+            self = self.translate(-about[0],-about[1])
+        exterior = (R.dot(numpy.array(self.exterior).T)).T.tolist()
+        interiors = [(R.dot(numpy.array(interior).T)).T.tolist() for interior in self.interiors]            
+        new = type(self)(exterior,interiors)
+        if about is not None:
+            new = new.translate(about[0],about[1])
         return new
 
     @staticmethod
@@ -139,6 +161,19 @@ class Polygon(Base):
         exterior = [coord for coord in entity.exterior.coords]        
         interiors = [[coord for coord in interior.coords] for interior in entity.interiors]
         return cls(exterior, interiors)
+
+    @classmethod    
+    def make_rect_bl(cls,bottom_left,width,height):
+        bl = numpy.array(bottom_left)
+        exterior = numpy.array([bl,bl+[0,height],bl+[width,height],bl+[width,0]])
+        return cls(exterior.tolist(),[])
+
+    @classmethod    
+    def make_circle_r(cls,center,radius,resolution = None):
+        resolution = resolution or cls.circle_resolution
+        p = Point([center],[])
+        new = p.dilate(radius,resolution)[0]
+        return new
         
 class Polyline(Base):
     def to_shapely(self):
@@ -167,5 +202,6 @@ class Point(Base):
     def _from_shapely(cls,entity):
         exterior = [coord for coord in entity.coords]        
         return cls(exterior, [])        
+
 if __name__=='__main__':
   pass

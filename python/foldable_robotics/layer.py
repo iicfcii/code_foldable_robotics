@@ -45,8 +45,13 @@ class Layer(ClassAlgebra):
     def intersection(self,other):
         return self.unary_operation(other,'intersection')
     
-    def shift(self,dx,dy):
-        new_geoms = [geom.shift(dx,dy) for geom in self.geoms]
+    def translate(self,dx,dy):
+        new_geoms = [geom.translate(dx,dy) for geom in self.geoms]
+        new_layer = type(self)(*new_geoms)
+        return new_layer
+
+    def rotate(self,angle,about=None):
+        new_geoms = [geom.rotate(angle,about) for geom in self.geoms]
         new_layer = type(self)(*new_geoms)
         return new_layer
 
