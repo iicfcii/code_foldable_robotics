@@ -1,17 +1,17 @@
 language: python
 python:
-  - "3.3"
   - "3.4"
 # command to install dependencies
 install: "pip install shapely matplotlib"
 before_script:
   - export PYTHONPATH=$PYTHONPATH:$(pwd)/python
-  - echo $PYTHONPATH
-  - ls -la
-  - ls -la python
+#  - echo $PYTHONPATH
+#  - ls -la
+#  - ls -la python
 # command to run tests
 script: 
-  - echo $PYTHONPATH
-  - ls -la
-  - ls -la python
+#  - echo $PYTHONPATH
+#  - ls -la
+#  - ls -la python
   - "python test1.py"
+  - "python test2.py"  

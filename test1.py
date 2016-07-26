@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
-plt.ion()
+#import matplotlib.pyplot as plt
+#plt.ion()
 from foldable_robotics.shape import Polygon,Polyline,Point
 from foldable_robotics.layer import Layer
 from foldable_robotics.laminate import Laminate
@@ -44,18 +44,18 @@ if __name__=='__main__':
 #    m.plot()
     
     lam = Laminate(l,n,m)
-    lam.plot()
-    plt.figure()
-    m.rotate(15,about=(1,-2)).plot()
-    plt.figure()
-    a.rotate(15,about=(1,-2)).plot()
+#    lam.plot()
+#    plt.figure()
+    #m.rotate(15,about=(1,-2)).plot()
+#    plt.figure()
+    #a.rotate(15,about=(1,-2)).plot()
     
-    plt.figure()
+#    plt.figure()
     a = Polygon.make_rect_bl((0,0),1,.5)
     b = a.erode(.1)[0]
     d = Polygon.make_circle_r((0,0),.3,3)
     c = ((a-b)[0]|d)[0]
-    c.plot()
+#    c.plot()
 #    plt.axis('equal')
 #    cc = popupcad.algorithms.csg_shapely.to_generic(aa.to_shapely().difference(bb.to_shapely()).buffer(-1000))
 #    c = c.erode(.3,8)
