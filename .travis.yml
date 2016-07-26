@@ -10,4 +10,8 @@ before-script:
   - ls -la
   - ls -la python
 # command to run tests
-script: "python test1.py"
+script: 
+  - echo $PYTHONPATH
+  - ls -la
+  - ls -la python
+  - "python test1.py"
