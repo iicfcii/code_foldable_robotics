@@ -4,5 +4,7 @@ python:
   - "3.4"
 # command to install dependencies
 install: "pip install shapely matplotlib"
+before-script:
+  - export PYTHONPATH=$PYTHONPATH:$(pwd)/python
 # command to run tests
 script: "python test1.py"
