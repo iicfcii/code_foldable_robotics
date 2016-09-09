@@ -45,8 +45,12 @@ class Laminate(IterableLaminate,ClassAlgebra):
         return new
 
     def plot(self):
-        for geom in self.layers:
-            geom.plot()
+        import matplotlib.cm
+        cm = matplotlib.cm.coolwarm
+        l = len(self.layers)        
+        for ii,geom in enumerate(self.layers):
+            
+            geom.plot(color = cm(ii/l))
     
     @property
     def list(self):
@@ -81,14 +85,17 @@ class Laminate(IterableLaminate,ClassAlgebra):
     def intersection(self,other):
         return self.binary_operation('intersection',other)
     
-    def dilate(self,value,resolution = None):
-        return self.unary_operation('dilate',value,resolution=resolution)
+    def dilate(self,*args,**kwargs):
+        return self.unary_operation('dilate',*args,**kwargs)
 
-    def erode(self,value,resolution = None):
-        return self.unary_operation('erode',value,resolution=resolution)
+    def erode(self,*args,**kwargs):
+        return self.unary_operation('erode',*args,**kwargs)
 
-    def translate(self,dx,dy):
-        return self.unary_operation('translate',dx,dy)
+    def translate(self,*args,**kwargs):
+        return self.unary_operation('translate',*args,**kwargs)
         
-    def rotate(self,angle,about=None):
-        return self.unary_operation('rotate',angle,about=about)
+    def rotate(self,*args,**kwargs):
+        return self.unary_operation('rotate',*args,**kwargs)
+
+    def affine_transform(self,*args,**kwargs):
+        return self.unary_operation('affine_transform',*args,**kwargs)

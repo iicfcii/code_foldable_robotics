@@ -5,9 +5,38 @@ Email: danaukes<at>asu.edu.
 Please see LICENSE for full license.
 """
 #import shapely.geometry as sg
-from .shape import Base
-from . import shape
+#from .shape import Base
+#from . import shape
+import shapely.geometry
+import shapely.geometry as sg
+import shapely.affinity as sa
 from .class_algebra import ClassAlgebra
+import shapely.ops as so
+
+def is_collection(item):
+    collections = [
+        shapely.geometry.MultiPolygon,
+        shapely.geometry.GeometryCollection,
+        shapely.geometry.MultiLineString,
+        shapely.geometry.multilinestring.MultiLineString,
+        shapely.geometry.MultiPoint]
+    iscollection = [isinstance(item, cls) for cls in collections]
+    return any(iscollection)
+
+def extract_r(item,list_in = None):
+    list_in = list_in or []
+    if is_collection(item):
+        list_in.extend([item3 for item2 in item.geoms for item3 in extract_r(item2,list_in)])
+    else:
+        list_in.append(item)
+    return list_in
+    
+def condition_shapely_entities(*entities):
+    entities = [item for item2 in entities for item in extract_r(item2)]
+    entities = [item for item in entities if any([isinstance(item,classitem) for classitem in [shapely.geometry.Polygon,shapely.geometry.LineString,shapely.geometry.Point]])]
+    entities = [item for item in entities if not item.is_empty]
+#    entities = [item for item in entities if not item.is_valid]
+    return entities
 
 class Layer(ClassAlgebra):
 
@@ -28,22 +57,41 @@ class Layer(ClassAlgebra):
             new.id = self.id
         return new
 
-    def plot(self):
+    def plot(self,*args,**kwargs):
         for geom in self.geoms:
-            geom.plot()
+            self.plot_poly(geom,*args,**kwargs)
 
+    def plot_poly(self,poly,color = (1,0,0,1)):
+        from matplotlib.patches import PathPatch
+        from matplotlib.path import Path
+        import matplotlib.pyplot as plt
+        axes = plt.gca()
+        vertices = []
+        codes = []
+        exterior = list(poly.exterior.coords)
+        interiors = [list(interior.coords) for interior in poly.interiors]
+        for item in [exterior]+interiors:
+            vertices.extend(item+[(0,0)])
+            codes.extend([Path.MOVETO]+([Path.LINETO]*(len(item)-1))+[Path.CLOSEPOLY])
+        path = Path(vertices,codes)
+        color = list(color)
+        patch = PathPatch(path,facecolor=color[:3]+[.25],edgecolor=color[:3]+[.5])        
+        axes.add_patch(patch)
+        plt.axis('equal')
+        
     def binary_operation(self,other,function_name):
-        a = shape.unary_union_safe(*[item.to_shapely() for item in self.geoms])
-        b = shape.unary_union_safe(*[item.to_shapely() for item in other.geoms])
+        a = so.unary_union(self.geoms)
+        b = so.unary_union(other.geoms)
         function = getattr(a,function_name)
         c = function(b)
-        d = Base.from_shapely(c)
-        e = self.flatten(d)
+        e = self.flatten(c)
         return type(self)(*e)
 
     @staticmethod
     def flatten(geoms):
-        return Base.unary_union(*geoms)
+        geoms = so.unary_union(geoms)
+        geoms2 = condition_shapely_entities(geoms)
+        return geoms2
 
     def union(self,other):
         return self.binary_operation(other,'union')
@@ -57,25 +105,34 @@ class Layer(ClassAlgebra):
     def intersection(self,other):
         return self.binary_operation(other,'intersection')
     
-    def dilate(self,value,resolution = None):
-        new_geoms = [item for geom in self.geoms for item in geom.dilate(value,resolution)]
+    def dilate(self,value,resolution = 0):
+        geoms = so.unary_union(self.geoms)
+        new_geoms = (geoms.buffer(value,resolution))
         new_geoms = self.flatten(new_geoms)        
         new_layer = type(self)(*new_geoms)
         return new_layer
 
     def erode(self,value,resolution = None):
-        new_geoms = [item for geom in self.geoms for item in geom.dilate(-value,resolution)]
+        return self.dilate(-value,resolution)
+        
+    def translate(self,*args,**kwargs):
+        geoms = so.unary_union(self.geoms)
+        new_geoms = sa.translate(geoms,*args,**kwargs)
         new_geoms = self.flatten(new_geoms)        
         new_layer = type(self)(*new_geoms)
         return new_layer
 
-    def translate(self,dx,dy):
-        new_geoms = [geom.translate(dx,dy) for geom in self.geoms]
+    def rotate(self,*args,**kwargs):
+        geoms = so.unary_union(self.geoms)
+        new_geoms = sa.rotate(geoms,*args,**kwargs)
+        new_geoms = self.flatten(new_geoms)        
         new_layer = type(self)(*new_geoms)
         return new_layer
 
-    def rotate(self,angle,about=None):
-        new_geoms = [geom.rotate(angle,about) for geom in self.geoms]
+    def affine_transform(self,*args,**kwargs):
+        geoms = so.unary_union(self.geoms)
+        new_geoms = sa.affine_transform(geoms,*args,**kwargs)
+        new_geoms = self.flatten(new_geoms)        
         new_layer = type(self)(*new_geoms)
         return new_layer
         
