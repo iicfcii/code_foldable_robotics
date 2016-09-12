@@ -21,9 +21,6 @@ layer34 = layer01.affine_transform([1,0,0,-1,0,0])
 hinge = Laminate(layer01,layer01,Layer(),layer34,layer34)
 hinge = hinge.affine_transform([1,0,0,.25,0,0])
 
-cut = Layer(sg.LineString([(0,0),(1,0)])) 
-cut = Laminate(cut,cut,cut,cut,cut) 
-
 plt.figure()
 hinge.plot()
 
@@ -31,6 +28,9 @@ outer = Layer(sg.box(0,0,3,5))
 outer = Laminate(outer,outer,outer,outer,outer)
 plt.figure()
 outer.plot()
+
+
+empty_layer = Layer()
 
 hinge_lines = []
 hinge_lines.append(((0,2),(1,2)))
@@ -40,19 +40,15 @@ hinge_lines.append(((1,3),(2,3)))
 hinge_lines.append(((2,2),(3,2)))
 hinge_lines.append(((2,4),(3,4)))
 
-cut_lines = []
-cut_lines.append(((1,1),(1,4)))
-cut_lines.append(((2,1),(2,4)))
-
-null_layer = Layer()
-
-
-base = Laminate(null_layer,null_layer,null_layer,null_layer,null_layer)
+base = Laminate(empty_layer,empty_layer,empty_layer,empty_layer,empty_layer)
 for c0,c1 in hinge_lines:
     base|=hinge.map_line_stretch((0,0),(3,0),c0,c1)
     
 plt.figure()
 base.plot()
+
+cut = Layer(sg.LineString([(0,0),(1,0)])) 
+cut = Laminate(cut,cut,cut,cut,cut) 
 
 first_cut = outer-base
 first_cut = first_cut.affine_transform([10,0,0,10,0,0])
@@ -60,7 +56,11 @@ plt.figure()
 first_cut.plot()
 first_cut.export_dxf('first_cut')
 
-base = Laminate(null_layer,null_layer,null_layer,null_layer,null_layer)
+cut_lines = []
+cut_lines.append(((1,1),(1,4)))
+cut_lines.append(((2,1),(2,4)))
+
+base = Laminate(empty_layer,empty_layer,empty_layer,empty_layer,empty_layer)
 for c0,c1 in cut_lines:
     base|=cut.map_line_stretch((0,0),(1,0),c0,c1)
 
