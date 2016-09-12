@@ -31,23 +31,32 @@ def extract_r(item,list_in = None):
         list_in.append(item)
     return list_in
     
-def condition_shapely_entities(*entities):
-    entities = [item for item2 in entities for item in extract_r(item2)]
-    entities = [item for item in entities if any([isinstance(item,classitem) for classitem in [shapely.geometry.Polygon,shapely.geometry.LineString,shapely.geometry.Point]])]
-    entities = [item for item in entities if not item.is_empty]
-#    entities = [item for item in entities if not item.is_valid]
-    return entities
+def flatten(geoms):
+    geom = so.unary_union(geoms)
+    entities = extract_r(geom)
+#    entities = [item for item in entities if any([isinstance(item,classitem) for classitem in [shapely.geometry.Polygon,shapely.geometry.LineString,shapely.geometry.Point]])]
+#    entities = [item for item in entities if not item.is_empty]
+    return entities   
+    
+def from_shapely_to_layer(new_geoms):
+    new_geoms = flatten(new_geoms)        
+    new_layer = Layer(*new_geoms)
+    return new_layer
+    
+def from_layer_to_shapely(layer):
+    geoms = so.unary_union(layer.geoms)
+    return geoms
 
 class Layer(ClassAlgebra):
 
     def __init__(self, *geoms):
-        geoms = self.flatten(geoms)
+        geoms = flatten(geoms)
         self.geoms = geoms
         self.id = id(self)
 
     @classmethod
     def new(cls,*geoms):
-        geoms = cls.flatten(geoms)
+        geoms = flatten(geoms)
         new = cls(*geoms)
         return new
 
@@ -59,43 +68,14 @@ class Layer(ClassAlgebra):
 
     def plot(self,*args,**kwargs):
         for geom in self.geoms:
-            self.plot_poly(geom,*args,**kwargs)
+            misc.plot_poly(geom,*args,**kwargs)
 
-    def plot_poly(self,poly,color = (1,0,0,1)):
-        from matplotlib.patches import PathPatch
-        from matplotlib.path import Path
-        import matplotlib.pyplot as plt
-        axes = plt.gca()
-        vertices = []
-        codes = []
-        if isinstance(poly,sg.Polygon):
-            exterior = list(poly.exterior.coords)
-            interiors = [list(interior.coords) for interior in poly.interiors]
-        elif isinstance(poly,sg.LineString):
-            exterior = list(poly.coords)
-            interiors = []
-        for item in [exterior]+interiors:
-            vertices.extend(item+[(0,0)])
-            codes.extend([Path.MOVETO]+([Path.LINETO]*(len(item)-1))+[Path.CLOSEPOLY])
-        path = Path(vertices,codes)
-        color = list(color)
-        patch = PathPatch(path,facecolor=color[:3]+[.25],edgecolor=color[:3]+[.5])        
-        axes.add_patch(patch)
-        plt.axis('equal')
-        
     def binary_operation(self,other,function_name):
-        a = so.unary_union(self.geoms)
-        b = so.unary_union(other.geoms)
+        a = from_layer_to_shapely(self)
+        b = from_layer_to_shapely(other)
         function = getattr(a,function_name)
         c = function(b)
-        e = self.flatten(c)
-        return type(self)(*e)
-
-    @staticmethod
-    def flatten(geoms):
-        geoms = so.unary_union(geoms)
-        geoms2 = condition_shapely_entities(geoms)
-        return geoms2
+        return from_shapely_to_layer(c)
 
     def union(self,other):
         return self.binary_operation(other,'union')
@@ -113,35 +93,27 @@ class Layer(ClassAlgebra):
         return self.dilate(value,resolution)
 
     def dilate(self,value,resolution = 0):
-        geoms = so.unary_union(self.geoms)
+        geoms = from_layer_to_shapely(self)
         new_geoms = (geoms.buffer(value,resolution))
-        new_geoms = self.flatten(new_geoms)        
-        new_layer = type(self)(*new_geoms)
-        return new_layer
+        return from_shapely_to_layer(new_geoms)
 
     def erode(self,value,resolution = None):
         return self.dilate(-value,resolution)
         
     def translate(self,*args,**kwargs):
-        geoms = so.unary_union(self.geoms)
+        geoms = from_layer_to_shapely(self)
         new_geoms = sa.translate(geoms,*args,**kwargs)
-        new_geoms = self.flatten(new_geoms)        
-        new_layer = type(self)(*new_geoms)
-        return new_layer
+        return from_shapely_to_layer(new_geoms)
 
     def rotate(self,*args,**kwargs):
-        geoms = so.unary_union(self.geoms)
+        geoms = from_layer_to_shapely(self)
         new_geoms = sa.rotate(geoms,*args,**kwargs)
-        new_geoms = self.flatten(new_geoms)        
-        new_layer = type(self)(*new_geoms)
-        return new_layer
+        return from_shapely_to_layer(new_geoms)
 
     def affine_transform(self,*args,**kwargs):
-        geoms = so.unary_union(self.geoms)
+        geoms = from_layer_to_shapely(self)
         new_geoms = sa.affine_transform(geoms,*args,**kwargs)
-        new_geoms = self.flatten(new_geoms)        
-        new_layer = type(self)(*new_geoms)
-        return new_layer
+        return from_shapely_to_layer(new_geoms)
 
     def export_dxf(self,name):
         import ezdxf
