@@ -68,8 +68,12 @@ class Layer(ClassAlgebra):
         axes = plt.gca()
         vertices = []
         codes = []
-        exterior = list(poly.exterior.coords)
-        interiors = [list(interior.coords) for interior in poly.interiors]
+        if isinstance(poly,sg.Polygon):
+            exterior = list(poly.exterior.coords)
+            interiors = [list(interior.coords) for interior in poly.interiors]
+        elif isinstance(poly,sg.LineString):
+            exterior = list(poly.coords)
+            interiors = []
         for item in [exterior]+interiors:
             vertices.extend(item+[(0,0)])
             codes.extend([Path.MOVETO]+([Path.LINETO]*(len(item)-1))+[Path.CLOSEPOLY])
@@ -105,6 +109,9 @@ class Layer(ClassAlgebra):
     def intersection(self,other):
         return self.binary_operation(other,'intersection')
     
+    def buffer(self,value,resolution = 0):
+        return self.dilate(value,resolution)
+
     def dilate(self,value,resolution = 0):
         geoms = so.unary_union(self.geoms)
         new_geoms = (geoms.buffer(value,resolution))
@@ -135,4 +142,27 @@ class Layer(ClassAlgebra):
         new_geoms = self.flatten(new_geoms)        
         new_layer = type(self)(*new_geoms)
         return new_layer
+
+    def export_dxf(self,name):
+        import ezdxf
+        dwg = ezdxf.new('R2010')
+        msp = dwg.modelspace()
+        for geom in self.geoms:
+            segments = self.get_segments(geom)
+            for segment in segments:
+                for c0,c1 in zip(segment[:-1],segment[1:]):
+                    print(c0,c1)
+                    msp.add_line(c0,c1)
+        dwg.saveas(name)
         
+    def get_segments(self,poly):
+        if isinstance(poly,sg.Polygon):
+            exterior = list(poly.exterior.coords)
+            interiors = [list(interior.coords) for interior in poly.interiors]
+            segments = [exterior]+interiors
+            segments = [loop+loop[0:1] for loop in segments]
+            
+        elif isinstance(poly,sg.LineString):
+            segments = list(poly.coords)
+            
+        return segments

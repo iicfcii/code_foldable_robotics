@@ -6,6 +6,7 @@ Please see LICENSE for full license.
 """
 
 from .class_algebra import ClassAlgebra
+from . import geometry
 
 class WrongNumLayers(Exception):
     pass
@@ -85,6 +86,9 @@ class Laminate(IterableLaminate,ClassAlgebra):
     def intersection(self,other):
         return self.binary_operation('intersection',other)
     
+    def buffer(self,*args,**kwargs):
+        return self.unary_operation('buffer',*args,**kwargs)
+
     def dilate(self,*args,**kwargs):
         return self.unary_operation('dilate',*args,**kwargs)
 
@@ -99,3 +103,16 @@ class Laminate(IterableLaminate,ClassAlgebra):
 
     def affine_transform(self,*args,**kwargs):
         return self.unary_operation('affine_transform',*args,**kwargs)
+
+    def map_line_stretch(self,*args,**kwargs):
+        import math
+        translate,rotate,scale = geometry.map_line(*args,**kwargs)
+        laminate = self.affine_transform([scale,0,0,1,0,0])
+        laminate = laminate.rotate(rotate*180/math.pi,origin=(0,0))
+        laminate = laminate.translate(*translate)
+        return laminate
+        
+    def export_dxf(self,name):
+        for ii,layer in enumerate(self.layers):
+            layername = name+str(ii)+'.dxf'
+            layer.export_dxf(layername)
