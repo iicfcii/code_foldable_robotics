@@ -5,8 +5,8 @@ Email: danaukes<at>asu.edu.
 Please see LICENSE for full license.
 """
 
-from .class_algebra import ClassAlgebra
-from . import geometry
+from class_algebra import ClassAlgebra
+import geometry
 
 class WrongNumLayers(Exception):
     pass

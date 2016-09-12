@@ -10,8 +10,10 @@ Please see LICENSE for full license.
 import shapely.geometry
 import shapely.geometry as sg
 import shapely.affinity as sa
-from .class_algebra import ClassAlgebra
 import shapely.ops as so
+import misc
+
+from class_algebra import ClassAlgebra
 
 def is_collection(item):
     collections = [
