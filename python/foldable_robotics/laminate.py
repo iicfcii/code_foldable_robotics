@@ -114,5 +114,5 @@ class Laminate(IterableLaminate,ClassAlgebra):
         
     def export_dxf(self,name):
         for ii,layer in enumerate(self.layers):
-            layername = name+str(ii)+'.dxf'
+            layername = name+str(ii)
             layer.export_dxf(layername)

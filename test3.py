@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 
 box = Layer(sg.box(0,0,1,1))
 layer01 = box
-layer01 |= box.translate(2,0)
-layer01 |= box.translate(1,-1)
+layer01 = layer01 | box.translate(2,0)
+layer01 = layer01 | box.translate(1,-1)
 layer01.plot()
 
 layer34 = layer01.affine_transform([1,0,0,-1,0,0])
@@ -29,7 +29,6 @@ outer = Laminate(outer,outer,outer,outer,outer)
 plt.figure()
 outer.plot()
 
-
 empty_layer = Layer()
 
 hinge_lines = []
@@ -41,8 +40,8 @@ hinge_lines.append(((2,2),(3,2)))
 hinge_lines.append(((2,4),(3,4)))
 
 base = Laminate(empty_layer,empty_layer,empty_layer,empty_layer,empty_layer)
-for c0,c1 in hinge_lines:
-    base|=hinge.map_line_stretch((0,0),(3,0),c0,c1)
+for point0,point1 in hinge_lines:
+    base = base |hinge.map_line_stretch((0,0),(3,0),point0,point1)
     
 plt.figure()
 base.plot()
@@ -61,11 +60,11 @@ cut_lines.append(((1,1),(1,4)))
 cut_lines.append(((2,1),(2,4)))
 
 base = Laminate(empty_layer,empty_layer,empty_layer,empty_layer,empty_layer)
-for c0,c1 in cut_lines:
-    base|=cut.map_line_stretch((0,0),(1,0),c0,c1)
+for point0,point1 in cut_lines:
+    base = base | cut.map_line_stretch((0,0),(1,0),point0,point1)
 
 second_cut = outer-(base<<.01)
 second_cut= second_cut.affine_transform([10,0,0,10,0,0])
 plt.figure()
 second_cut[0].plot()
-second_cut[0].export_dxf('second_cut.dxf')
+second_cut[0].export_dxf('second_cut')

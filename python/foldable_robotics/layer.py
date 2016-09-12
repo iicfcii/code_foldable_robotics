@@ -152,7 +152,7 @@ class Layer(ClassAlgebra):
             for segment in segments:
                 for c0,c1 in zip(segment[:-1],segment[1:]):
                     msp.add_line(c0,c1)
-        dwg.saveas(name)
+        dwg.saveas(name+'.dxf')
         
     def get_segments(self,poly):
         if isinstance(poly,sg.Polygon):
