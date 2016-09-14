@@ -48,6 +48,31 @@ def from_layer_to_shapely(layer):
     geoms = so.unary_union(layer.geoms)
     return geoms
 
+def plot_poly(poly,color = (1,0,0,1)):
+    import numpy
+    from matplotlib.patches import PathPatch
+    from matplotlib.path import Path
+    import matplotlib.pyplot as plt
+    axes = plt.gca()
+    vertices = []
+    codes = []
+    color = list(color)
+    if isinstance(poly,sg.Polygon):
+        exterior = list(poly.exterior.coords)
+        interiors = [list(interior.coords) for interior in poly.interiors]
+        for item in [exterior]+interiors:
+            vertices.extend(item+[(0,0)])
+            codes.extend([Path.MOVETO]+([Path.LINETO]*(len(item)-1))+[Path.CLOSEPOLY])
+        path = Path(vertices,codes)
+        patch = PathPatch(path,facecolor=color[:3]+[.25],edgecolor=color[:3]+[.5])        
+        axes.add_patch(patch)
+
+    elif isinstance(poly,sg.LineString):
+        exterior = list(poly.coords)
+        exterior = numpy.array(poly.coords)
+        axes.plot(exterior[:,0],exterior[:,1],color=color[:3]+[.5])
+    plt.axis('equal')
+    
 class Layer(ClassAlgebra):
 
     def __init__(self, *geoms):
@@ -69,7 +94,7 @@ class Layer(ClassAlgebra):
 
     def plot(self,*args,**kwargs):
         for geom in self.geoms:
-            misc.plot_poly(geom,*args,**kwargs)
+            plot_poly(geom,*args,**kwargs)
 
     def binary_operation(self,other,function_name):
         a = from_layer_to_shapely(self)
