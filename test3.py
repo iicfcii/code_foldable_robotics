@@ -10,9 +10,8 @@ import shapely.geometry as sg
 import matplotlib.pyplot as plt
 
 #import classes from my local modules
-
-from laminate import Laminate
-from layer import Layer
+from foldable_robotics.laminate import Laminate
+from foldable_robotics.layer import Layer
 
 #create a layer named box
 box = Layer(sg.box(0,0,1,1))

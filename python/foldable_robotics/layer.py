@@ -12,7 +12,6 @@ import shapely.geometry as sg
 import shapely.affinity as sa
 from .class_algebra import ClassAlgebra
 import shapely.ops as so
-import foldable_robotics.misc as misc
 
 def is_collection(item):
     collections = [
