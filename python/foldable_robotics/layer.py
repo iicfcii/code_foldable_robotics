@@ -130,6 +130,11 @@ class Layer(ClassAlgebra):
         new_geoms = sa.translate(geoms,*args,**kwargs)
         return from_shapely_to_layer(new_geoms)
 
+    def scale(self,*args,**kwargs):
+        geoms = from_layer_to_shapely(self)
+        new_geoms = sa.scale(geoms,*args,**kwargs)
+        return from_shapely_to_layer(new_geoms)
+
     def rotate(self,*args,**kwargs):
         geoms = from_layer_to_shapely(self)
         new_geoms = sa.rotate(geoms,*args,**kwargs)

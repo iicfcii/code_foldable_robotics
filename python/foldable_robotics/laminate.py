@@ -51,7 +51,7 @@ class Laminate(IterableLaminate,ClassAlgebra):
         l = len(self.layers)        
         for ii,geom in enumerate(self.layers):
             
-            geom.plot(color = cm(ii/l))
+            geom.plot(color = cm((ii+1)/(l+1)))
     
     @property
     def list(self):
