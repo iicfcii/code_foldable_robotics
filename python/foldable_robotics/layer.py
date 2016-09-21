@@ -12,6 +12,8 @@ import shapely.geometry as sg
 import shapely.affinity as sa
 from .class_algebra import ClassAlgebra
 import shapely.ops as so
+import shapely.wkt as sw
+import matplotlib.pyplot as plt
 
 def is_collection(item):
     collections = [
@@ -67,7 +69,6 @@ def plot_poly(poly,color = (1,0,0,1)):
         axes.add_patch(patch)
 
     elif isinstance(poly,sg.LineString):
-        exterior = list(poly.coords)
         exterior = numpy.array(poly.coords)
         axes.plot(exterior[:,0],exterior[:,1],color=color[:3]+[.5])
     plt.axis('equal')
@@ -86,7 +87,7 @@ class Layer(ClassAlgebra):
         return new
 
     def copy(self,identical = True):
-        new = type(self)(*[geom.copy(identical) for geom in self.geoms])        
+        new = type(self)(*[sw.loads(geom.to_wkt()) for geom in self.geoms])        
         if identical:        
             new.id = self.id
         return new
@@ -122,7 +123,7 @@ class Layer(ClassAlgebra):
         new_geoms = (geoms.buffer(value,resolution))
         return from_shapely_to_layer(new_geoms)
 
-    def erode(self,value,resolution = None):
+    def erode(self,value,resolution = 0):
         return self.dilate(-value,resolution)
         
     def translate(self,*args,**kwargs):

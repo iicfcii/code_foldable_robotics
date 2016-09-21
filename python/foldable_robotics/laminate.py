@@ -7,6 +7,7 @@ Please see LICENSE for full license.
 
 from .class_algebra import ClassAlgebra
 from . import geometry
+import matplotlib.pyplot as plt
 
 class WrongNumLayers(Exception):
     pass
@@ -36,7 +37,7 @@ class IterableLaminate(object):
 
 class Laminate(IterableLaminate,ClassAlgebra):
     def __init__(self, *layers):
-        self.layers = layers
+        self.layers = list(layers)
         self.id = id(self)
 
     def copy(self,identical = True):
