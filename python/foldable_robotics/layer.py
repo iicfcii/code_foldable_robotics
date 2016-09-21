@@ -93,6 +93,12 @@ class Layer(ClassAlgebra):
         return new
 
     def plot(self,*args,**kwargs):
+        if 'new' in kwargs:
+            new = kwargs.pop('new')
+        else:
+            new = False
+        if new:
+            plt.figure()
         for geom in self.geoms:
             plot_poly(geom,*args,**kwargs)
 

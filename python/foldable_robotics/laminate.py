@@ -19,14 +19,19 @@ class IterableLaminate(object):
             return self.list[index]
 
         elif isinstance(index, slice):
-            return self.list[index]
+            return type(self)(*self.list[index])
 
     def __setitem__(self, index, v):
         if isinstance(index, int):
             self.list[index] = v
             
         elif isinstance(index, slice):
-            self.list[index] = v
+            if isinstance(v,IterableLaminate):
+                self.list[index] = v.list
+            elif isinstance(v,list):
+                self.list[index] = v
+            else:
+                raise(Exception())
 
     def __iter__(self):
         for item in self.list:
@@ -46,12 +51,21 @@ class Laminate(IterableLaminate,ClassAlgebra):
             new.id = self.id
         return new
 
-    def plot(self):
+    def plot(self,new=False):
+        import matplotlib.cm
+        cm = matplotlib.cm.coolwarm
+        l = len(self.layers)        
+        if new:
+            plt.figure()
+        for ii,geom in enumerate(self.layers):
+            geom.plot(color = cm((ii+1)/(l+1)))
+
+    def plot_layers(self):
         import matplotlib.cm
         cm = matplotlib.cm.coolwarm
         l = len(self.layers)        
         for ii,geom in enumerate(self.layers):
-            
+            plt.figure()
             geom.plot(color = cm((ii+1)/(l+1)))
     
     @property
