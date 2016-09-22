@@ -13,9 +13,11 @@ def length(v1):
     return l
     
 def angle(v1,v2):
-    sint = numpy.cross(numpy.array(v1),numpy.array(v2))
+    v1 = numpy.array(v1)
+    v2 = numpy.array(v2)
+    sint = numpy.cross(v1,v2)
     sint = length(sint)
-    cost = numpy.dot(numpy.array(v1),numpy.array(v2))
+    cost = numpy.dot(v1,v2)
     t = math.atan2(sint,cost)
     return t
     
