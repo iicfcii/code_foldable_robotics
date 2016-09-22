@@ -8,6 +8,7 @@ Please see LICENSE for full license.
 from .shape import Base
 from . import shape
 from .class_algebra import ClassAlgebra
+import matplotlib.pyplot as plt
 
 class Layer(ClassAlgebra):
 
@@ -28,9 +29,15 @@ class Layer(ClassAlgebra):
             new.id = self.id
         return new
 
-    def plot(self):
+    def plot(self,*args,**kwargs):
+        if 'new' in kwargs:
+            new = kwargs.pop('new')
+        else:
+            new = False
+        if new:
+            plt.figure()
         for geom in self.geoms:
-            geom.plot()
+            geom.plot(*args,**kwargs)
 
     def binary_operation(self,other,function_name):
         a = shape.unary_union_safe(*[item.to_shapely() for item in self.geoms])

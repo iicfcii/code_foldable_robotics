@@ -6,6 +6,8 @@ Please see LICENSE for full license.
 """
 
 from .class_algebra import ClassAlgebra
+from . import geometry
+import matplotlib.pyplot as plt
 
 class WrongNumLayers(Exception):
     pass
@@ -17,14 +19,19 @@ class IterableLaminate(object):
             return self.list[index]
 
         elif isinstance(index, slice):
-            return self.list[index]
+            return type(self)(*self.list[index])
 
     def __setitem__(self, index, v):
         if isinstance(index, int):
             self.list[index] = v
             
         elif isinstance(index, slice):
-            self.list[index] = v
+            if isinstance(v,IterableLaminate):
+                self.list[index] = v.list
+            elif isinstance(v,list):
+                self.list[index] = v
+            else:
+                raise(Exception())
 
     def __iter__(self):
         for item in self.list:
@@ -35,7 +42,7 @@ class IterableLaminate(object):
 
 class Laminate(IterableLaminate,ClassAlgebra):
     def __init__(self, *layers):
-        self.layers = layers
+        self.layers = list(layers)
         self.id = id(self)
 
     def copy(self,identical = True):
@@ -44,9 +51,22 @@ class Laminate(IterableLaminate,ClassAlgebra):
             new.id = self.id
         return new
 
-    def plot(self):
-        for geom in self.layers:
-            geom.plot()
+    def plot(self,new=False):
+        import matplotlib.cm
+        cm = matplotlib.cm.coolwarm
+        l = len(self.layers)        
+        if new:
+            plt.figure()
+        for ii,geom in enumerate(self.layers):
+            geom.plot(color = cm((ii+1)/(l+1)))
+
+    def plot_layers(self):
+        import matplotlib.cm
+        cm = matplotlib.cm.coolwarm
+        l = len(self.layers)        
+        for ii,geom in enumerate(self.layers):
+            plt.figure()
+            geom.plot(color = cm((ii+1)/(l+1)))
     
     @property
     def list(self):
@@ -81,14 +101,33 @@ class Laminate(IterableLaminate,ClassAlgebra):
     def intersection(self,other):
         return self.binary_operation('intersection',other)
     
-    def dilate(self,value,resolution = None):
-        return self.unary_operation('dilate',value,resolution=resolution)
+    def buffer(self,*args,**kwargs):
+        return self.unary_operation('buffer',*args,**kwargs)
 
-    def erode(self,value,resolution = None):
-        return self.unary_operation('erode',value,resolution=resolution)
+    def dilate(self,*args,**kwargs):
+        return self.unary_operation('dilate',*args,**kwargs)
 
-    def translate(self,dx,dy):
-        return self.unary_operation('translate',dx,dy)
+    def erode(self,*args,**kwargs):
+        return self.unary_operation('erode',*args,**kwargs)
+
+    def translate(self,*args,**kwargs):
+        return self.unary_operation('translate',*args,**kwargs)
         
-    def rotate(self,angle,about=None):
-        return self.unary_operation('rotate',angle,about=about)
+    def rotate(self,*args,**kwargs):
+        return self.unary_operation('rotate',*args,**kwargs)
+
+    def affine_transform(self,*args,**kwargs):
+        return self.unary_operation('affine_transform',*args,**kwargs)
+
+    def map_line_stretch(self,*args,**kwargs):
+        import math
+        translate,rotate,scale = geometry.map_line(*args,**kwargs)
+        laminate = self.affine_transform([scale,0,0,1,0,0])
+        laminate = laminate.rotate(rotate*180/math.pi,origin=(0,0))
+        laminate = laminate.translate(*translate)
+        return laminate
+        
+    def export_dxf(self,name):
+        for ii,layer in enumerate(self.layers):
+            layername = name+str(ii)
+            layer.export_dxf(layername)
