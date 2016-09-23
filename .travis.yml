@@ -13,5 +13,5 @@ script:
 #  - echo $PYTHONPATH
 #  - ls -la
 #  - ls -la python
-  - "python test1.py"
-  - "python test2.py"  
+  - "python python/tests/test1.py"
+  - "python python/tests/test2.py"  
