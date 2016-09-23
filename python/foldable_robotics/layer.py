@@ -20,7 +20,6 @@ def is_collection(item):
         shapely.geometry.MultiPolygon,
         shapely.geometry.GeometryCollection,
         shapely.geometry.MultiLineString,
-        shapely.geometry.multilinestring.MultiLineString,
         shapely.geometry.MultiPoint]
     iscollection = [isinstance(item, cls) for cls in collections]
     return any(iscollection)
