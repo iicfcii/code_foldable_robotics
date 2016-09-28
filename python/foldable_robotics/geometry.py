@@ -12,7 +12,15 @@ def length(v1):
     l = (v1.dot(v1))**.5
     return l
     
-def angle(v1,v2):
+def planar_angle(v1,v2):
+    v1 = numpy.array(v1)
+    v2 = numpy.array(v2)
+    sint = numpy.cross(v1,v2)
+    cost = numpy.dot(v1,v2)
+    t = math.atan2(sint,cost)
+    return t
+
+def interior_angle(v1,v2):
     v1 = numpy.array(v1)
     v2 = numpy.array(v2)
     sint = numpy.cross(v1,v2)
