@@ -53,20 +53,20 @@ class Laminate(IterableLaminate,ClassAlgebra):
 
     def plot(self,new=False):
         import matplotlib.cm
-        cm = matplotlib.cm.coolwarm
+        cm = matplotlib.cm.plasma
         l = len(self.layers)        
         if new:
             plt.figure()
         for ii,geom in enumerate(self.layers):
-            geom.plot(color = cm((ii+1)/(l+1)))
+            geom.plot(color = cm((ii)/(l)))
 
     def plot_layers(self):
         import matplotlib.cm
-        cm = matplotlib.cm.coolwarm
+        cm = matplotlib.cm.plasma
         l = len(self.layers)        
         for ii,geom in enumerate(self.layers):
             plt.figure()
-            geom.plot(color = cm((ii+1)/(l+1)))
+            geom.plot(color = cm((ii)/(l)))
     
     @property
     def list(self):
