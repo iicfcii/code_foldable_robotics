@@ -72,6 +72,10 @@ def plot_poly(poly,color = (1,0,0,1)):
         axes.plot(exterior[:,0],exterior[:,1],color=color[:3]+[.5])
     plt.axis('equal')
     
+def check_loop(loop):
+    if loop[-1]==loop[0]:
+        return loop[:-1]
+        
 class Layer(ClassAlgebra):
 
     def __init__(self, *geoms):
@@ -175,3 +179,53 @@ class Layer(ClassAlgebra):
             segments = list(poly.coords)
             
         return segments
+    
+    def mesh_items(self,z_offset = 0,color = (1,0,0,1)):
+        import pypoly2tri
+        from pypoly2tri.cdt import CDT
+        import numpy
+        import pyqtgraph.opengl as gl
+
+        mi = []        
+        
+        for geom in self.geoms:
+            if isinstance(geom,sg.Polygon):
+                exterior = list(geom.exterior.coords)
+                exterior = check_loop(exterior)
+                exterior2 = [pypoly2tri.shapes.Point(*item) for item in exterior]
+                cdt = CDT(exterior2)
+                interiors = []
+                for interior in geom.interiors:
+                    interior= list(interior.coords)
+                    interior = check_loop(interior)
+                    interiors.append(interior)
+                for interior in interiors:
+                    interior2 = [pypoly2tri.shapes.Point(*item) for item in interior]
+                    cdt.AddHole(interior2)
+                cdt.Triangulate()
+                tris =cdt.GetTriangles()
+                points = cdt.GetPoints()
+                points2 = numpy.array([item.toTuple() for item in points])
+                tris2 = numpy.array([[points.index(point) for point in tri.points_] for tri in tris],dtype = int)
+#                print(tris2)
+                z = points2[:,0:1]*0+z_offset
+                points3 = numpy.c_[points2,z]
+                verts =points3[tris2]
+    #            verts2 =points3[tris2[:,::-1]]
+                
+    #            vc =numpy.array([[1,0,0,1]]*len(points3))
+    #            fc = [[1,0,0,1]]*len(tris2)
+                
+                verts_colors = [[color]*3]*len(tris2)
+    #            meshdata = gl.MeshData(points3,tris,vertexColors = vc,faceColors=fc)
+                mi.append(gl.GLMeshItem(vertexes=verts,vertexColors=verts_colors,smooth=False,shader='balloon',drawEdges=False))
+    #            mi.append(gl.GLMeshItem(vertexes=verts2,vertexColors=verts_colors,smooth=False,shader='balloon',drawEdges=False,edgeColor = edge_color))
+                
+    #            for loop in [exterior]+interiors:
+    #                loop = loop+loop[0:1]
+    #                loop = numpy.array(loop)
+    #                loop = numpy.c_[loop,loop[:,0]*0+ii]
+    #                color = [1,1,1,1]
+    #                pi =gl.GLLinePlotItem(pos = loop,color =color, width=10)
+    #                lines.append(pi)        
+        return mi

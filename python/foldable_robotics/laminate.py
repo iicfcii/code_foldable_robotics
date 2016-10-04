@@ -148,3 +148,17 @@ class Laminate(IterableLaminate,ClassAlgebra):
         for ii,layer in enumerate(self.layers):
             layername = name+str(ii)
             layer.export_dxf(layername)
+    def mesh_items(self,thickness = None):
+        if thickness is None:
+            thickness = [1]*len(self)
+        import matplotlib.cm as cm
+        mi = []
+#        lines = []
+        z = 0
+        for ii,(layer,t) in enumerate(zip(self,thickness)):
+            color1 = list(cm.plasma(ii/(len(self))))
+            mi.extend(layer.mesh_items(z,color1))
+        #    color1[3] = .1
+            z+=t
+        return mi
+        
