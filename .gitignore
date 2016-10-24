@@ -1,6 +1,5 @@
 *__pycache__*
 *.ipynb_checkpoints*
-*.dxf
 build/*
 dist/*
 *.egg-info*
