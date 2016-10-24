@@ -11,7 +11,7 @@ plt.ion()
 import numpy
 
 #Here goes the file name of the dxf.
-dwg = ezdxf.readfile("C:/Users/daukes/Desktop/test/test.dxf")
+dwg = ezdxf.readfile("test.dxf")
 modelspace = dwg.modelspace()
 
 hinge_lines = []
@@ -49,6 +49,6 @@ for item in other_lines:
 for item in exteriors:
 #    turn each list of exteriors into array
     item = numpy.array(item)
-    plt.plot(item[:,0],item[:,1],'k-', linewidth = 5)
+    plt.plot(item[:,0],item[:,1],'k-', linewidth = 3)
     
 plt.axis('equal')
