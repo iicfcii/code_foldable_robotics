@@ -93,3 +93,22 @@ second_cut= second_cut.affine_transform([10,0,0,10,0,0])
 plt.figure()
 second_cut[0].plot()
 second_cut[0].export_dxf('second_cut')
+
+from foldable_robotics.laminate import Laminate
+from foldable_robotics.layer import Layer
+import shapely.geometry as sg
+import pyqtgraph.opengl as gl
+import pyqtgraph as pg
+import PyQt4.QtGui as qg
+import sys
+
+t = [1]*len(first_cut)
+mi = first_cut.mesh_items(thickness=t)
+
+app = qg.QApplication(sys.argv)
+view_widget = gl.GLViewWidget()
+view_widget.setBackgroundColor(pg.mkColor(1, 1, 1))
+for item in mi:
+    view_widget.addItem(item)    
+view_widget.show()
+sys.exit(app.exec())
