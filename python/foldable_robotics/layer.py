@@ -179,6 +179,10 @@ class Layer(ClassAlgebra):
             segments = list(poly.coords)
             
         return segments
+        
+    def map_line_stretch(self,*args,**kwargs):
+        import foldable_robotics.manufacturing
+        return foldable_robotics.manufacturing.map_line_stretch(self,*args,**kwargs)
     
     def mesh_items(self,z_offset = 0,color = (1,0,0,1)):
         import pypoly2tri

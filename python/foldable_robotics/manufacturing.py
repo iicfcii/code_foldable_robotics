@@ -154,6 +154,29 @@ def find_connected(laminate,adhesive):
                     changed = True
         results.append(result)
     return results
+
+def map_line_stretch(self,*args,**kwargs):
+    import math
+    import numpy
+    import foldable_robotics.geometry as geometry
+    
+    p1 = numpy.array(args[0])
+    p2 = numpy.array(args[1])
+    p3 = numpy.array(args[2])
+    p4 = numpy.array(args[3])
+
+    x_axis = numpy.array([1,0])
+
+    pre_rotate = geometry.planar_angle(x_axis,p2-p1)
+    post_rotate = geometry.planar_angle(x_axis,p4-p3)
+    scale = geometry.length(p4-p3)/geometry.length(p2-p1)
+
+    laminate = self.translate(*(-p1))
+    laminate = laminate.rotate(-pre_rotate*180/math.pi,origin=(0,0))
+    laminate = laminate.affine_transform([scale,0,0,1,0,0])
+    laminate = laminate.rotate((post_rotate)*180/math.pi,origin=(0,0))
+    laminate = laminate.translate(*p3)
+    return laminate    
     
 def modify_device(device,custom_support_line,support_width,support_gap,hole_buffer):
     custom_support = custom_support_line<<support_width/2

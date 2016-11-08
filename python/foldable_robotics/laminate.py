@@ -123,26 +123,8 @@ class Laminate(IterableLaminate,ClassAlgebra):
         return self.unary_operation('affine_transform',*args,**kwargs)
 
     def map_line_stretch(self,*args,**kwargs):
-        import math
-        import numpy
-
-        p1 = numpy.array(args[0])
-        p2 = numpy.array(args[1])
-        p3 = numpy.array(args[2])
-        p4 = numpy.array(args[3])
-
-        x_axis = numpy.array([1,0])
-
-        pre_rotate = geometry.planar_angle(x_axis,p2-p1)
-        post_rotate = geometry.planar_angle(x_axis,p4-p3)
-        scale = geometry.length(p4-p3)/geometry.length(p2-p1)
-
-        laminate = self.translate(*(-p1))
-        laminate = laminate.rotate(-pre_rotate*180/math.pi,origin=(0,0))
-        laminate = laminate.affine_transform([scale,0,0,1,0,0])
-        laminate = laminate.rotate((post_rotate)*180/math.pi,origin=(0,0))
-        laminate = laminate.translate(*p3)
-        return laminate
+        import foldable_robotics.manufacturing
+        return foldable_robotics.manufacturing.map_line_stretch(self,*args,**kwargs)
         
     def export_dxf(self,name):
         for ii,layer in enumerate(self.layers):
