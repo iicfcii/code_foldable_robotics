@@ -44,6 +44,40 @@ def calc_hole(hinge_lines,width,resolution = 2):
     all_hinges = [list(item.geoms[0].coords) for item in trimmed_lines]
     return holes,all_hinges
 
+def mass_props(laminate,thickness,density):
+    volume = 0
+    mass = 0
+    z=0
+    centroid_x=0
+    centroid_y=0
+    for ii,layer in enumerate(laminate):
+        bottom = z
+        top = z+thickness[ii]
+        area=0
+
+        mass_i=0
+        volume_i=0
+
+        for geom in layer.geoms:
+            area+=geom.area
+            volume_ii = geom.area*thickness[ii]
+            mass_ii  = volume_ii*density[ii]
+
+            volume_i+=volume_ii
+            mass_i+=mass_ii
+            centroid = list(geom.centroid.coords)[0]
+            centroid_x += centroid[0]*mass_ii
+            centroid_y += centroid[1]*mass_ii
+            
+        volume+=volume_i
+        mass+=mass_i
+
+        z=top
+    
+    centroid_x /= mass
+    centroid_y /= mass
+    return mass,volume,(centroid_x,centroid_y)
+
 #create a layer named box
 box = Layer(sg.box(0,0,1,1))
 
@@ -125,3 +159,5 @@ separated_device.plot(True)
 connected = foldable_robotics.manufacturing.find_connected(separated_device,[False,True,False,True,False])
 for item in connected:
     item.plot(new=True)
+    m,v,(x,y)=mass_props(item,[.1]*5,[1]*5)
+    plt.text(x,y,'asdf')

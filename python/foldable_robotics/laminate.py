@@ -8,39 +8,12 @@ Please see LICENSE for full license.
 from .class_algebra import ClassAlgebra
 from . import geometry
 import matplotlib.pyplot as plt
+from .iterable import Iterable
 
 class WrongNumLayers(Exception):
     pass
 
-class IterableLaminate(object):
-
-    def __getitem__(self, index):
-        if isinstance(index, int):
-            return self.list[index]
-
-        elif isinstance(index, slice):
-            return type(self)(*self.list[index])
-
-    def __setitem__(self, index, v):
-        if isinstance(index, int):
-            self.list[index] = v
-            
-        elif isinstance(index, slice):
-            if isinstance(v,IterableLaminate):
-                self.list[index] = v.list
-            elif isinstance(v,list):
-                self.list[index] = v
-            else:
-                raise(Exception())
-
-    def __iter__(self):
-        for item in self.list:
-            yield item
-
-    def __len__(self):
-        return len(self.list)
-
-class Laminate(IterableLaminate,ClassAlgebra):
+class Laminate(Iterable,ClassAlgebra):
     def __init__(self, *layers):
         self.layers = list(layers)
         self.id = id(self)
