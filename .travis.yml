@@ -1,6 +1,7 @@
 language: python
+dist: trusty
 python:
-  - "3.4"
+  - "3.5"
 # command to install dependencies
 install: "pip install shapely matplotlib"
 before_script:
