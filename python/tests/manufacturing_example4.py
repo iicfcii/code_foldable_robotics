@@ -4,6 +4,11 @@ Created on Wed Sep 28 09:03:59 2016
 
 @author: daukes
 """
+import os
+import matplotlib as mpl
+if os.environ.get('DISPLAY','') == '':
+    print('no display found. Using non-interactive Agg backend')
+    mpl.use('Agg')
 
 from foldable_robotics.laminate import Laminate
 from foldable_robotics.layer import Layer

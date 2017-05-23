@@ -4,6 +4,12 @@ Created on Mon Sep 26 20:40:50 2016
 
 @author: danb0b
 """
+import os
+import matplotlib as mpl
+if os.environ.get('DISPLAY','') == '':
+    print('no display found. Using non-interactive Agg backend')
+    mpl.use('Agg')
+
 from foldable_robotics.laminate import Laminate
 from foldable_robotics.layer import Layer
 import shapely.geometry as sg

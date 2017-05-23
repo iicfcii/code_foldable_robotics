@@ -99,7 +99,7 @@ from foldable_robotics.layer import Layer
 import shapely.geometry as sg
 import pyqtgraph.opengl as gl
 import pyqtgraph as pg
-import PyQt4.QtGui as qg
+import PyQt5.QtGui as qg
 import sys
 
 t = [1]*len(first_cut)
