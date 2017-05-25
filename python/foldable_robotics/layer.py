@@ -76,8 +76,43 @@ def check_loop(loop):
     if loop[-1]==loop[0]:
         return loop[:-1]
         
-class Layer(ClassAlgebra):
+def triangulate_geom(geom,z_offset):
+    import pypoly2tri
+    from pypoly2tri.cdt import CDT
+    import numpy
+    exterior = list(geom.exterior.coords)
+    exterior = check_loop(exterior)
+    exterior2 = [pypoly2tri.shapes.Point(*item) for item in exterior]
+    cdt = CDT(exterior2)
+    interiors = []
+    for interior in geom.interiors:
+        interior= list(interior.coords)
+        interior = check_loop(interior)
+        interiors.append(interior)
+    for interior in interiors:
+        interior2 = [pypoly2tri.shapes.Point(*item) for item in interior]
+        cdt.AddHole(interior2)
+    cdt.Triangulate()
+    tris =cdt.GetTriangles()
+    points = cdt.GetPoints()
+    points2 = numpy.array([item.toTuple() for item in points])
+    tris2 = numpy.array([[points.index(point) for point in tri.points_] for tri in tris],dtype = int)
+    z = points2[:,0:1]*0+z_offset
+    points3 = numpy.c_[points2,z]
+    return points3,tris2
 
+def inertia_tensor(about_point,density,z_lower,z_upper,tris):
+    import numpy
+    z_lower = z_lower
+    z_upper = z_upper
+    from idealab_tools.geometry.triangle import Triangle
+    tris3 = [Triangle(*tri) for tri in tris]
+    tets = [tet for tri in tris3 for tet in tri.extrude(z_lower,z_upper)]
+    Is = numpy.array([tet.I(density,about_point) for tet in tets])
+    I = Is.sum(0)
+    return I
+
+class Layer(ClassAlgebra):
     def __init__(self, *geoms):
         geoms = flatten(geoms)
         self.geoms = geoms
@@ -93,6 +128,18 @@ class Layer(ClassAlgebra):
         new = type(self)(*[sw.loads(geom.to_wkt()) for geom in self.geoms])        
         if identical:        
             new.id = self.id
+        return new
+
+    def export_dict(self):
+        d = {}
+        d['geoms'] = [item.to_wkt() for item in self.geoms]
+        d['id'] = self.id
+        return d
+
+    @classmethod
+    def import_dict(cls,d):
+        new = cls(*[sw.loads(item) for item in d['geoms']])
+        new.id = d['id']
         return new
 
     def plot(self,*args,**kwargs):
@@ -185,35 +232,14 @@ class Layer(ClassAlgebra):
         return foldable_robotics.manufacturing.map_line_stretch(self,*args,**kwargs)
     
     def mesh_items(self,z_offset = 0,color = (1,0,0,1)):
-        import pypoly2tri
-        from pypoly2tri.cdt import CDT
-        import numpy
         import pyqtgraph.opengl as gl
 
         mi = []        
         
         for geom in self.geoms:
             if isinstance(geom,sg.Polygon):
-                exterior = list(geom.exterior.coords)
-                exterior = check_loop(exterior)
-                exterior2 = [pypoly2tri.shapes.Point(*item) for item in exterior]
-                cdt = CDT(exterior2)
-                interiors = []
-                for interior in geom.interiors:
-                    interior= list(interior.coords)
-                    interior = check_loop(interior)
-                    interiors.append(interior)
-                for interior in interiors:
-                    interior2 = [pypoly2tri.shapes.Point(*item) for item in interior]
-                    cdt.AddHole(interior2)
-                cdt.Triangulate()
-                tris =cdt.GetTriangles()
-                points = cdt.GetPoints()
-                points2 = numpy.array([item.toTuple() for item in points])
-                tris2 = numpy.array([[points.index(point) for point in tri.points_] for tri in tris],dtype = int)
-#                print(tris2)
-                z = points2[:,0:1]*0+z_offset
-                points3 = numpy.c_[points2,z]
+                
+                points3,tris2 = triangulate_geom(geom,z_offset)
                 verts =points3[tris2]
     #            verts2 =points3[tris2[:,::-1]]
                 

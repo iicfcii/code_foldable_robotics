@@ -30,10 +30,14 @@ def cleanup2(a,radius):
     i = a^h
     return i
 
-def keepout_laser(laminate):
+def unary_union(laminate):
     result = Layer()
     for layer in laminate:
         result|=layer
+    return result
+
+def keepout_laser(laminate):
+    result = unary_union(laminate)
     result = [result]*len(laminate)
     new_lam  = Laminate(*result)
     return new_lam 
@@ -185,6 +189,40 @@ def modify_device(device,custom_support_line,support_width,support_gap,hole_buff
     modified_device = device-custom_support_hole2
     custom_cut = keepout_laser(custom_support_hole)
     return modified_device,custom_support,custom_cut
+
+def lines_to_shapely(hinge_lines):
+    hinge_line = sg.LineString([(0,0),(1,0)])
+    hinge_layer = Layer(hinge_line)
+    all_hinges1 = [hinge_layer.map_line_stretch((0,0),(1,0),*toline) for toline in hinge_lines]
+    return all_hinges1
+
+def calc_hole(hinge_lines,width,resolution = 2):
+    all_hinges1= lines_to_shapely(hinge_lines)
+    all_hinges11 = [item.dilate(w/2,resolution = resolution) for item,w in zip(all_hinges1,width)]
+    
+    plt.figure()
+    all_hinges3 = []
+    for ii,hinge in enumerate(all_hinges11):
+        all_hinges2 = Layer()
+        for item in all_hinges11[:ii]+all_hinges11[ii+1:]:
+            all_hinges2|=item
+        all_hinges3.append(hinge&all_hinges2)
+    
+    all_hinges4 = Layer()
+    for item in all_hinges3:
+        all_hinges4|=item
+    all_hinges4.plot(new=True)
+    
+    holes = Laminate(*([all_hinges4]*5))
+    
+    trimmed_lines = [item-all_hinges4 for item in all_hinges1]
+    all_hinges = [tuple(sorted(item.geoms[0].coords)) for item in trimmed_lines]
+    return holes,all_hinges
+
+def save_joint_def(filename,bodies,connections,fixed_bodies,joint_props,thickness,density):
+    import yaml
+    with open(filename, 'w') as f:
+        yaml.dump((bodies,connections,fixed_bodies,joint_props,thickness,density),f)
     
 if __name__=='__main__':
     pass

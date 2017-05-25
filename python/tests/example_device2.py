@@ -12,71 +12,10 @@ import matplotlib.pyplot as plt
 #import classes from my local modules
 from foldable_robotics.laminate import Laminate
 from foldable_robotics.layer import Layer
-
+from idealab_tools.geometry.tetrahedron import Tetrahedron
+from idealab_tools.geometry.triangle import Triangle
 import foldable_robotics.manufacturing
 
-def lines_to_shapely(hinge_lines):
-    hinge_line = sg.LineString([(0,0),(1,0)])
-    hinge_layer = Layer(hinge_line)
-    all_hinges1 = [hinge_layer.map_line_stretch((0,0),(1,0),*toline) for toline in hinge_lines]
-    return all_hinges1
-
-def calc_hole(hinge_lines,width,resolution = 2):
-    all_hinges1= lines_to_shapely(hinge_lines)
-    all_hinges11 = [item.dilate(w/2,resolution = resolution) for item,w in zip(all_hinges1,width)]
-    
-    plt.figure()
-    all_hinges3 = []
-    for ii,hinge in enumerate(all_hinges11):
-        all_hinges2 = Layer()
-        for item in all_hinges11[:ii]+all_hinges11[ii+1:]:
-            all_hinges2|=item
-        all_hinges3.append(hinge&all_hinges2)
-    
-    all_hinges4 = Layer()
-    for item in all_hinges3:
-        all_hinges4|=item
-    all_hinges4.plot(new=True)
-    
-    holes = Laminate(*([all_hinges4]*5))
-    
-    trimmed_lines = [item-all_hinges4 for item in all_hinges1]
-    all_hinges = [list(item.geoms[0].coords) for item in trimmed_lines]
-    return holes,all_hinges
-
-def mass_props(laminate,thickness,density):
-    volume = 0
-    mass = 0
-    z=0
-    centroid_x=0
-    centroid_y=0
-    for ii,layer in enumerate(laminate):
-        bottom = z
-        top = z+thickness[ii]
-        area=0
-
-        mass_i=0
-        volume_i=0
-
-        for geom in layer.geoms:
-            area+=geom.area
-            volume_ii = geom.area*thickness[ii]
-            mass_ii  = volume_ii*density[ii]
-
-            volume_i+=volume_ii
-            mass_i+=mass_ii
-            centroid = list(geom.centroid.coords)[0]
-            centroid_x += centroid[0]*mass_ii
-            centroid_y += centroid[1]*mass_ii
-            
-        volume+=volume_i
-        mass+=mass_i
-
-        z=top
-    
-    centroid_x /= mass
-    centroid_y /= mass
-    return mass,volume,(centroid_x,centroid_y)
 
 #create a layer named box
 box = Layer(sg.box(0,0,1,1))
@@ -117,7 +56,7 @@ hinge_lines.append(((0,0),(-1,-1)))
 hinge_lines.append(((0,0),(-1,1)))
 hinge_lines.append(((0,0),(1,-1)))
 
-holes,hinge_lines2 = calc_hole(hinge_lines,[.1]*len(hinge_lines))
+holes,hinge_lines2 = foldable_robotics.manufacturing.calc_hole(hinge_lines,[.1]*len(hinge_lines))
 
 #create an empty laminate
 all_hinges = Laminate(empty_layer,empty_layer,empty_layer,empty_layer,empty_layer)
@@ -147,7 +86,7 @@ jig = Laminate(empty,empty,empty,empty,empty)
 device = body-all_hinges-(holes<<.01)
 device.plot(new=True)
 
-asdf  = lines_to_shapely(hinge_lines)
+asdf  = foldable_robotics.manufacturing.lines_to_shapely(hinge_lines)
 asdf2 = Layer()
 for item in asdf:
     asdf2 |= item
@@ -156,8 +95,40 @@ asdf3 = Laminate(asdf2,asdf2,asdf2,asdf2,asdf2)
 separated_device = device - asdf3
 separated_device.plot(True)
 
+joint_props = {}
+for item in hinge_lines2:
+    joint_props[tuple(item)] = (1e1,1e0,0,-180,180,.025)
+
 connected = foldable_robotics.manufacturing.find_connected(separated_device,[False,True,False,True,False])
-for item in connected:
-    item.plot(new=True)
-    m,v,(x,y)=mass_props(item,[.1]*5,[1]*5)
-    plt.text(x,y,'asdf')
+connected_export = [item.export_dict() for item in connected]
+asdf  = foldable_robotics.manufacturing.lines_to_shapely(hinge_lines2)
+connection = []
+for line,coords in zip(asdf,hinge_lines2):
+    line<<=.002
+#    print('line')
+    plt.figure()
+    line.plot()
+    a=[]
+    for item1,item2 in zip(connected,connected_export):
+        item11 = foldable_robotics.manufacturing.unary_union(item1)
+        if len((item11&line).geoms)!=0:
+#            print(item1)
+            item11.plot()
+            a.append(item1.id)
+    connection.append((coords,a))
+
+thickness = [.01]*5
+density = [1]*5
+
+foldable_robotics.manufacturing.save_joint_def('test.yaml',connected_export,connection,[connected_export[0]['id']],joint_props,thickness,density)
+
+#asdf2 = Layer()
+#for item in asdf:
+#    asdf2 |= item
+
+#for item in connected:
+#    item.plot(new=True)
+#    m,v,(x,y)=mass_properties(item,[.1]*5,[1]*5)
+#    plt.plot(x,y,'ro')
+#    plt.text(x,y,'asdf')
+

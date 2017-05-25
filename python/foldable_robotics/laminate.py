@@ -9,6 +9,7 @@ from .class_algebra import ClassAlgebra
 from . import geometry
 import matplotlib.pyplot as plt
 from .iterable import Iterable
+from .layer import Layer
 
 class WrongNumLayers(Exception):
     pass
@@ -22,6 +23,18 @@ class Laminate(Iterable,ClassAlgebra):
         new = type(self)(*[layer.copy(identical) for layer in self.layers])
         if identical:        
             new.id = self.id
+        return new
+
+    def export_dict(self):
+        d = {}
+        d['layers'] = [layer.export_dict() for layer in self.layers]
+        d['id'] = self.id
+        return d
+
+    @classmethod
+    def import_dict(cls,d):
+        new = cls(*[Layer.import_dict(item) for item in d['layers']])
+        new.id = d['id']
         return new
 
     def plot(self,new=False):
@@ -103,9 +116,7 @@ class Laminate(Iterable,ClassAlgebra):
         for ii,layer in enumerate(self.layers):
             layername = name+str(ii)
             layer.export_dxf(layername)
-    def mesh_items(self,thickness = None):
-        if thickness is None:
-            thickness = [1]*len(self)
+    def mesh_items(self,thickness):
         import matplotlib.cm as cm
         mi = []
 #        lines = []
@@ -116,4 +127,42 @@ class Laminate(Iterable,ClassAlgebra):
         #    color1[3] = .1
             z+=t
         return mi
+
+    def mass_properties(laminate,thickness,density):
+        volume = 0
+        mass = 0
+        z=0
+        centroid_x=0
+        centroid_y=0
+        centroid_z=0
+        for ii,layer in enumerate(laminate):
+            bottom = z
+            top = z+thickness[ii]
+            area=0
+    
+            mass_i=0
+            volume_i=0
+    
+            for geom in layer.geoms:
+                area+=geom.area
+                volume_ii = geom.area*thickness[ii]
+                mass_ii  = volume_ii*density[ii]
+    
+                volume_i+=volume_ii
+                mass_i+=mass_ii
+                centroid = list(geom.centroid.coords)[0]
+                centroid_x += centroid[0]*mass_ii
+                centroid_y += centroid[1]*mass_ii
+                centroid_z += (bottom+top)/2*mass_ii
+                
+            volume+=volume_i
+            mass+=mass_i
+    
+            z=top
+        
+        centroid_x /= mass
+        centroid_y /= mass
+        centroid_z /= mass
+        return mass,volume,(centroid_x,centroid_y,centroid_z)
+        
         
