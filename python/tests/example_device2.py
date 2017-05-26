@@ -15,7 +15,7 @@ from foldable_robotics.layer import Layer
 from idealab_tools.geometry.tetrahedron import Tetrahedron
 from idealab_tools.geometry.triangle import Triangle
 import foldable_robotics.manufacturing
-
+from foldable_robotics.dynamics_info import DynamicsInfo,MaterialProperty,JointProps
 
 #create a layer named box
 box = Layer(sg.box(0,0,1,1))
@@ -95,9 +95,6 @@ asdf3 = Laminate(asdf2,asdf2,asdf2,asdf2,asdf2)
 separated_device = device - asdf3
 separated_device.plot(True)
 
-joint_props = {}
-for item in hinge_lines2:
-    joint_props[tuple(item)] = (1e1,1e0,0,-180,180,.025)
 
 connected = foldable_robotics.manufacturing.find_connected(separated_device,[False,True,False,True,False])
 connected_export = [item.export_dict() for item in connected]
@@ -115,20 +112,20 @@ for line,coords in zip(asdf,hinge_lines2):
 #            print(item1)
             item11.plot()
             a.append(item1.id)
-    connection.append((coords,a))
+    connection.append((coords,a, JointProps(1e1,1e0,0,-180,180,.025)))
 
 thickness = [.01]*5
 density = [1]*5
 
-foldable_robotics.manufacturing.save_joint_def('test.yaml',connected_export,connection,[connected_export[0]['id']],joint_props,thickness,density)
+material_properties = []
+for item in hinge:
+    material_properties.append(MaterialProperty('material',(1,0,0,1),.01,1,1,1,1,False,False,False,False))
 
-#asdf2 = Layer()
-#for item in asdf:
-#    asdf2 |= item
+d = DynamicsInfo(connected_export,connection,[connected[0].id],material_properties)
 
-#for item in connected:
-#    item.plot(new=True)
-#    m,v,(x,y)=mass_properties(item,[.1]*5,[1]*5)
-#    plt.plot(x,y,'ro')
-#    plt.text(x,y,'asdf')
 
+import yaml
+with open('../tests/dynamics-info.yaml','w') as f:
+    yaml.dump(d,f)
+    
+    

@@ -219,10 +219,5 @@ def calc_hole(hinge_lines,width,resolution = 2):
     all_hinges = [tuple(sorted(item.geoms[0].coords)) for item in trimmed_lines]
     return holes,all_hinges
 
-def save_joint_def(filename,bodies,connections,fixed_bodies,joint_props,thickness,density):
-    import yaml
-    with open(filename, 'w') as f:
-        yaml.dump((bodies,connections,fixed_bodies,joint_props,thickness,density),f)
-    
 if __name__=='__main__':
     pass

@@ -29,11 +29,10 @@ class JointProps(object):
         self.z_pos = z_pos
 
 class DynamicsInfo(object):
-    def __init__(self,connected_items,connections,newtonian_ids,joint_info,material_properties):
+    def __init__(self,connected_items,connections,newtonian_ids,material_properties):
         self.connected_items = connected_items
         self.connections = connections
         self.newtonian_ids = newtonian_ids
-        self.joint_info = joint_info
         self.material_properties = material_properties
         
 

@@ -128,7 +128,7 @@ class Laminate(Iterable,ClassAlgebra):
             z+=t
         return mi
 
-    def mass_properties(laminate,thickness,density):
+    def mass_properties(laminate,material_properties):
         volume = 0
         mass = 0
         z=0
@@ -137,7 +137,7 @@ class Laminate(Iterable,ClassAlgebra):
         centroid_z=0
         for ii,layer in enumerate(laminate):
             bottom = z
-            top = z+thickness[ii]
+            top = z+material_properties.thickness[ii]
             area=0
     
             mass_i=0
@@ -145,8 +145,8 @@ class Laminate(Iterable,ClassAlgebra):
     
             for geom in layer.geoms:
                 area+=geom.area
-                volume_ii = geom.area*thickness[ii]
-                mass_ii  = volume_ii*density[ii]
+                volume_ii = geom.area*material_properties.thickness[ii]
+                mass_ii  = volume_ii*material_properties.density[ii]
     
                 volume_i+=volume_ii
                 mass_i+=mass_ii
