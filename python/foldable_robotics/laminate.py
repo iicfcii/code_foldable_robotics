@@ -10,6 +10,7 @@ from . import geometry
 import matplotlib.pyplot as plt
 from .iterable import Iterable
 from .layer import Layer
+import numpy
 
 class WrongNumLayers(Exception):
     pass
@@ -140,29 +141,31 @@ class Laminate(Iterable,ClassAlgebra):
             top = z+material_properties[ii].thickness
             area=0
     
-            mass_i=0
-            volume_i=0
-    
-            for geom in layer.geoms:
-                area+=geom.area
-                volume_ii = geom.area*material_properties[ii].thickness
-                mass_ii  = volume_ii*material_properties[ii].density
-    
-                volume_i+=volume_ii
-                mass_i+=mass_ii
-                centroid = list(geom.centroid.coords)[0]
-                centroid_x += centroid[0]*mass_ii
-                centroid_y += centroid[1]*mass_ii
-                centroid_z += (bottom+top)/2*mass_ii
-                
+            area_i,volume_i,mass_i,centroid_i = layer.mass_props(material_properties[ii],bottom,top)
+
+            centroid_x_i,centroid_y_i,centroid_z_i = centroid_i
+            area+=area_i
             volume+=volume_i
             mass+=mass_i
-    
+
+            centroid_x += centroid_x_i*mass_i
+            centroid_y += centroid_y_i*mass_i
+            centroid_z += centroid_z_i*mass_i
+
             z=top
         
         centroid_x /= mass
         centroid_y /= mass
         centroid_z /= mass
-        return mass,volume,(centroid_x,centroid_y,centroid_z)
+        centroid = (centroid_x,centroid_y,centroid_z)
+        
+        I=numpy.zeros((3,3))
+        for ii,layer in enumerate(laminate):
+            bottom = z
+            top = z+material_properties[ii].thickness
+            cn = numpy.array(centroid)                
+            I+=layer.inertia(cn,bottom,top,material_properties[ii])
+            
+        return mass,volume,centroid,I
         
         

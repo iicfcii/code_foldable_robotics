@@ -14,6 +14,7 @@ from .class_algebra import ClassAlgebra
 import shapely.ops as so
 import shapely.wkt as sw
 import matplotlib.pyplot as plt
+import numpy
 
 def is_collection(item):
     collections = [
@@ -97,9 +98,12 @@ def triangulate_geom(geom,z_offset):
     points = cdt.GetPoints()
     points2 = numpy.array([item.toTuple() for item in points])
     tris2 = numpy.array([[points.index(point) for point in tri.points_] for tri in tris],dtype = int)
-    z = points2[:,0:1]*0+z_offset
-    points3 = numpy.c_[points2,z]
-    return points3,tris2
+    return points2,tris2
+
+def points_2d_to_3d(points_2d,z_val):
+    z = points_2d[:,0:1]*0+z_val
+    points3 = numpy.c_[points_2d,z]
+    return points3
 
 def inertia_tensor(about_point,density,z_lower,z_upper,tris):
     import numpy
@@ -239,7 +243,8 @@ class Layer(ClassAlgebra):
         for geom in self.geoms:
             if isinstance(geom,sg.Polygon):
                 
-                points3,tris2 = triangulate_geom(geom,z_offset)
+                points2,tris2 = triangulate_geom(geom,z_offset)
+                points3 = points_2d_to_3d(points2,z_offset)
                 verts =points3[tris2]
     #            verts2 =points3[tris2[:,::-1]]
                 
@@ -259,3 +264,39 @@ class Layer(ClassAlgebra):
     #                pi =gl.GLLinePlotItem(pos = loop,color =color, width=10)
     #                lines.append(pi)        
         return mi
+    def mass_props(self,material_property,bottom,top):
+        area_i = 0
+        mass_i=0
+        volume_i=0
+        
+        centroid_x_i=0
+        centroid_y_i=0
+        centroid_z_i=0
+
+        for geom in self.geoms:
+            area_i = geom.area
+            volume_ii = geom.area*material_property.thickness
+            mass_ii  = volume_ii*material_property.density
+
+            volume_i+=volume_ii
+            mass_i+=mass_ii
+            centroid = list(geom.centroid.coords)[0]
+            centroid_x_i += centroid[0]*mass_ii
+            centroid_y_i += centroid[1]*mass_ii
+            centroid_z_i += (bottom+top)/2*mass_ii
+
+        centroid_i = centroid_x_i/mass_ii,centroid_y_i/mass_ii,centroid_z_i/mass_ii
+        
+        return area_i,volume_i,mass_i,centroid_i 
+    
+    def inertia(self,about_point,z_lower,z_upper,material_property):
+        I=numpy.zeros((3,3))
+        for geom in self.geoms:
+            points,tris = triangulate_geom(geom,z_lower)
+            tris = points[tris]
+            I+=inertia_tensor(about_point,material_property.density,z_lower,z_upper,tris)
+        return I
+            
+            
+        
+        
