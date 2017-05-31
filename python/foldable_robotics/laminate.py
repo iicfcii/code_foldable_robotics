@@ -117,16 +117,16 @@ class Laminate(Iterable,ClassAlgebra):
         for ii,layer in enumerate(self.layers):
             layername = name+str(ii)
             layer.export_dxf(layername)
-    def mesh_items(self,thickness):
+    def mesh_items(self,material_properties):
         import matplotlib.cm as cm
         mi = []
 #        lines = []
         z = 0
-        for ii,(layer,t) in enumerate(zip(self,thickness)):
-            color1 = list(cm.plasma(ii/(len(self))))
-            mi.extend(layer.mesh_items(z,color1))
+        for ii,(layer,mp) in enumerate(zip(self,material_properties)):
+#            color1 = list(cm.plasma(ii/(len(self))))
+            mi.extend(layer.mesh_items(z,mp.color))
         #    color1[3] = .1
-            z+=t
+            z+=mp.thickness
         return mi
 
     def mass_properties(laminate,material_properties):
@@ -160,11 +160,11 @@ class Laminate(Iterable,ClassAlgebra):
         centroid = (centroid_x,centroid_y,centroid_z)
         
         I=numpy.zeros((3,3))
+        bottom = 0
         for ii,layer in enumerate(laminate):
-            bottom = z
-            top = z+material_properties[ii].thickness
             cn = numpy.array(centroid)                
-            I+=layer.inertia(cn,bottom,top,material_properties[ii])
+            I+=layer.inertia(cn,bottom,material_properties[ii])
+            bottom += material_properties[ii].thickness
             
         return mass,volume,centroid,I
         

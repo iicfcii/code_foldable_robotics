@@ -289,12 +289,15 @@ class Layer(ClassAlgebra):
         
         return area_i,volume_i,mass_i,centroid_i 
     
-    def inertia(self,about_point,z_lower,z_upper,material_property):
+    def inertia(self,about_point,z_lower,material_property):
         I=numpy.zeros((3,3))
+        z_upper = z_lower+material_property.thickness
+
         for geom in self.geoms:
             points,tris = triangulate_geom(geom,z_lower)
             tris = points[tris]
             I+=inertia_tensor(about_point,material_property.density,z_lower,z_upper,tris)
+            
         return I
             
             
