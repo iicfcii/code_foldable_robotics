@@ -7,6 +7,12 @@ Please see LICENSE for full license.
 
 from setuptools import setup
 import sys
+import shutil
+
+shutil.rmtree("build", ignore_errors=True)
+shutil.rmtree("dist", ignore_errors=True)
+shutil.rmtree('foldable_robotics.egg-info', ignore_errors=True)
+
 
 packages = [ 'foldable_robotics']
 
