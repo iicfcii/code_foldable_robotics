@@ -8,9 +8,10 @@ Please see LICENSE for full license.
 from .class_algebra import ClassAlgebra
 from . import geometry
 import matplotlib.pyplot as plt
-from .iterable import Iterable
+#from .iterable import Iterable
 from .layer import Layer
 import numpy
+from idealab_tools.iterable import Iterable
 
 class WrongNumLayers(Exception):
     pass
