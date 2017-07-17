@@ -125,7 +125,7 @@ class Laminate(Iterable,ClassAlgebra):
         z = 0
         for ii,(layer,mp) in enumerate(zip(self,material_properties)):
 #            color1 = list(cm.plasma(ii/(len(self))))
-            mi.extend(layer.mesh_items(z,mp.color))
+            mi.extend(layer.mesh_items(z+mp.thickness/2,mp.color))
         #    color1[3] = .1
             z+=mp.thickness
         return mi
