@@ -12,6 +12,8 @@ import pyqtgraph.opengl as gl
 import pyqtgraph as pg
 import PyQt5.QtGui as qg
 import sys
+from foldable_robotics.dynamics_info import MaterialProperty
+
 
 box = sg.box(-2,-1,2,1)
 box = Layer(box)
@@ -23,7 +25,11 @@ lam -= lam.scale(.5,.5)
 lam |= lam.translate(0,-4)
 
 t = [1]*len(lam)
-mi = lam.mesh_items(thickness=t)
+
+m1 = MaterialProperty('red',(1,0,0,.5),.1,1,1,1,.3,False,True,False,False)
+m2 = MaterialProperty('cyan',(0,1,1,.5),.1,1,1,1,.3,False,True,False,False)
+mp = [m1,m2]
+mi = lam.mesh_items(mp)
 
 #zgrid = gl.GLGridItem()
 #zgrid.scale(0.1, 0.1, 0.1)

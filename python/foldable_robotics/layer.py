@@ -15,6 +15,7 @@ import shapely.ops as so
 import shapely.wkt as sw
 import matplotlib.pyplot as plt
 import numpy
+import pyqtgraph.opengl as gl
 
 def is_collection(item):
     collections = [
@@ -235,10 +236,10 @@ class Layer(ClassAlgebra):
         import foldable_robotics.manufacturing
         return foldable_robotics.manufacturing.map_line_stretch(self,*args,**kwargs)
     
-    def mesh_items(self,z_offset = 0,color = (1,0,0,1)):
-        import pyqtgraph.opengl as gl
+    def mesh_items_inner(self,z_offset = 0,color = (1,0,0,1)):
 
-        mi = []        
+        verts_outer = []
+        colors_outer = []
         
         for geom in self.geoms:
             if isinstance(geom,sg.Polygon):
@@ -246,24 +247,20 @@ class Layer(ClassAlgebra):
                 points2,tris2 = triangulate_geom(geom,z_offset)
                 points3 = points_2d_to_3d(points2,z_offset)
                 verts =points3[tris2]
-    #            verts2 =points3[tris2[:,::-1]]
-                
-    #            vc =numpy.array([[1,0,0,1]]*len(points3))
-    #            fc = [[1,0,0,1]]*len(tris2)
-                
                 verts_colors = [[color]*3]*len(tris2)
-    #            meshdata = gl.MeshData(points3,tris,vertexColors = vc,faceColors=fc)
-                mi.append(gl.GLMeshItem(vertexes=verts,vertexColors=verts_colors,smooth=False,shader='balloon',drawEdges=False))
-    #            mi.append(gl.GLMeshItem(vertexes=verts2,vertexColors=verts_colors,smooth=False,shader='balloon',drawEdges=False,edgeColor = edge_color))
-                
-    #            for loop in [exterior]+interiors:
-    #                loop = loop+loop[0:1]
-    #                loop = numpy.array(loop)
-    #                loop = numpy.c_[loop,loop[:,0]*0+ii]
-    #                color = [1,1,1,1]
-    #                pi =gl.GLLinePlotItem(pos = loop,color =color, width=10)
-    #                lines.append(pi)        
+                verts_outer.append(verts)
+                colors_outer.append(verts_colors)
+        
+        verts_outer = numpy.vstack(verts_outer)
+        colors_outer = numpy.vstack(colors_outer)
+        return verts_outer,colors_outer
+    
+    def mesh_items(self,z_offset = 0,color = (1,0,0,1)):
+        verts_outer,colors_outer = self.mesh_items_inner(z_offset,color)
+        mi = []
+        mi.append(gl.GLMeshItem(vertexes=verts_outer,vertexColors=colors_outer,smooth=False,shader='balloon',drawEdges=False))
         return mi
+    
     def mass_props(self,material_property,bottom,top):
         area_i = 0
         mass_i=0
