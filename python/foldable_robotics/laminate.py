@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from .layer import Layer
 import numpy
 from idealab_tools.iterable import Iterable
+import pyqtgraph.opengl as gl
 
 class WrongNumLayers(Exception):
     pass
@@ -120,14 +121,22 @@ class Laminate(Iterable,ClassAlgebra):
             layer.export_dxf(layername)
     def mesh_items(self,material_properties):
         import matplotlib.cm as cm
-        mi = []
-#        lines = []
         z = 0
+        vs = []
+        cs = []
         for ii,(layer,mp) in enumerate(zip(self,material_properties)):
-#            color1 = list(cm.plasma(ii/(len(self))))
-            mi.extend(layer.mesh_items(z+mp.thickness/2,mp.color))
-        #    color1[3] = .1
+
+            v,c = layer.mesh_items_inner(z+mp.thickness/2,mp.color)
+            vs.append(v)
+            cs.append(c)
             z+=mp.thickness
+            
+        verts_outer = numpy.vstack(vs)
+        colors_outer = numpy.vstack(cs)
+
+        mi = []
+        mi.append(gl.GLMeshItem(vertexes=verts_outer,vertexColors=colors_outer,smooth=False,shader='balloon',drawEdges=False))
+
         return mi
 
     def mass_properties(laminate,material_properties):
