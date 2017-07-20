@@ -32,8 +32,7 @@ app = qg.QApplication(sys.argv)
 
 view_widget = gl.GLViewWidget()
 view_widget.setBackgroundColor(pg.mkColor(1, 1, 1))
-for item in mi:
-    view_widget.addItem(item)    
+view_widget.addItem(mi)    
 
 def clear_view():
     [view_widget.removeItem(item) for item in view_widget.items]

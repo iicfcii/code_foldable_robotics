@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 #import classes from my local modules
 from foldable_robotics.laminate import Laminate
 from foldable_robotics.layer import Layer
+from foldable_robotics.dynamics_info import MaterialProperty
 
 #create a layer named box
 box = Layer(sg.box(0,0,1,1))
@@ -102,13 +103,16 @@ import pyqtgraph as pg
 import PyQt5.QtGui as qg
 import sys
 
-t = [1]*len(first_cut)
-mi = first_cut.mesh_items(thickness=t)
+m1 = MaterialProperty('red',(1,0,0,.5),.1,1,1,1,.3,False,True,False,False)
+m2 = MaterialProperty('cyan',(0,1,1,.5),.1,1,1,1,.3,False,True,False,False)
+mp = [m1,m2,m1,m2,m1]
+
+first_cut = (first_cut<<.01)>>.01
+mi = first_cut.mesh_items(mp)
 
 app = qg.QApplication(sys.argv)
 view_widget = gl.GLViewWidget()
 view_widget.setBackgroundColor(pg.mkColor(1, 1, 1))
-for item in mi:
-    view_widget.addItem(item)    
+view_widget.addItem(mi)    
 view_widget.show()
 sys.exit(app.exec())

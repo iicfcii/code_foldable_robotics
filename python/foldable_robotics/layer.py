@@ -257,8 +257,7 @@ class Layer(ClassAlgebra):
     
     def mesh_items(self,z_offset = 0,color = (1,0,0,1)):
         verts_outer,colors_outer = self.mesh_items_inner(z_offset,color)
-        mi = []
-        mi.append(gl.GLMeshItem(vertexes=verts_outer,vertexColors=colors_outer,smooth=False,shader='balloon',drawEdges=False))
+        mi=gl.GLMeshItem(vertexes=verts_outer,vertexColors=colors_outer,smooth=False,shader='balloon',drawEdges=False)
         return mi
     
     def mass_props(self,material_property,bottom,top):

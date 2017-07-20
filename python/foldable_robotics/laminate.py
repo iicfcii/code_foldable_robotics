@@ -119,13 +119,15 @@ class Laminate(Iterable,ClassAlgebra):
         for ii,layer in enumerate(self.layers):
             layername = name+str(ii)
             layer.export_dxf(layername)
+            
     def mesh_items(self,material_properties):
         import matplotlib.cm as cm
+
         z = 0
         vs = []
         cs = []
-        for ii,(layer,mp) in enumerate(zip(self,material_properties)):
 
+        for ii,(layer,mp) in enumerate(zip(self,material_properties)):
             v,c = layer.mesh_items_inner(z+mp.thickness/2,mp.color)
             vs.append(v)
             cs.append(c)
@@ -134,8 +136,7 @@ class Laminate(Iterable,ClassAlgebra):
         verts_outer = numpy.vstack(vs)
         colors_outer = numpy.vstack(cs)
 
-        mi = []
-        mi.append(gl.GLMeshItem(vertexes=verts_outer,vertexColors=colors_outer,smooth=False,shader='balloon',drawEdges=False))
+        mi= gl.GLMeshItem(vertexes=verts_outer,vertexColors=colors_outer,smooth=False,shader='balloon',drawEdges=False)
 
         return mi
 
