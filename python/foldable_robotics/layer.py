@@ -296,6 +296,18 @@ class Layer(ClassAlgebra):
             
         return I
             
-            
         
+def layer_representer(dumper, v):
+    d = v.export_dict()
+    output = dumper.represent_mapping(u'!Layer',d)
+    return output
+
+def layer_constructor(loader, node):
+    item = loader.construct_mapping(node)
+    new = Layer.import_dict(item)
+    return new
+    
+import yaml        
+yaml.add_representer(Layer, layer_representer)
+yaml.add_constructor(u'!Layer', layer_constructor)
         
