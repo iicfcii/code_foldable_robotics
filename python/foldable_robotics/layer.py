@@ -281,7 +281,7 @@ class Layer(ClassAlgebra):
             centroid_y_i += centroid[1]*mass_ii
             centroid_z_i += (bottom+top)/2*mass_ii
 
-        centroid_i = centroid_x_i/mass_ii,centroid_y_i/mass_ii,centroid_z_i/mass_ii
+        centroid_i = centroid_x_i/mass_i,centroid_y_i/mass_i,centroid_z_i/mass_i
         
         return area_i,volume_i,mass_i,centroid_i 
     
