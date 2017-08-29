@@ -18,7 +18,9 @@ class MaterialProperty(object):
         self.is_rigid = is_rigid
         self.is_conductive = is_conductive
         self.is_flexible = is_flexible
-        
+    def copy(self):
+        return MaterialProperty(self.name,self.color,self.thickness,self.E1,self.E2,self.density,self.poisson,self.is_adhesive,self.is_rigid,self.is_conductive,self.is_flexible)
+    
 class JointProps(object):
     def __init__(self,stiffness,damping,preload,limit_neg,limit_pos,z_pos):
         self.stiffness = stiffness
