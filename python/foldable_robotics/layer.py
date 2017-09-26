@@ -15,7 +15,6 @@ import shapely.ops as so
 import shapely.wkt as sw
 import matplotlib.pyplot as plt
 import numpy
-import pyqtgraph.opengl as gl
 
 def is_collection(item):
     collections = [
@@ -270,6 +269,7 @@ class Layer(ClassAlgebra):
         return verts_outer,colors_outer
     
     def mesh_items(self,z_offset = 0,color = (1,0,0,1)):
+		import pyqtgraph.opengl as gl
         verts_outer,colors_outer = self.mesh_items_inner(z_offset,color)
         mi=gl.GLMeshItem(vertexes=verts_outer,vertexColors=colors_outer,smooth=False,shader='balloon',drawEdges=False)
         return mi
