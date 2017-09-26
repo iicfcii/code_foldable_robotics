@@ -78,7 +78,7 @@ def check_loop(loop):
     if loop[-1]==loop[0]:
         return loop[:-1]
         
-def triangulate_geom(geom,z_offset):
+def triangulate_geom(geom):
     import pypoly2tri
     from pypoly2tri.cdt import CDT
     import numpy
@@ -236,6 +236,20 @@ class Layer(ClassAlgebra):
         import foldable_robotics.manufacturing
         return foldable_robotics.manufacturing.map_line_stretch(self,*args,**kwargs)
     
+    def triangulation(self):
+        points = []
+        tris = []
+        ii = 0
+        for geom in self.geoms:
+            if isinstance(geom,sg.Polygon):
+                points2,tris2 = triangulate_geom(geom)
+                points.append(points2)
+                tris.append(tris2+ii)
+                ii+=len(points2)
+        points = numpy.vstack(points)
+        tris = numpy.vstack(tris)
+        return points,tris
+    
     def mesh_items_inner(self,z_offset = 0,color = (1,0,0,1)):
 
         verts_outer = []
@@ -244,7 +258,7 @@ class Layer(ClassAlgebra):
         for geom in self.geoms:
             if isinstance(geom,sg.Polygon):
                 
-                points2,tris2 = triangulate_geom(geom,z_offset)
+                points2,tris2 = triangulate_geom(geom)
                 points3 = points_2d_to_3d(points2,z_offset)
                 verts =points3[tris2]
                 verts_colors = [[color]*3]*len(tris2)
