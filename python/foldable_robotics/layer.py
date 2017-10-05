@@ -304,7 +304,7 @@ class Layer(ClassAlgebra):
         z_upper = z_lower+material_property.thickness
 
         for geom in self.geoms:
-            points,tris = triangulate_geom(geom,z_lower)
+            points,tris = triangulate_geom(geom)
             tris = points[tris]
             I+=inertia_tensor(about_point,material_property.density,z_lower,z_upper,tris)
             
