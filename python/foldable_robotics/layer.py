@@ -309,7 +309,19 @@ class Layer(ClassAlgebra):
             I+=inertia_tensor(about_point,material_property.density,z_lower,z_upper,tris)
             
         return I
-            
+    
+    def bounding_box(self):
+        a = numpy.array([vertex for geom in self.geoms for vertex in geom.exterior.coords])
+        box = [tuple(a.min(0)),tuple(a.max(0))]
+        return box
+        
+    def exterior(self):
+        a = [list(geom.exterior.coords) for geom in self.geoms]
+        return a
+
+    def interiors(self):
+        a = [list(interior.coords) for geom in self.geoms for interior in geom.interiors]
+        return a
         
 def layer_representer(dumper, v):
     d = v.export_dict()
