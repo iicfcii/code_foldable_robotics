@@ -15,6 +15,7 @@ import shapely.ops as so
 import shapely.wkt as sw
 import matplotlib.pyplot as plt
 import numpy
+import foldable_robotics
 
 def is_collection(item):
     collections = [
@@ -177,15 +178,18 @@ class Layer(ClassAlgebra):
     def intersection(self,other):
         return self.binary_operation(other,'intersection')
     
-    def buffer(self,value,resolution = 0):
+    def buffer(self,value,resolution = None):
+        resolution = resolution or foldable_robotics.resolution
         return self.dilate(value,resolution)
 
-    def dilate(self,value,resolution = 0):
+    def dilate(self,value,resolution = None):
+        resolution = resolution or foldable_robotics.resolution
         geoms = from_layer_to_shapely(self)
         new_geoms = (geoms.buffer(value,resolution))
         return from_shapely_to_layer(new_geoms)
 
-    def erode(self,value,resolution = 0):
+    def erode(self,value,resolution = None):
+        resolution = resolution or foldable_robotics.resolution
         return self.dilate(-value,resolution)
         
     def translate(self,*args,**kwargs):
@@ -314,10 +318,16 @@ class Layer(ClassAlgebra):
             
         return I
     
-    def bounding_box(self):
+    def bounding_box_coords(self):
         a = numpy.array([vertex for geom in self.geoms for vertex in geom.exterior.coords])
         box = [tuple(a.min(0)),tuple(a.max(0))]
         return box
+
+    def bounding_box(self):
+        a,b = self.bounding_box_coords()
+        p = sg.box(*a,*b)
+        l = Layer(p)
+        return l
         
     def exteriors(self):
         a = [list(geom.exterior.coords) for geom in self.geoms]
@@ -335,6 +345,13 @@ class Layer(ClassAlgebra):
         points2 = numpy.r_[numpy.c_[points,[z_lower]*len(points)],numpy.c_[points,[z_upper]*len(points)]]
         tris2 = numpy.r_[numpy.c_[tris[:,(0)]+m,tris[:,(1,0,2)]+m],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(2,)]+m,tris[:,(2,)]],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(1,2)]+m]]
         return points2,tris2
+    
+    def simplify(self,tolerance):
+        geoms = foldable_robotics.layer.from_layer_to_shapely(self)
+        new_geoms = (geoms.simplify(tolerance))
+        return foldable_robotics.layer.from_shapely_to_layer(new_geoms)
+
+    
         
 def layer_representer(dumper, v):
     d = v.export_dict()

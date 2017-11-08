@@ -111,6 +111,9 @@ class Laminate(Iterable,ClassAlgebra):
     def affine_transform(self,*args,**kwargs):
         return self.unary_operation('affine_transform',*args,**kwargs)
 
+    def simplify(self,*args,**kwargs):
+        return self.unary_operation('simplify',*args,**kwargs)
+
     def map_line_stretch(self,*args,**kwargs):
         import foldable_robotics.manufacturing
         return foldable_robotics.manufacturing.map_line_stretch(self,*args,**kwargs)

@@ -5,12 +5,14 @@ Created on Wed Sep 21 08:13:05 2016
 @author: daukes
 """
 
+import foldable_robotics
 from foldable_robotics.laminate import Laminate
 from foldable_robotics.layer import Layer
 import shapely.geometry as sg
 import shapely.ops as so
 import matplotlib.pyplot as plt
 plt.ion()
+
 
 def cleanup(input1,value,res):
     return input1.buffer(value,res).buffer(-2*value,res).buffer(value,res)
@@ -196,7 +198,8 @@ def lines_to_shapely(hinge_lines):
     all_hinges1 = [hinge_layer.map_line_stretch((0,0),(1,0),*toline) for toline in hinge_lines]
     return all_hinges1
 
-def calc_hole(hinge_lines,width,resolution = 2):
+def calc_hole(hinge_lines,width,resolution = None):
+    resolution = resolution or foldable_robotics.hole_resolution
     all_hinges1= lines_to_shapely(hinge_lines)
     all_hinges11 = [item.dilate(w/2,resolution = resolution) for item,w in zip(all_hinges1,width)]
     
