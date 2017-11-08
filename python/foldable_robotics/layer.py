@@ -105,13 +105,15 @@ def points_2d_to_3d(points_2d,z_val):
     points3 = numpy.c_[points_2d,z]
     return points3
 
-def inertia_tensor(about_point,density,z_lower,z_upper,tris):
-    import numpy
-    z_lower = z_lower
-    z_upper = z_upper
+def extrude(points,tris,z_lower,z_upper):
     from idealab_tools.geometry.triangle import Triangle
-    tris3 = [Triangle(*tri) for tri in tris]
+    tris3 = [Triangle(*(points[tri])) for tri in tris]
     tets = [tet for tri in tris3 for tet in tri.extrude(z_lower,z_upper)]
+    return tets
+    
+def inertia_tensor(about_point,density,z_lower,z_upper,points,tris):
+    import numpy
+    tets = extrude(points,tris,z_lower,z_upper)
     Is = numpy.array([tet.I(density,about_point) for tet in tets])
     I = Is.sum(0)
     return I
@@ -192,7 +194,10 @@ class Layer(ClassAlgebra):
         return from_shapely_to_layer(new_geoms)
 
     def scale(self,*args,**kwargs):
-        kwargs['origin']=(0,0)
+        try:
+            kwargs['origin']
+        except KeyError:
+            kwargs['origin']=(0,0)
         geoms = from_layer_to_shapely(self)
         new_geoms = sa.scale(geoms,*args,**kwargs)
         return from_shapely_to_layer(new_geoms)
@@ -305,8 +310,7 @@ class Layer(ClassAlgebra):
 
         for geom in self.geoms:
             points,tris = triangulate_geom(geom)
-            tris = points[tris]
-            I+=inertia_tensor(about_point,material_property.density,z_lower,z_upper,tris)
+            I+=inertia_tensor(about_point,material_property.density,z_lower,z_upper,points,tris)
             
         return I
     
@@ -315,13 +319,22 @@ class Layer(ClassAlgebra):
         box = [tuple(a.min(0)),tuple(a.max(0))]
         return box
         
-    def exterior(self):
+    def exteriors(self):
         a = [list(geom.exterior.coords) for geom in self.geoms]
         return a
 
     def interiors(self):
         a = [list(interior.coords) for geom in self.geoms for interior in geom.interiors]
         return a
+
+    def extrude(self,z_lower,material_property):
+        z_upper = z_lower+material_property.thickness
+        points, tris =self.triangulation()
+        m = points.shape[0]
+        n = tris.shape[0]
+        points2 = numpy.r_[numpy.c_[points,[z_lower]*len(points)],numpy.c_[points,[z_upper]*len(points)]]
+        tris2 = numpy.r_[numpy.c_[tris[:,(0)]+m,tris[:,(1,0,2)]+m],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(2,)]+m,tris[:,(2,)]],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(1,2)]+m]]
+        return points2,tris2
         
 def layer_representer(dumper, v):
     d = v.export_dict()
