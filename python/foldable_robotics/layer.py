@@ -50,7 +50,12 @@ def from_layer_to_shapely(layer):
     geoms = so.unary_union(layer.geoms)
     return geoms
 
-def plot_poly(poly,color = (1,0,0,1)):
+def plot_poly(poly,color = None,edgecolor = None, facecolor =None):
+    color = color or (1,0,0,.25)
+    
+    facecolor = facecolor or color
+    edgecolor = edgecolor or tuple(list(color[:3])+[1])
+    
     import numpy
     from matplotlib.patches import PathPatch
     from matplotlib.path import Path
@@ -66,7 +71,7 @@ def plot_poly(poly,color = (1,0,0,1)):
             vertices.extend(item+[(0,0)])
             codes.extend([Path.MOVETO]+([Path.LINETO]*(len(item)-1))+[Path.CLOSEPOLY])
         path = Path(vertices,codes)
-        patch = PathPatch(path,facecolor=color[:3]+[.25],edgecolor=color[:3]+[.5])        
+        patch = PathPatch(path,facecolor=facecolor,edgecolor=edgecolor)        
         axes.add_patch(patch)
 
     elif isinstance(poly,sg.LineString):
@@ -207,7 +212,10 @@ class Layer(ClassAlgebra):
         return from_shapely_to_layer(new_geoms)
 
     def rotate(self,*args,**kwargs):
-        kwargs['origin']=(0,0)
+        try:
+            kwargs['origin']
+        except KeyError:
+            kwargs['origin']=(0,0)
         geoms = from_layer_to_shapely(self)
         new_geoms = sa.rotate(geoms,*args,**kwargs)
         return from_shapely_to_layer(new_geoms)
