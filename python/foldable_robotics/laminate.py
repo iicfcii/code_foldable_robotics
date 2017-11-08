@@ -43,11 +43,14 @@ class Laminate(Iterable,ClassAlgebra):
     def plot(self,new=False):
         import matplotlib.cm
         cm = matplotlib.cm.plasma
-        l = len(self.layers)        
+        l = len(self.layers)     
+        colors = numpy.array([cm(ii/(l-1)) for ii in range(l)])
+        colors[:,3] = .25
+        colors = [tuple(item) for item in colors]
         if new:
             plt.figure()
-        for ii,geom in enumerate(self.layers):
-            geom.plot(color = cm((ii)/(l)))
+        for layer,color in zip(self.layers,colors):
+            layer.plot(color = color)
 
     def plot_layers(self):
         import matplotlib.cm

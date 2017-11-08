@@ -20,6 +20,18 @@ class MaterialProperty(object):
         self.is_flexible = is_flexible
     def copy(self):
         return MaterialProperty(self.name,self.color,self.thickness,self.E1,self.E2,self.density,self.poisson,self.is_adhesive,self.is_rigid,self.is_conductive,self.is_flexible)
+    @classmethod
+    def make_n_blank(cls,n,thickness = 1,E1 = 1,E2 = 1,density = 1, poisson = 1,is_adhesive = False, is_rigid = False, is_conductive = False, is_flexible = False ):
+        import numpy
+        import matplotlib.cm
+        cm = matplotlib.cm.plasma
+        colors = numpy.array([cm(ii/(n-1)) for ii in range(n)])
+        colors[:,3] = .25
+        colors = [tuple(item) for item in colors]   
+        materials = []
+        for ii,color in enumerate(colors):
+            materials.append(cls('layer'+str(ii),color,thickness,E1,E2,density,poisson,is_adhesive,is_rigid,is_conductive,is_flexible))
+        return materials
     
 class JointProps(object):
     def __init__(self,stiffness,damping,preload,limit_neg,limit_pos,z_pos):
