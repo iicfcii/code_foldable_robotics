@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 from .layer import Layer
 import numpy
 from idealab_tools.iterable import Iterable
-import pyqtgraph.opengl as gl
 
 class WrongNumLayers(Exception):
     pass
@@ -128,6 +127,7 @@ class Laminate(Iterable,ClassAlgebra):
             
     def mesh_items(self,material_properties):
         import matplotlib.cm as cm
+        import pyqtgraph.opengl as gl
 
         z = 0
         vs = []
