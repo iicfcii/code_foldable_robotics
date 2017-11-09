@@ -21,7 +21,7 @@ package_data['foldable_robotics'] = []
 
 setup_kwargs = {}
 setup_kwargs['name']='foldable_robotics'
-setup_kwargs['version']='0.0.10'
+setup_kwargs['version']='0.0.11'
 setup_kwargs['classifiers']=['Programming Language :: Python','Programming Language :: Python :: 3']   
 setup_kwargs['description']='Foldable robotics is a package for designing and analyzing foldable laminate robots'
 setup_kwargs['author']='Dan Aukes'
@@ -31,6 +31,6 @@ setup_kwargs['license']='MIT'
 setup_kwargs['packages']=packages
 setup_kwargs['package_dir']={'foldable_robotics' : 'python/foldable_robotics'}
 setup_kwargs['package_data'] = package_data
-
+setup_kwargs['install_requires']=['ezdxf','idealab_tools','matplotlib','numpy','pypoly2tri','shapely','pyyaml']
   
 setup(**setup_kwargs)
