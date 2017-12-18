@@ -1,4 +1,9 @@
 #import matplotlib.pyplot as plt
+
+"""Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes<at>asu.edu.
+Please see LICENSE for full license."""
+
 #plt.ion()
 from foldable_robotics.shape import Polygon,Polyline,Point
 from foldable_robotics.layer import Layer

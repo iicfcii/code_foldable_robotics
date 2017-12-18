@@ -10,7 +10,8 @@ Welcome to foldable_robotics's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+    <foldable_robotics/foldable_robotics.rst>
+    <!-- <foldable_robotics/modules.rst> -->
 
 Indices and tables
 ==================

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri May 26 09:16:38 2017
-
-@author: daukes
+Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes<at>asu.edu.
+Please see LICENSE for full license.
 """
 
 class MaterialProperty(object):

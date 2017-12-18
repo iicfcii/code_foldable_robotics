@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Sep 21 08:13:05 2016
+A collection of tools used to compute manufacturing geometry useful for laminates and layers.
 
-@author: daukes
+Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes<at>asu.edu.
+Please see LICENSE for full license.
 """
 
 import foldable_robotics
@@ -15,14 +17,36 @@ plt.ion()
 
 
 def cleanup(input1,value,res):
+    '''
+    Cleans up the layer or laminate by using successive dilate and erode functions to remove small objects.  Results in rounded edges
+    
+   :param input1: input shape
+   :type input1: Layer or Laminate
+   :param value: dilate / erode radius
+   :type value: float
+   :param res: resolution
+   :type res: float
+   :rtype: Layer or Laminate
+    '''   
     return input1.buffer(value,res).buffer(-2*value,res).buffer(value,res)
     
-def cleanup2(a,radius):
-    c=(a>>radius)<<2*radius
+def cleanup2(a,radius,res):
+    '''
+    Cleans up the layer or laminate by using successive dilate and erode functions to remove small objects.  Attempts to address rounded corners with additional CSG logic, at the cost of computation and non-intuitive results.
+    
+   :param a: input shape
+   :type a: Layer or Laminate
+   :param radius: dilate / erode radius
+   :type radius: float
+   :param res: resolution
+   :type res: float
+   :rtype: Layer or Laminate
+    '''   
+    c=(a.buffer(-radius,res)).buffer(2*radius,res)
     e=(a&c)
-    bb=(a<<10*radius)
+    bb=(a.buffer(10*radius,res))
     b=bb-a
-    d=(b>>radius)<<2*radius
+    d=(b.buffer(-radius,res)).buffer(2*radius,res)
     
     f=(b&d)
     g=bb-f
@@ -33,18 +57,38 @@ def cleanup2(a,radius):
     return i
 
 def unary_union(laminate):
+    '''
+    Unions all the layers in a laminate together and returns to a new Layer.
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :rtype: Layer
+    '''   
+
     result = Layer()
     for layer in laminate:
         result|=layer
     return result
 
 def keepout_laser(laminate):
+    """This function computes the keepout laminate for a laser cut operation..
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :rtype: Laminate
+    """
     result = unary_union(laminate)
     result = [result]*len(laminate)
     new_lam  = Laminate(*result)
     return new_lam 
 #
 def keepout_mill_up(laminate):
+    """This function computes the keepout laminate for a milling operation with the mill above the top layer.
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :rtype: Laminate
+    """    
     result = Layer()
     results = []
     for layer in laminate[::-1]:
@@ -55,15 +99,34 @@ def keepout_mill_up(laminate):
     return new_lam
 
 def keepout_mill_down(laminate):
+    """This function computes the keepout laminate for a milling operation with the mill below the bottom layer.
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :rtype: Laminate
+    """    
     return keepout_mill_up(laminate[::-1])[::-1]
 #
 def keepout_mill_flip(laminate):
+    """This function computes the keepout laminate for a milling operation with the mill cutting from above and below.
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :rtype: Laminate
+    """        
     dummy1 = keepout_mill_up(laminate)
     dummy2 = keepout_mill_down(laminate)
     dummy3 = dummy1 & dummy2
     return dummy3
 #    
 def bounding_box(laminate):
+    """This function computes a bounding box aligned with the x and y axes for the given laminate.
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :rtype: Laminate
+    """  
+    
     A = keepout_laser(laminate)
     b = so.unary_union(A[0].geoms)
     c = sg.box(*b.bounds)
@@ -73,6 +136,14 @@ def bounding_box(laminate):
     return new_lam 
 
 def not_removable_up(laminate,is_adhesive):
+    """This function computes the non-removable material in the up direction for a given laminate.  
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :param is_adhesive: list of booleans indicating whether the layer at that index is an adhesive layer.
+   :type is_adhesive: list
+   :rtype: Laminate
+    """      
     result = Layer()
     results = []
     for layer in laminate[::-1]:
@@ -85,9 +156,24 @@ def not_removable_up(laminate,is_adhesive):
     return new_lam
 
 def not_removable_down(laminate,is_adhesive):
+    """This function computes the non-removable material in the down direction for a given laminate.  
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :param is_adhesive: list of booleans indicating whether the layer at that index is an adhesive layer.
+   :type is_adhesive: list
+   :rtype: Laminate
+    """      
     return not_removable_up(laminate[::-1],is_adhesive[::-1])[::-1]
 
 def not_removable_both(laminate):
+    """This function computes the non-removable material in the either direction for a given laminate.  
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :rtype: Laminate
+    """      
+    
     result = Layer()
     for layer in laminate:
         result|=layer
@@ -103,22 +189,49 @@ def modify_up(laminate,is_adhesive):
     return laminate
     
 def zero_test(laminate):
+    """This function checks whether a laminate is empty.  
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :rtype: boolean
+    """      
+    
     result = keepout_laser(laminate)
     if not result[0].geoms:
         return True
     else:
         return False
         
-def support(laminate,keepout_method,width,invalid_width):
+def support(laminate,keepout_method,width,invalid_width, small_dim = .001):
+    """This function computes support for a laminate.  
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :param keepout_method: the keepout method selected for the computation
+   :type keepout_method: python function ref
+   :param width: gap away from the original laminate
+   :type width: float
+   :param invalid_width: value to keep support away from non-cuttable regions.
+   :type invalid_width: float
+   :param small_dim: relatively small dimension for eliminating numerical precision problems.
+   :type small_dim: float   
+   :rtype: Laminate
+    """       
     keepout = keepout_method(laminate)
     all_support = (keepout<<width)-keepout
     not_cuttable = keepout-laminate
-    not_cuttable_clean= cleanup(not_cuttable,.001,0)
+    not_cuttable_clean= cleanup(not_cuttable,small_dim,0)
     valid_support = all_support-(not_cuttable_clean<<invalid_width)
-    valid_support <<=.001
+    valid_support <<= small_dim
     return valid_support
 
-def split_laminate_by_geoms(remain):
+def split_laminate_by_geoms(laminate):
+    """This function splits a laminate into n respective geometries and returns one laminate for each geom.  
+    
+   :param laminate: input shape
+   :type laminate: Laminate
+   :rtype: list of Laminates
+    """         
     l = len(remain)
     all_laminates = []
     for ii,layerfrom in enumerate(remain):
@@ -128,7 +241,16 @@ def split_laminate_by_geoms(remain):
             all_laminates.append(split)
     return all_laminates
 
-def expand_adhesive(laminate,adhesive):
+def _expand_adhesive(laminate,adhesive):
+    '''
+    Sub-function used for computing the effect of an adhesive geometry on its neighbors.
+    
+    :param laminate: input shape
+    :type laminate: Laminate
+    :param adhesive: indicates whether each layer sticks to its neighbors.
+    :type adhesive: list of booleans
+    :rtype: Laminate
+    '''   
     l = len(laminate)
     expand_up = Laminate(*([Layer()]*l))
     for ii,(layer,test,test2) in enumerate(zip(laminate[:-1],adhesive[:-1],adhesive[1:])):
@@ -144,24 +266,46 @@ def expand_adhesive(laminate,adhesive):
     return result
 
 def find_connected(laminate,adhesive):
+    '''
+    Creates a list of laminates which are topologically connected above or below and across multiple layers.
+    
+    :param laminate: input shape
+    :type laminate: Laminate
+    :param adhesive: indicates whether each layer sticks to its neighbors.
+    :type adhesive: list of booleans
+    :rtype: Laminate
+    '''   
+
     all_laminates = split_laminate_by_geoms(laminate)
     results = []
     while not not all_laminates:
         result = all_laminates.pop(0)
-        expanded_result = expand_adhesive(result,adhesive)
+        expanded_result = _expand_adhesive(result,adhesive)
         changed=True
         while changed:
             changed=False
             for item in all_laminates:
                 if not zero_test(item&expanded_result):
                     result |= item
-                    expanded_result = expand_adhesive(result,adhesive)
+                    expanded_result = _expand_adhesive(result,adhesive)
                     all_laminates.remove(item)
                     changed = True
         results.append(result)
     return results
 
 def map_line_stretch(self,*args,**kwargs):
+    '''
+    Transforms a layer or laminate by using the translation and rotation between two lines to compute the stretch, scale, and rotation. 
+    
+    :param self: input shape
+    :type self: Layer or Laminate
+    :param args: four coordinates of two line endpoints.
+    :type args: tuple of coordinates
+    :param kwargs: unused
+    :type kwargs: dict
+    :rtype: Layer or Laminate
+    '''   
+
     import math
     import numpy
     import foldable_robotics.geometry as geometry
@@ -185,7 +329,23 @@ def map_line_stretch(self,*args,**kwargs):
     return laminate    
     
 def modify_device(device,custom_support_line,support_width,support_gap,hole_buffer):
-    custom_support = custom_support_line<<support_width/2
+    '''
+    From a list of two-coordinate tuples, creates shapely lines.
+    
+   :param device: input shape
+   :type device: Laminate
+   :param custom_support_line: desired additional support geometry
+   :type custom_support_line: Laminate
+   :param support_width: width of desired support
+   :type support_width: float
+   :param support_gap: gap between device and support
+   :type support_gap: float
+   :param hole_buffer: gap between user-supplied support and computed support hole
+   :type hole_buffer: float
+   :rtype: Laminate
+    '''   
+
+    custom_support = custom_support_line<<(support_width/2)
     custom_support_hole = (custom_support & ((device<<support_gap)-device))
     custom_support_hole2 = keepout_laser(custom_support_hole<<hole_buffer) - (custom_support_hole<<2*hole_buffer)
     modified_device = device-custom_support_hole2
@@ -193,12 +353,29 @@ def modify_device(device,custom_support_line,support_width,support_gap,hole_buff
     return modified_device,custom_support,custom_cut
 
 def lines_to_shapely(hinge_lines):
+    '''
+    From a list of two-coordinate tuples, creates shapely lines.
+    
+   :param hinge_lines: input shape
+   :type hinge_lines: list of tuples
+   :rtype: Laminate
+    '''   
     hinge_line = sg.LineString([(0,0),(1,0)])
     hinge_layer = Layer(hinge_line)
     all_hinges1 = [hinge_layer.map_line_stretch((0,0),(1,0),*toline) for toline in hinge_lines]
     return all_hinges1
 
 def calc_hole(hinge_lines,width,resolution = None):
+    '''
+    From a list of lines computes the hole needed at a node, based on hinge gaps.
+    
+   :param hinge_lines: input shape
+   :type hinge_lines: list of tuples
+   :param width: width of the hinge
+   :type width: float
+   :rtype: Laminate
+    '''   
+
     resolution = resolution or foldable_robotics.hole_resolution
     all_hinges1= lines_to_shapely(hinge_lines)
     all_hinges11 = [item.dilate(w/2,resolution = resolution) for item,w in zip(all_hinges1,width)]

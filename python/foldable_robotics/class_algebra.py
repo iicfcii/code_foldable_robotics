@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon May 16 09:55:55 2016
-
-@author: danb0b
+Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes<at>asu.edu.
+Please see LICENSE for full license.
 """
 class ClassAlgebra(object):
     def __or__(self,other):

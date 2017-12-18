@@ -1,0 +1,1 @@
+sphinx-apidoc -f -o source/foldable_robotics  %HOMEDRIVE%%HOMEPATH%\code\foldable_robotics\python\foldable_robotics
