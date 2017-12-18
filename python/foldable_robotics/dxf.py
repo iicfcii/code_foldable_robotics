@@ -13,6 +13,14 @@ import numpy
 
 #def read_lines(filename, color = None ,layer = None):
 def read_lines(filename, color = None):
+    '''
+    Reads a dxf file searching for line objects,
+
+    :param filename: the file path of the source dxf
+    :type filename: string
+    :param color: optional.  if included, this function filters for objects of only this color
+    :rtype: List of lines consisting of two two-coordinate tuples each.
+    '''
     dwg = ezdxf.readfile(filename)
     modelspace = dwg.modelspace()
     lines = []
@@ -28,6 +36,14 @@ def read_lines(filename, color = None):
 
 #def read_lwpolylines(filename,color = None,layer = None):
 def read_lwpolylines(filename,color = None):
+    '''
+    Reads a dxf file searching for lwpolyline objects,
+
+    :param filename: the file path of the source dxf
+    :type filename: string
+    :param color: optional.  if included, this function filters for objects of only this color
+    :rtype: List of lines consisting of two two-coordinate tuples each.
+    '''
     dwg = ezdxf.readfile(filename)
     modelspace = dwg.modelspace()
     lines = []
@@ -49,7 +65,7 @@ def approx_lwpoly(lines):
     return circles
             
 def calc_circle(p1,p2,f):
-    sign = lambda x: x and (1,-1)[x<0]
+#    sign = lambda x: x and (1,-1)[x<0]
     import math
     from foldable_robotics.layer import Layer
     
@@ -68,9 +84,37 @@ def calc_circle(p1,p2,f):
 #    center = p1+v/2+c*n_p*sign(f)*-1
     import shapely.geometry as sg
     ls = Layer(sg.LineString([tuple(p1),tuple(p3),tuple(p2)])).buffer(.1)
-#    p = Layer(sg.Point(*center))
-#    c = p.buffer(r*.8)
+    
+    
+    x1_0 = p1[0]
+    x1_1 = p1[1]
+    x2_0 = p2[0]
+    x2_1 = p2[1]
+    x3_0 = p3[0]
+    x3_1 = p3[1]
+    p = numpy.array([ x1_0/2 + x3_0/2 + (x1_1 - x3_1)*((x1_0 - x2_0)*(x2_0 - x3_0) + (x1_1 - x2_1)*(x2_1 - x3_1))/(2*((x1_0 - x3_0)*(x2_1 - x3_1) - (x1_1 - x3_1)*(x2_0 - x3_0))),x1_1/2 + x3_1/2 + (-x1_0 + x3_0)*((x1_0 - x2_0)*(x2_0 - x3_0) + (x1_1 - x2_1)*(x2_1 - x3_1))/(2*((x1_0 - x3_0)*(x2_1 - x3_1) - (x1_1 - x3_1)*(x2_0 - x3_0)))])
+#    cp = Layer(sg.Point(*p))
+    v = p-p1
+    r = (v.dot(v))**.5
+#    c = cp.buffer(r)
+    
+    v1=(p1-p)
+    v2=(p2-p)
+    t1 = math.atan2(v1[1],v1[0])
+    t2 = math.atan2(v2[1],v2[0])
+    
+    if f<0:
+        if t2>t1:
+            t2 = t2 - math.pi
+    
+    n = 20
+    t = numpy.r_[t1:t2:n*1j]
+    points = r*numpy.c_[numpy.cos(t),numpy.sin(t)] +p
+    ls = Layer(sg.LineString(points))
+    
     return ls
+
+
 
 def list_attrib(filename,attrib):
     '''
