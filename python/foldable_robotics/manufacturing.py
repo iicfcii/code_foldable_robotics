@@ -293,14 +293,20 @@ def find_connected(laminate,adhesive):
         results.append(result)
     return results
 
-def map_line_stretch(self,*args,**kwargs):
+def map_line_stretch(self,p1,p2,p3,p4):
     '''
     Transforms a layer or laminate by using the translation and rotation between two lines to compute the stretch, scale, and rotation. 
     
     :param self: input shape
     :type self: Layer or Laminate
-    :param args: four coordinates of two line endpoints.
-    :type args: tuple of coordinates
+    :param p1: point 1 of line 1 in (x,y) format
+    :type p1: tuple
+    :param p1: point 2 of line 1 in (x,y) format
+    :type p1: tuple
+    :param p1: point 1 of line 2 in (x,y) format
+    :type p1: tuple
+    :param p1: point 2 of line 2 in (x,y) format
+    :type p1: tuple
     :param kwargs: unused
     :type kwargs: dict
     :rtype: Layer or Laminate
@@ -310,10 +316,10 @@ def map_line_stretch(self,*args,**kwargs):
     import numpy
     import foldable_robotics.geometry as geometry
     
-    p1 = numpy.array(args[0])
-    p2 = numpy.array(args[1])
-    p3 = numpy.array(args[2])
-    p4 = numpy.array(args[3])
+    p1 = numpy.array(p1)
+    p2 = numpy.array(p2)
+    p3 = numpy.array(p3)
+    p4 = numpy.array(p4)
 
     x_axis = numpy.array([1,0])
 

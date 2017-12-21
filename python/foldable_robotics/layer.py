@@ -17,7 +17,33 @@ import matplotlib.pyplot as plt
 import numpy
 import foldable_robotics
 
+def get_segments(poly):
+    '''
+    get the line segments of a polygon or linestring
+    
+    :param poly: the geometry
+    :type poly: shapely.geometry.Polygon or shapely.geometry.LineString
+    :rtype: list of two-coordinate segments
+    '''         
+    if isinstance(poly,sg.Polygon):
+        exterior = list(poly.exterior.coords)
+        interiors = [list(interior.coords) for interior in poly.interiors]
+        segments = [exterior]+interiors
+        segments = [loop+loop[0:1] for loop in segments]
+        
+    elif isinstance(poly,sg.LineString):
+        segments = list(poly.coords)
+        
+    return segments
+
 def is_collection(item):
+    '''
+    determines whether the geometry defined by item contains multiple geometries
+    
+    :param item: the shapely geometry
+    :type item: class from shapely.geometry
+    :rtype: boolean
+    '''    
     collections = [
         shapely.geometry.MultiPolygon,
         shapely.geometry.GeometryCollection,
@@ -27,6 +53,16 @@ def is_collection(item):
     return any(iscollection)
 
 def extract_r(item,list_in = None):
+    '''
+    recursively extracts geometries from collections of geometries
+    
+    :param item: the shapely geometry
+    :type item: class from shapely.geometry
+    :param list_in: a list to add to
+    :type list_in: list
+    :rtype: boolean
+    '''    
+    
     list_in = list_in or []
     if is_collection(item):
         list_in.extend([item3 for item2 in item.geoms for item3 in extract_r(item2,list_in)])
@@ -35,6 +71,13 @@ def extract_r(item,list_in = None):
     return list_in
     
 def flatten(geoms):
+    '''
+    eliminate any collections of geometries by flattening all into a single list.
+    
+    :param geoms: the shapely geometries
+    :type geoms: list or iterable
+    :rtype: list
+    '''  
     geom = so.unary_union(geoms)
     entities = extract_r(geom)
 #    entities = [item for item in entities if any([isinstance(item,classitem) for classitem in [shapely.geometry.Polygon,shapely.geometry.LineString,shapely.geometry.Point]])]
@@ -42,15 +85,38 @@ def flatten(geoms):
     return entities   
     
 def from_shapely_to_layer(new_geoms):
+    '''
+    convert from shapely geometry to Layer class
+    
+    :param new_geoms: the shapely geometries
+    :type new_geoms: list or iterable
+    :rtype: Layer
+    '''  
     new_geoms = flatten(new_geoms)        
     new_layer = Layer(*new_geoms)
     return new_layer
     
 def from_layer_to_shapely(layer):
+    '''
+    convert from Layer class to shapely geometry
+    
+    :param layer: the layer instance
+    :type layer: Layer
+    :rtype: class from shapely.geometry
+    '''  
     geoms = so.unary_union(layer.geoms)
     return geoms
 
 def plot_poly(poly,color = None,edgecolor = None, facecolor =None):
+    '''
+    plot a shapely geometry
+    
+    :param poly: the layer instance
+    :type poly: class from shapely.geometry
+    :param poly: tuple of r,g,b,a scalars from 0 to 1
+    :type poly: tuple
+    '''  
+
     color = color or (1,0,0,.25)
     
     facecolor = facecolor or color
@@ -80,10 +146,24 @@ def plot_poly(poly,color = None,edgecolor = None, facecolor =None):
     plt.axis('equal')
     
 def check_loop(loop):
+    '''
+    remove the last element of loop if it is the same as the first
+    
+    :param loop: list of coordinates
+    :type loop: iterable of tuples
+    :rtype: iterable of tuples
+    '''      
     if loop[-1]==loop[0]:
         return loop[:-1]
         
 def triangulate_geom(geom):
+    '''
+    triangulate a shapely geometry
+    
+    :param geom: the geometry to triangulate
+    :type geom: shapely.Polygon
+    :rtype: array of points, array of triangle indeces
+    '''      
     import pypoly2tri
     from pypoly2tri.cdt import CDT
     import numpy
@@ -107,17 +187,58 @@ def triangulate_geom(geom):
     return points2,tris2
 
 def points_2d_to_3d(points_2d,z_val):
+    '''
+    convert a list of 2d points to a list of 3d points
+    
+    :param points_2d: the geometry to triangulate
+    :type points_2d: numpy.array
+    :param z_val: the padded z value
+    :type z_val: float
+    :rtype: numpy.array
+    '''      
+
     z = points_2d[:,0:1]*0+z_val
     points3 = numpy.c_[points_2d,z]
     return points3
 
 def extrude(points,tris,z_lower,z_upper):
+    '''
+    create 3d tetrahedra from 2d triangles
+    
+    :param points: array of 3d points
+    :type points: numpy.array
+    :param tris: the triangle coordinates
+    :type tris: numpy.array
+    :param z_lower: the lower z value
+    :type z_lower: float
+    :param z_upper: the upper z value
+    :type z_upper: float
+    :rtype: list of Tetrahedron
+    '''       
+    
     from idealab_tools.geometry.triangle import Triangle
     tris3 = [Triangle(*(points[tri])) for tri in tris]
     tets = [tet for tri in tris3 for tet in tri.extrude(z_lower,z_upper)]
     return tets
     
 def inertia_tensor(about_point,density,z_lower,z_upper,points,tris):
+    '''
+    create 3d inertia tensor from a 2d list of triangles
+    
+    :param about_point: the point about which to compute the inertia
+    :type about_point: 3d coordinate
+    :param density: the density of the material
+    :type density: float
+    :param z_lower: the lower z value
+    :type z_lower: float
+    :param z_upper: the upper z value
+    :type z_upper: float
+    :param points: array of 3d points
+    :type points: numpy.array
+    :param tris: the triangle coordinates
+    :type tris: numpy.array
+    :rtype: list of Tetrahedron
+    '''       
     import numpy
     tets = extrude(points,tris,z_lower,z_upper)
     Is = numpy.array([tet.I(density,about_point) for tet in tets])
@@ -125,24 +246,54 @@ def inertia_tensor(about_point,density,z_lower,z_upper,points,tris):
     return I
 
 class Layer(ClassAlgebra):
+    '''
+    The Layer class is essentially a list of 2d polygons which all exist on the same plane.
+    '''
     def __init__(self, *geoms):
+        '''
+        create a new class instance
+        
+        :param geoms: a list of shapely geometries contained by the layer
+        :type geoms: list of shapely.geometry classes
+        :rtype: Layer
+        '''   
         geoms = flatten(geoms)
         self.geoms = geoms
         self.id = id(self)
 
     @classmethod
     def new(cls,*geoms):
+        '''
+        create a new class instance
+        
+        :param geoms: a list of shapely geometries contained by the layer
+        :type geoms: list of shapely.geometry classes
+        :rtype: Layer
+        '''   
+        
         geoms = flatten(geoms)
         new = cls(*geoms)
         return new
 
     def copy(self,identical = True):
+        '''
+        creates a copy of the instance
+        
+        :param identical: whether to use the same id or not.
+        :type identical: boolean
+        :rtype: Layer
+        '''            
         new = type(self)(*[sw.loads(geom.to_wkt()) for geom in self.geoms])        
         if identical:        
             new.id = self.id
         return new
 
     def export_dict(self):
+        '''
+        converts the layer to a dict.
+        
+        :rtype: dict
+        '''
         d = {}
         d['geoms'] = [item.to_wkt() for item in self.geoms]
         d['id'] = self.id
@@ -150,11 +301,26 @@ class Layer(ClassAlgebra):
 
     @classmethod
     def import_dict(cls,d):
+        '''
+        converts a dict to a Layer instance
+        
+        :param d: the laminate in dict form
+        :type d: dict
+        :rtype: Laminate
+        '''        
+        
         new = cls(*[sw.loads(item) for item in d['geoms']])
         new.id = d['id']
         return new
 
     def plot(self,*args,**kwargs):
+        '''
+        plots the layer using matplotlib.
+        
+        :param new: whether to create a new figure
+        :type new: boolean
+        '''   
+        
         if 'new' in kwargs:
             new = kwargs.pop('new')
         else:
@@ -164,60 +330,154 @@ class Layer(ClassAlgebra):
         for geom in self.geoms:
             plot_poly(geom,*args,**kwargs)
 
-    def binary_operation(self,other,function_name):
+    def binary_operation(self,other,function_name,*args,**kwargs):
+        '''
+        performs a binary operation between self and other.
+        
+        :param function_name: the layer-based function to be performed
+        :type function_name: string
+        :param other: the layer-based function to be performed
+        :type other: Layer
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
+        :rtype: Layer
+        '''
+        
         a = from_layer_to_shapely(self)
         b = from_layer_to_shapely(other)
         function = getattr(a,function_name)
-        c = function(b)
+        c = function(b,*args,**kwargs)
         return from_shapely_to_layer(c)
 
     def union(self,other):
+        '''
+        returns the union between self and other.
+        
+        :param other: the other layer
+        :type other: Layer
+        :rtype: Layer
+        '''
         return self.binary_operation(other,'union')
 
     def difference(self,other):
+        '''
+        returns the difference between self and other.
+        
+        :param other: the other layer
+        :type other: Layer
+        :rtype: Layer
+        '''
         return self.binary_operation(other,'difference')
 
     def symmetric_difference(self,other):
+        '''
+        returns the symmetric difference between self and other.
+        
+        :param other: the other layer
+        :type other: Layer
+        :rtype: Layer
+        '''
         return self.binary_operation(other,'symmetric_difference')
 
     def intersection(self,other):
+        '''
+        returns the intersection between self and other.
+        
+        :param other: the other layer
+        :type other: Layer
+        :rtype: Layer
+        '''
         return self.binary_operation(other,'intersection')
     
     def buffer(self,value,resolution = None):
+        '''
+        dilate (or erode) the geometries in the layer
+        
+        :param value: the positive (or negative) radius of the dilation (or erosion)
+        :type value: float
+        :param resolution: the number of interpolanting vertices to use
+        :type resolution: int
+        :rtype: Layer
+        '''
         resolution = resolution or foldable_robotics.resolution
         return self.dilate(value,resolution)
 
     def dilate(self,value,resolution = None):
+        '''
+        dilate the geometries in the layer
+        
+        :param value: the radius of the dilation
+        :type value: float
+        :param resolution: the number of interpolanting vertices to use
+        :type resolution: int
+        :rtype: Layer
+        '''
         resolution = resolution or foldable_robotics.resolution
         geoms = from_layer_to_shapely(self)
         new_geoms = (geoms.buffer(value,resolution))
         return from_shapely_to_layer(new_geoms)
 
     def erode(self,value,resolution = None):
+        '''
+        erode the geometries in the layer
+        
+        :param value: the radius of the erotion
+        :type value: float
+        :param resolution: the number of interpolanting vertices to use
+        :type resolution: int
+        :rtype: Layer
+        '''        
         resolution = resolution or foldable_robotics.resolution
         return self.dilate(-value,resolution)
         
-    def translate(self,*args,**kwargs):
+    def translate(self,xoff=0.0, yoff=0.0, zoff=0.0):
+        '''
+        translate the layer
+        
+        :param xoff: the amount of x translation
+        :type xoff: float
+        :param yoff: the amount of y translation
+        :type yoff: float
+        :param zoff: the amount of z translation
+        :type zoff: float
+        :rtype: Layer
+        '''          
         geoms = from_layer_to_shapely(self)
-        new_geoms = sa.translate(geoms,*args,**kwargs)
+        new_geoms = sa.translate(geoms,xoff,yoff,zoff)
         return from_shapely_to_layer(new_geoms)
 
-    def scale(self,*args,**kwargs):
-        try:
-            kwargs['origin']
-        except KeyError:
-            kwargs['origin']=(0,0)
+    def scale(self, xfact=1.0, yfact=1.0, zfact=1.0, origin=(0,0)):
+        '''
+        scale the layer
+        
+        :param xfact: the amount of x scaling
+        :type xfact: float
+        :param yfact: the amount of y scaling
+        :type yfact: float
+        :param zfact: the amount of z scaling
+        :type zfact: float
+        :rtype: Layer
+        '''           
         geoms = from_layer_to_shapely(self)
-        new_geoms = sa.scale(geoms,*args,**kwargs)
+        new_geoms = sa.scale(geoms,xfact,yfact,zfact,origin)
         return from_shapely_to_layer(new_geoms)
 
-    def rotate(self,*args,**kwargs):
-        try:
-            kwargs['origin']
-        except KeyError:
-            kwargs['origin']=(0,0)
+    def rotate(self, angle, origin=(0,0), use_radians=False):
+        '''
+        rotate the layer
+        
+        :param angle: the amount of rotation
+        :type angle: float
+        :param origin: the origin to use in calculating the rotation
+        :type origin: string or tuple
+        :param use_radians: whether to use radians or degrees
+        :type use_radians: boolean
+        :rtype: Layer
+        '''          
         geoms = from_layer_to_shapely(self)
-        new_geoms = sa.rotate(geoms,*args,**kwargs)
+        new_geoms = sa.rotate(geoms,angle,origin,use_radians)
         return from_shapely_to_layer(new_geoms)
 
     def affine_transform(self,*args,**kwargs):
@@ -226,33 +486,49 @@ class Layer(ClassAlgebra):
         return from_shapely_to_layer(new_geoms)
 
     def export_dxf(self,name):
+        '''
+        export the layer to a dxf
+        
+        :param name: the filename to write
+        :type name: string
+        '''  
+        
         import ezdxf
         dwg = ezdxf.new('R2010')
         msp = dwg.modelspace()
         for geom in self.geoms:
-            segments = self.get_segments(geom)
+            segments = get_segments(geom)
             for segment in segments:
                 for c0,c1 in zip(segment[:-1],segment[1:]):
                     msp.add_line(c0,c1)
         dwg.saveas(name+'.dxf')
         
-    def get_segments(self,poly):
-        if isinstance(poly,sg.Polygon):
-            exterior = list(poly.exterior.coords)
-            interiors = [list(interior.coords) for interior in poly.interiors]
-            segments = [exterior]+interiors
-            segments = [loop+loop[0:1] for loop in segments]
-            
-        elif isinstance(poly,sg.LineString):
-            segments = list(poly.coords)
-            
-        return segments
+    def map_line_stretch(self,p1,p2,p3,p4):
+        '''
+        Transforms a layer or laminate by using the translation and rotation between two lines to compute the stretch, scale, and rotation. 
         
-    def map_line_stretch(self,*args,**kwargs):
+        :param self: input shape
+        :type self: Layer or Laminate
+        :param p1: point 1 of line 1 in (x,y) format
+        :type p1: tuple
+        :param p1: point 2 of line 1 in (x,y) format
+        :type p1: tuple
+        :param p1: point 1 of line 2 in (x,y) format
+        :type p1: tuple
+        :param p1: point 2 of line 2 in (x,y) format
+        :type p1: tuple
+        :rtype: Layer 
+        '''           
         import foldable_robotics.manufacturing
-        return foldable_robotics.manufacturing.map_line_stretch(self,*args,**kwargs)
+        return foldable_robotics.manufacturing.map_line_stretch(self,p1,p2,p3,p4)
     
     def triangulation(self):
+        '''
+        triangulate a layer
+        
+        :rtype: array of points, array of triangle indeces
+        '''      
+         
         points = []
         tris = []
         ii = 0

@@ -151,7 +151,7 @@ class Laminate(Iterable,ClassAlgebra):
         '''
         unions two laminates together.
         
-        :param other: the layer-based function to be performed
+        :param other: the other laminate
         :type other: Laminate
         :rtype: Laminate
         '''
@@ -161,7 +161,7 @@ class Laminate(Iterable,ClassAlgebra):
         '''
         takes the difference of self - other.
         
-        :param other: the layer-based function to be performed
+        :param other:the other laminate
         :type other: Laminate
         :rtype: Laminate
         '''
@@ -171,7 +171,7 @@ class Laminate(Iterable,ClassAlgebra):
         '''
         takes the symmetric difference of self and other.
         
-        :param other: the layer-based function to be performed
+        :param other: the other laminate
         :type other: Laminate
         :rtype: Laminate
         '''
@@ -181,7 +181,7 @@ class Laminate(Iterable,ClassAlgebra):
         '''
         takes the intersection of self and other.
         
-        :param other: the layer-based function to be performed
+        :param other: the other laminate
         :type other: Laminate
         :rtype: Laminate
         '''
