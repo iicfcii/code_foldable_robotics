@@ -18,6 +18,7 @@ import foldable_robotics.manufacturing
 from foldable_robotics.dynamics_info import DynamicsInfo,MaterialProperty,JointProps
 
 def make_five_layer_hinge(width = 1, height = 1):
+    '''makes a five layer hinge of width and height'''
         #create a layer named box
     box = Layer(sg.box(0,0,1,1))
     
@@ -38,9 +39,12 @@ def make_five_layer_hinge(width = 1, height = 1):
     return hinge
 #    plt.figure()
 #    hinge.plot()
-def make_text(text):
+def make_text(text,*args,**kwargs):
+    '''
+    makes a layer of text
+    '''
     import idealab_tools.text_to_polygons
-    p = idealab_tools.text_to_polygons.text_to_polygons(text)
+    p = idealab_tools.text_to_polygons.text_to_polygons(text,*args,**kwargs)
     layers = [Layer(sg.Polygon(item)) for item in p]
     l = Layer()
     for item in layers:

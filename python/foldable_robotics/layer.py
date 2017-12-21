@@ -485,6 +485,19 @@ class Layer(ClassAlgebra):
         new_geoms = sa.affine_transform(geoms,*args,**kwargs)
         return from_shapely_to_layer(new_geoms)
 
+    def simplify(self,tolerance):
+        '''
+        simplify the layer by reducing the number of coordinates. uses shapely's simplify function.
+        
+        :param tolerance: the length scale by which to simplify
+        :type tolerance: float
+        :rtype: Layer
+        '''      
+        geoms = foldable_robotics.layer.from_layer_to_shapely(self)
+        new_geoms = (geoms.simplify(tolerance))
+        return foldable_robotics.layer.from_shapely_to_layer(new_geoms)
+
+
     def export_dxf(self,name):
         '''
         export the layer to a dxf
@@ -543,7 +556,7 @@ class Layer(ClassAlgebra):
         return points,tris
     
     def mesh_items_inner(self,z_offset = 0,color = (1,0,0,1)):
-
+        '''inner loop for meshing the layer'''
         verts_outer = []
         colors_outer = []
         
@@ -562,12 +575,14 @@ class Layer(ClassAlgebra):
         return verts_outer,colors_outer
     
     def mesh_items(self,z_offset = 0,color = (1,0,0,1)):
+        '''Return a pyqtgraph.opengl.GLMeshItem for the layer'''
         import pyqtgraph.opengl as gl
         verts_outer,colors_outer = self.mesh_items_inner(z_offset,color)
         mi=gl.GLMeshItem(vertexes=verts_outer,vertexColors=colors_outer,smooth=False,shader='balloon',drawEdges=False)
         return mi
     
     def mass_props(self,material_property,bottom,top):
+        '''compute the mass properties of the layer'''
         area_i = 0
         mass_i=0
         volume_i=0
@@ -593,6 +608,7 @@ class Layer(ClassAlgebra):
         return area_i,volume_i,mass_i,centroid_i 
     
     def inertia(self,about_point,z_lower,material_property):
+        '''compute the inertia tensor for the layer'''
         I=numpy.zeros((3,3))
         z_upper = z_lower+material_property.thickness
 
@@ -603,25 +619,30 @@ class Layer(ClassAlgebra):
         return I
     
     def bounding_box_coords(self):
+        '''compute the lower left hand and upper right coordinates for computing a bounding box of the layer'''
         a = numpy.array([vertex for geom in self.geoms for vertex in geom.exterior.coords])
         box = [tuple(a.min(0)),tuple(a.max(0))]
         return box
 
     def bounding_box(self):
+        '''create a bounding box of the layer and return as a layer'''
         a,b = self.bounding_box_coords()
         p = sg.box(*a,*b)
         l = Layer(p)
         return l
         
     def exteriors(self):
+        '''return the exterior coordinates of all shapes in the layer'''
         a = [list(geom.exterior.coords) for geom in self.geoms]
         return a
 
     def interiors(self):
+        '''return the interior coordinates of all shapes in the layer'''
         a = [list(interior.coords) for geom in self.geoms for interior in geom.interiors]
         return a
 
     def extrude(self,z_lower,material_property):
+        '''create tetrahedra from the layer and return as a set of points and tetrahedra indeces'''
         z_upper = z_lower+material_property.thickness
         points, tris =self.triangulation()
         m = points.shape[0]
@@ -630,19 +651,17 @@ class Layer(ClassAlgebra):
         tris2 = numpy.r_[numpy.c_[tris[:,(0)]+m,tris[:,(1,0,2)]+m],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(2,)]+m,tris[:,(2,)]],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(1,2)]+m]]
         return points2,tris2
     
-    def simplify(self,tolerance):
-        geoms = foldable_robotics.layer.from_layer_to_shapely(self)
-        new_geoms = (geoms.simplify(tolerance))
-        return foldable_robotics.layer.from_shapely_to_layer(new_geoms)
 
     
         
 def layer_representer(dumper, v):
+    '''function for representing layer as a dictionary for use by yaml'''
     d = v.export_dict()
     output = dumper.represent_mapping(u'!Layer',d)
     return output
 
 def layer_constructor(loader, node):
+    '''function for constructing layer from a dictionary for use by yaml'''
     item = loader.construct_mapping(node)
     new = Layer.import_dict(item)
     return new
