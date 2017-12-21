@@ -113,10 +113,10 @@ class Laminate(Iterable,ClassAlgebra):
         :type function_name: string
         :param other: the layer-based function to be performed
         :type other: Laminate
-        :param *args: tuple of arguments passed to subfunction
-        :type *args: tuple
-        :param *kwargs: keyword arguments passed to subfunction
-        :type *kwargs: dict
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
         :rtype: Laminate
         '''
 
@@ -135,18 +135,18 @@ class Laminate(Iterable,ClassAlgebra):
         
         :param function_name: the layer-based function to be performed
         :type function_name: string
-        :param *args: tuple of arguments passed to subfunction
-        :type *args: tuple
-        :param *kwargs: keyword arguments passed to subfunction
-        :type *kwargs: dict
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
         :rtype: Laminate
         '''
-            layers = []
-            for layer1 in self.layers:
-                function = getattr(layer1,function_name)
-                layers.append(function(*args,**kwargs))
-            return type(self)(*layers)
-            
+        layers = []
+        for layer1 in self.layers:
+            function = getattr(layer1,function_name)
+            layers.append(function(*args,**kwargs))
+        return type(self)(*layers)
+        
     def union(self,other):
         '''
         unions two laminates together.
@@ -187,15 +187,15 @@ class Laminate(Iterable,ClassAlgebra):
         '''
         return self.binary_operation('intersection',other)
     
-    def buffer(self,*args,**kwargs):
+    def buffer(self,args,**kwargs):
         '''
         dilate or erode the laminate based on the arguments sent.
         see the corresponding layer function for arguments and keyword-arguments
         
-        :param *args: tuple of arguments passed to subfunction
-        :type *args: tuple
-        :param *kwargs: keyword arguments passed to subfunction
-        :type *kwargs: dict
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
         :rtype: Laminate
         '''
         return self.unary_operation('buffer',*args,**kwargs)
@@ -205,10 +205,10 @@ class Laminate(Iterable,ClassAlgebra):
         dilate the laminate.
         see the corresponding layer function for arguments and keyword-arguments
         
-        :param *args: tuple of arguments passed to subfunction
-        :type *args: tuple
-        :param *kwargs: keyword arguments passed to subfunction
-        :type *kwargs: dict
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
         :rtype: Laminate
         '''
         return self.unary_operation('dilate',*args,**kwargs)
@@ -218,10 +218,10 @@ class Laminate(Iterable,ClassAlgebra):
         erode the laminate.
         see the corresponding layer function for arguments and keyword-arguments
         
-        :param *args: tuple of arguments passed to subfunction
-        :type *args: tuple
-        :param *kwargs: keyword arguments passed to subfunction
-        :type *kwargs: dict
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
         :rtype: Laminate
         '''
         return self.unary_operation('erode',*args,**kwargs)
@@ -231,10 +231,10 @@ class Laminate(Iterable,ClassAlgebra):
         translate the laminate.
         see the corresponding layer function for arguments and keyword-arguments
         
-        :param *args: tuple of arguments passed to subfunction
-        :type *args: tuple
-        :param *kwargs: keyword arguments passed to subfunction
-        :type *kwargs: dict
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
         :rtype: Laminate
         '''
         return self.unary_operation('translate',*args,**kwargs)
@@ -244,10 +244,10 @@ class Laminate(Iterable,ClassAlgebra):
         rotate the laminate.
         see the corresponding layer function for arguments and keyword-arguments
         
-        :param *args: tuple of arguments passed to subfunction
-        :type *args: tuple
-        :param *kwargs: keyword arguments passed to subfunction
-        :type *kwargs: dict
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
         :rtype: Laminate
         '''
         return self.unary_operation('rotate',*args,**kwargs)
@@ -257,10 +257,10 @@ class Laminate(Iterable,ClassAlgebra):
         scale the laminate.
         see the corresponding layer function for arguments and keyword-arguments
         
-        :param *args: tuple of arguments passed to subfunction
-        :type *args: tuple
-        :param *kwargs: keyword arguments passed to subfunction
-        :type *kwargs: dict
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
         :rtype: Laminate
         '''
         return self.unary_operation('scale',*args,**kwargs)
@@ -270,10 +270,10 @@ class Laminate(Iterable,ClassAlgebra):
         affine transform the laminate.
         see the corresponding layer function for arguments and keyword-arguments
         
-        :param *args: tuple of arguments passed to subfunction
-        :type *args: tuple
-        :param *kwargs: keyword arguments passed to subfunction
-        :type *kwargs: dict
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
         :rtype: Laminate
         '''
         return self.unary_operation('affine_transform',*args,**kwargs)
@@ -283,10 +283,10 @@ class Laminate(Iterable,ClassAlgebra):
         simplify the laminate.
         see the corresponding layer function for arguments and keyword-arguments
         
-        :param *args: tuple of arguments passed to subfunction
-        :type *args: tuple
-        :param *kwargs: keyword arguments passed to subfunction
-        :type *kwargs: dict
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
         :rtype: Laminate
         '''
         return self.unary_operation('simplify',*args,**kwargs)
@@ -296,10 +296,10 @@ class Laminate(Iterable,ClassAlgebra):
         transform the laminate based on two lines.
         see foldable_robotics.manufacturing.map_line_stretch for arguments and keyword-arguments
         
-        :param *args: tuple of arguments passed to subfunction
-        :type *args: tuple
-        :param *kwargs: keyword arguments passed to subfunction
-        :type *kwargs: dict
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
         :rtype: Laminate
         '''
         import foldable_robotics.manufacturing
