@@ -317,8 +317,8 @@ def map_line_stretch(self,*args,**kwargs):
 
     x_axis = numpy.array([1,0])
 
-    pre_rotate = geometry.planar_angle(x_axis,p2-p1)
-    post_rotate = geometry.planar_angle(x_axis,p4-p3)
+    pre_rotate = geometry.angle(x_axis,p2-p1)
+    post_rotate = geometry.angle(x_axis,p4-p3)
     scale = geometry.length(p4-p3)/geometry.length(p2-p1)
 
     laminate = self.translate(*(-p1))

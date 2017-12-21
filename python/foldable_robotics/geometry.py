@@ -8,40 +8,33 @@ import numpy
 import math
 
 def length(v1):
+    '''
+    finds the length of a vector
+    
+    :param v1: the vector
+    :type v1: tuple or list of floats
+    :rtype: float
+    '''
     v1 = numpy.array(v1)
     l = (v1.dot(v1))**.5
     return l
     
-def planar_angle(v1,v2):
-    v1 = numpy.array(v1)
-    v2 = numpy.array(v2)
-    sint = numpy.cross(v1,v2)
+def angle(v1,v2):
+    '''
+    finds the angle between two vectors
+    
+    :param v1: the first vector
+    :type v1: tuple or list of floats
+    :param v2: the second vector
+    :type v2: tuple or list of floats
+    :rtype: float
+    '''
+    v1 = numpy.array(v1).flatten()
+    v2 = numpy.array(v2).flatten()
+    sint = numpy.cross(v1,v2).flatten()
+    if len(sint)>1:
+        sint = length(sint)
     cost = numpy.dot(v1,v2)
     t = math.atan2(sint,cost)
     return t
 
-def interior_angle(v1,v2):
-    v1 = numpy.array(v1)
-    v2 = numpy.array(v2)
-    sint = numpy.cross(v1,v2)
-    sint = length(sint)
-    cost = numpy.dot(v1,v2)
-    t = math.atan2(sint,cost)
-    return t
-    
-def map_line(p1,p2,p11,p22):
-    p1 = numpy.array(p1)
-    p2 = numpy.array(p2)
-    p11 = numpy.array(p11)
-    p22 = numpy.array(p22)
-    
-    v1 = p2-p1
-    v2 = p22-p11
-    
-    l1=length(v1)
-    l2=length(v2)
-
-    scale = l2/l1
-    rotate = angle(v1,v2)
-    translate = p11-p1
-    return translate,rotate,scale
