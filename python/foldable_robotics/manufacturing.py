@@ -232,9 +232,9 @@ def split_laminate_by_geoms(laminate):
    :type laminate: Laminate
    :rtype: list of Laminates
     """         
-    l = len(remain)
+    l = len(laminate)
     all_laminates = []
-    for ii,layerfrom in enumerate(remain):
+    for ii,layerfrom in enumerate(laminate):
         for jj,geom in enumerate(layerfrom.geoms):
             split_layers = [Layer()]*ii+[Layer(geom)]+[Layer()]*(l-1-ii)
             split= Laminate(*split_layers)
