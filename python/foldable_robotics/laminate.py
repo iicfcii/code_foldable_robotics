@@ -187,7 +187,7 @@ class Laminate(Iterable,ClassAlgebra):
         '''
         return self.binary_operation('intersection',other)
     
-    def buffer(self,args,**kwargs):
+    def buffer(self,*args,**kwargs):
         '''
         dilate or erode the laminate based on the arguments sent.
         see the corresponding layer function for arguments and keyword-arguments
