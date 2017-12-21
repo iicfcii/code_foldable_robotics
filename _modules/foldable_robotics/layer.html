@@ -1,0 +1,772 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>foldable_robotics.layer &#8212; foldable_robotics  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for foldable_robotics.layer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Written by Daniel M. Aukes and CONTRIBUTORS</span>
+<span class="sd">Email: danaukes&lt;at&gt;asu.edu.</span>
+<span class="sd">Please see LICENSE for full license.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">#import shapely.geometry as sg</span>
+<span class="c1">#from .shape import Base</span>
+<span class="c1">#from . import shape</span>
+<span class="kn">import</span> <span class="nn">shapely.geometry</span>
+<span class="kn">import</span> <span class="nn">shapely.geometry</span> <span class="k">as</span> <span class="nn">sg</span>
+<span class="kn">import</span> <span class="nn">shapely.affinity</span> <span class="k">as</span> <span class="nn">sa</span>
+<span class="kn">from</span> <span class="nn">.class_algebra</span> <span class="k">import</span> <span class="n">ClassAlgebra</span>
+<span class="kn">import</span> <span class="nn">shapely.ops</span> <span class="k">as</span> <span class="nn">so</span>
+<span class="kn">import</span> <span class="nn">shapely.wkt</span> <span class="k">as</span> <span class="nn">sw</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">foldable_robotics</span>
+
+<div class="viewcode-block" id="get_segments"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.get_segments">[docs]</a><span class="k">def</span> <span class="nf">get_segments</span><span class="p">(</span><span class="n">poly</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    get the line segments of a polygon or linestring</span>
+<span class="sd">    </span>
+<span class="sd">    :param poly: the geometry</span>
+<span class="sd">    :type poly: shapely.geometry.Polygon or shapely.geometry.LineString</span>
+<span class="sd">    :rtype: list of two-coordinate segments</span>
+<span class="sd">    &#39;&#39;&#39;</span>         
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span><span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">):</span>
+        <span class="n">exterior</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">poly</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+        <span class="n">interiors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">interior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span> <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="n">poly</span><span class="o">.</span><span class="n">interiors</span><span class="p">]</span>
+        <span class="n">segments</span> <span class="o">=</span> <span class="p">[</span><span class="n">exterior</span><span class="p">]</span><span class="o">+</span><span class="n">interiors</span>
+        <span class="n">segments</span> <span class="o">=</span> <span class="p">[</span><span class="n">loop</span><span class="o">+</span><span class="n">loop</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">loop</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">]</span>
+        
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span><span class="n">sg</span><span class="o">.</span><span class="n">LineString</span><span class="p">):</span>
+        <span class="n">segments</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">poly</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">segments</span></div>
+
+<div class="viewcode-block" id="is_collection"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.is_collection">[docs]</a><span class="k">def</span> <span class="nf">is_collection</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    determines whether the geometry defined by item contains multiple geometries</span>
+<span class="sd">    </span>
+<span class="sd">    :param item: the shapely geometry</span>
+<span class="sd">    :type item: class from shapely.geometry</span>
+<span class="sd">    :rtype: boolean</span>
+<span class="sd">    &#39;&#39;&#39;</span>    
+    <span class="n">collections</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">shapely</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">MultiPolygon</span><span class="p">,</span>
+        <span class="n">shapely</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">GeometryCollection</span><span class="p">,</span>
+        <span class="n">shapely</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">MultiLineString</span><span class="p">,</span>
+        <span class="n">shapely</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">MultiPoint</span><span class="p">]</span>
+    <span class="n">iscollection</span> <span class="o">=</span> <span class="p">[</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span> <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">collections</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">iscollection</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="extract_r"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.extract_r">[docs]</a><span class="k">def</span> <span class="nf">extract_r</span><span class="p">(</span><span class="n">item</span><span class="p">,</span><span class="n">list_in</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    recursively extracts geometries from collections of geometries</span>
+<span class="sd">    </span>
+<span class="sd">    :param item: the shapely geometry</span>
+<span class="sd">    :type item: class from shapely.geometry</span>
+<span class="sd">    :param list_in: a list to add to</span>
+<span class="sd">    :type list_in: list</span>
+<span class="sd">    :rtype: boolean</span>
+<span class="sd">    &#39;&#39;&#39;</span>    
+    
+    <span class="n">list_in</span> <span class="o">=</span> <span class="n">list_in</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">is_collection</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+        <span class="n">list_in</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">item3</span> <span class="k">for</span> <span class="n">item2</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">geoms</span> <span class="k">for</span> <span class="n">item3</span> <span class="ow">in</span> <span class="n">extract_r</span><span class="p">(</span><span class="n">item2</span><span class="p">,</span><span class="n">list_in</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">list_in</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">list_in</span></div>
+    
+<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">geoms</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    eliminate any collections of geometries by flattening all into a single list.</span>
+<span class="sd">    </span>
+<span class="sd">    :param geoms: the shapely geometries</span>
+<span class="sd">    :type geoms: list or iterable</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &#39;&#39;&#39;</span>  
+    <span class="n">geom</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">unary_union</span><span class="p">(</span><span class="n">geoms</span><span class="p">)</span>
+    <span class="n">entities</span> <span class="o">=</span> <span class="n">extract_r</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
+<span class="c1">#    entities = [item for item in entities if any([isinstance(item,classitem) for classitem in [shapely.geometry.Polygon,shapely.geometry.LineString,shapely.geometry.Point]])]</span>
+<span class="c1">#    entities = [item for item in entities if not item.is_empty]</span>
+    <span class="k">return</span> <span class="n">entities</span>   </div>
+    
+<div class="viewcode-block" id="from_shapely_to_layer"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.from_shapely_to_layer">[docs]</a><span class="k">def</span> <span class="nf">from_shapely_to_layer</span><span class="p">(</span><span class="n">new_geoms</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    convert from shapely geometry to Layer class</span>
+<span class="sd">    </span>
+<span class="sd">    :param new_geoms: the shapely geometries</span>
+<span class="sd">    :type new_geoms: list or iterable</span>
+<span class="sd">    :rtype: Layer</span>
+<span class="sd">    &#39;&#39;&#39;</span>  
+    <span class="n">new_geoms</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">new_geoms</span><span class="p">)</span>        
+    <span class="n">new_layer</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span><span class="o">*</span><span class="n">new_geoms</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_layer</span></div>
+    
+<div class="viewcode-block" id="from_layer_to_shapely"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.from_layer_to_shapely">[docs]</a><span class="k">def</span> <span class="nf">from_layer_to_shapely</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    convert from Layer class to shapely geometry</span>
+<span class="sd">    </span>
+<span class="sd">    :param layer: the layer instance</span>
+<span class="sd">    :type layer: Layer</span>
+<span class="sd">    :rtype: class from shapely.geometry</span>
+<span class="sd">    &#39;&#39;&#39;</span>  
+    <span class="n">geoms</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">unary_union</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">geoms</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">geoms</span></div>
+
+<div class="viewcode-block" id="plot_poly"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.plot_poly">[docs]</a><span class="k">def</span> <span class="nf">plot_poly</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">edgecolor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">facecolor</span> <span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    plot a shapely geometry</span>
+<span class="sd">    </span>
+<span class="sd">    :param poly: the layer instance</span>
+<span class="sd">    :type poly: class from shapely.geometry</span>
+<span class="sd">    :param poly: tuple of r,g,b,a scalars from 0 to 1</span>
+<span class="sd">    :type poly: tuple</span>
+<span class="sd">    &#39;&#39;&#39;</span>  
+
+    <span class="n">color</span> <span class="o">=</span> <span class="n">color</span> <span class="ow">or</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">.</span><span class="mi">25</span><span class="p">)</span>
+    
+    <span class="n">facecolor</span> <span class="o">=</span> <span class="n">facecolor</span> <span class="ow">or</span> <span class="n">color</span>
+    <span class="n">edgecolor</span> <span class="o">=</span> <span class="n">edgecolor</span> <span class="ow">or</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">color</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span><span class="o">+</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    
+    <span class="kn">import</span> <span class="nn">numpy</span>
+    <span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="k">import</span> <span class="n">PathPatch</span>
+    <span class="kn">from</span> <span class="nn">matplotlib.path</span> <span class="k">import</span> <span class="n">Path</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">vertices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">codes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span><span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">):</span>
+        <span class="n">exterior</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">poly</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+        <span class="n">interiors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">interior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span> <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="n">poly</span><span class="o">.</span><span class="n">interiors</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="n">exterior</span><span class="p">]</span><span class="o">+</span><span class="n">interiors</span><span class="p">:</span>
+            <span class="n">vertices</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">item</span><span class="o">+</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)])</span>
+            <span class="n">codes</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">Path</span><span class="o">.</span><span class="n">MOVETO</span><span class="p">]</span><span class="o">+</span><span class="p">([</span><span class="n">Path</span><span class="o">.</span><span class="n">LINETO</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">+</span><span class="p">[</span><span class="n">Path</span><span class="o">.</span><span class="n">CLOSEPOLY</span><span class="p">])</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span><span class="n">codes</span><span class="p">)</span>
+        <span class="n">patch</span> <span class="o">=</span> <span class="n">PathPatch</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">facecolor</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span><span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">)</span>        
+        <span class="n">axes</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patch</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span><span class="n">sg</span><span class="o">.</span><span class="n">LineString</span><span class="p">):</span>
+        <span class="n">exterior</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">poly</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">exterior</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">exterior</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="o">.</span><span class="mi">5</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="check_loop"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.check_loop">[docs]</a><span class="k">def</span> <span class="nf">check_loop</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    remove the last element of loop if it is the same as the first</span>
+<span class="sd">    </span>
+<span class="sd">    :param loop: list of coordinates</span>
+<span class="sd">    :type loop: iterable of tuples</span>
+<span class="sd">    :rtype: iterable of tuples</span>
+<span class="sd">    &#39;&#39;&#39;</span>      
+    <span class="k">if</span> <span class="n">loop</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">loop</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">loop</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+        
+<div class="viewcode-block" id="triangulate_geom"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.triangulate_geom">[docs]</a><span class="k">def</span> <span class="nf">triangulate_geom</span><span class="p">(</span><span class="n">geom</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    triangulate a shapely geometry</span>
+<span class="sd">    </span>
+<span class="sd">    :param geom: the geometry to triangulate</span>
+<span class="sd">    :type geom: shapely.Polygon</span>
+<span class="sd">    :rtype: array of points, array of triangle indeces</span>
+<span class="sd">    &#39;&#39;&#39;</span>      
+    <span class="kn">import</span> <span class="nn">pypoly2tri</span>
+    <span class="kn">from</span> <span class="nn">pypoly2tri.cdt</span> <span class="k">import</span> <span class="n">CDT</span>
+    <span class="kn">import</span> <span class="nn">numpy</span>
+    <span class="n">exterior</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+    <span class="n">exterior</span> <span class="o">=</span> <span class="n">check_loop</span><span class="p">(</span><span class="n">exterior</span><span class="p">)</span>
+    <span class="n">exterior2</span> <span class="o">=</span> <span class="p">[</span><span class="n">pypoly2tri</span><span class="o">.</span><span class="n">shapes</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="o">*</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">exterior</span><span class="p">]</span>
+    <span class="n">cdt</span> <span class="o">=</span> <span class="n">CDT</span><span class="p">(</span><span class="n">exterior2</span><span class="p">)</span>
+    <span class="n">interiors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">interiors</span><span class="p">:</span>
+        <span class="n">interior</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">interior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+        <span class="n">interior</span> <span class="o">=</span> <span class="n">check_loop</span><span class="p">(</span><span class="n">interior</span><span class="p">)</span>
+        <span class="n">interiors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interior</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="n">interiors</span><span class="p">:</span>
+        <span class="n">interior2</span> <span class="o">=</span> <span class="p">[</span><span class="n">pypoly2tri</span><span class="o">.</span><span class="n">shapes</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="o">*</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">interior</span><span class="p">]</span>
+        <span class="n">cdt</span><span class="o">.</span><span class="n">AddHole</span><span class="p">(</span><span class="n">interior2</span><span class="p">)</span>
+    <span class="n">cdt</span><span class="o">.</span><span class="n">Triangulate</span><span class="p">()</span>
+    <span class="n">tris</span> <span class="o">=</span><span class="n">cdt</span><span class="o">.</span><span class="n">GetTriangles</span><span class="p">()</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">GetPoints</span><span class="p">()</span>
+    <span class="n">points2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">item</span><span class="o">.</span><span class="n">toTuple</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">points</span><span class="p">])</span>
+    <span class="n">tris2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">points</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">point</span><span class="p">)</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">tri</span><span class="o">.</span><span class="n">points_</span><span class="p">]</span> <span class="k">for</span> <span class="n">tri</span> <span class="ow">in</span> <span class="n">tris</span><span class="p">],</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">points2</span><span class="p">,</span><span class="n">tris2</span></div>
+
+<div class="viewcode-block" id="points_2d_to_3d"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.points_2d_to_3d">[docs]</a><span class="k">def</span> <span class="nf">points_2d_to_3d</span><span class="p">(</span><span class="n">points_2d</span><span class="p">,</span><span class="n">z_val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    convert a list of 2d points to a list of 3d points</span>
+<span class="sd">    </span>
+<span class="sd">    :param points_2d: the geometry to triangulate</span>
+<span class="sd">    :type points_2d: numpy.array</span>
+<span class="sd">    :param z_val: the padded z value</span>
+<span class="sd">    :type z_val: float</span>
+<span class="sd">    :rtype: numpy.array</span>
+<span class="sd">    &#39;&#39;&#39;</span>      
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">points_2d</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">0</span><span class="o">+</span><span class="n">z_val</span>
+    <span class="n">points3</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">points_2d</span><span class="p">,</span><span class="n">z</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">points3</span></div>
+
+<div class="viewcode-block" id="extrude"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.extrude">[docs]</a><span class="k">def</span> <span class="nf">extrude</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="n">tris</span><span class="p">,</span><span class="n">z_lower</span><span class="p">,</span><span class="n">z_upper</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    create 3d tetrahedra from 2d triangles</span>
+<span class="sd">    </span>
+<span class="sd">    :param points: array of 3d points</span>
+<span class="sd">    :type points: numpy.array</span>
+<span class="sd">    :param tris: the triangle coordinates</span>
+<span class="sd">    :type tris: numpy.array</span>
+<span class="sd">    :param z_lower: the lower z value</span>
+<span class="sd">    :type z_lower: float</span>
+<span class="sd">    :param z_upper: the upper z value</span>
+<span class="sd">    :type z_upper: float</span>
+<span class="sd">    :rtype: list of Tetrahedron</span>
+<span class="sd">    &#39;&#39;&#39;</span>       
+    
+    <span class="kn">from</span> <span class="nn">idealab_tools.geometry.triangle</span> <span class="k">import</span> <span class="n">Triangle</span>
+    <span class="n">tris3</span> <span class="o">=</span> <span class="p">[</span><span class="n">Triangle</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">tri</span><span class="p">]))</span> <span class="k">for</span> <span class="n">tri</span> <span class="ow">in</span> <span class="n">tris</span><span class="p">]</span>
+    <span class="n">tets</span> <span class="o">=</span> <span class="p">[</span><span class="n">tet</span> <span class="k">for</span> <span class="n">tri</span> <span class="ow">in</span> <span class="n">tris3</span> <span class="k">for</span> <span class="n">tet</span> <span class="ow">in</span> <span class="n">tri</span><span class="o">.</span><span class="n">extrude</span><span class="p">(</span><span class="n">z_lower</span><span class="p">,</span><span class="n">z_upper</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">tets</span></div>
+    
+<div class="viewcode-block" id="inertia_tensor"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.inertia_tensor">[docs]</a><span class="k">def</span> <span class="nf">inertia_tensor</span><span class="p">(</span><span class="n">about_point</span><span class="p">,</span><span class="n">density</span><span class="p">,</span><span class="n">z_lower</span><span class="p">,</span><span class="n">z_upper</span><span class="p">,</span><span class="n">points</span><span class="p">,</span><span class="n">tris</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    create 3d inertia tensor from a 2d list of triangles</span>
+<span class="sd">    </span>
+<span class="sd">    :param about_point: the point about which to compute the inertia</span>
+<span class="sd">    :type about_point: 3d coordinate</span>
+<span class="sd">    :param density: the density of the material</span>
+<span class="sd">    :type density: float</span>
+<span class="sd">    :param z_lower: the lower z value</span>
+<span class="sd">    :type z_lower: float</span>
+<span class="sd">    :param z_upper: the upper z value</span>
+<span class="sd">    :type z_upper: float</span>
+<span class="sd">    :param points: array of 3d points</span>
+<span class="sd">    :type points: numpy.array</span>
+<span class="sd">    :param tris: the triangle coordinates</span>
+<span class="sd">    :type tris: numpy.array</span>
+<span class="sd">    :rtype: list of Tetrahedron</span>
+<span class="sd">    &#39;&#39;&#39;</span>       
+    <span class="kn">import</span> <span class="nn">numpy</span>
+    <span class="n">tets</span> <span class="o">=</span> <span class="n">extrude</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="n">tris</span><span class="p">,</span><span class="n">z_lower</span><span class="p">,</span><span class="n">z_upper</span><span class="p">)</span>
+    <span class="n">Is</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">tet</span><span class="o">.</span><span class="n">I</span><span class="p">(</span><span class="n">density</span><span class="p">,</span><span class="n">about_point</span><span class="p">)</span> <span class="k">for</span> <span class="n">tet</span> <span class="ow">in</span> <span class="n">tets</span><span class="p">])</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="n">Is</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">I</span></div>
+
+<div class="viewcode-block" id="Layer"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer">[docs]</a><span class="k">class</span> <span class="nc">Layer</span><span class="p">(</span><span class="n">ClassAlgebra</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The Layer class is essentially a list of 2d polygons which all exist on the same plane.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">geoms</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        create a new class instance</span>
+<span class="sd">        </span>
+<span class="sd">        :param geoms: a list of shapely geometries contained by the layer</span>
+<span class="sd">        :type geoms: list of shapely.geometry classes</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>   
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">geoms</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span> <span class="o">=</span> <span class="n">geoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Layer.new"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="o">*</span><span class="n">geoms</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        create a new class instance</span>
+<span class="sd">        </span>
+<span class="sd">        :param geoms: a list of shapely geometries contained by the layer</span>
+<span class="sd">        :type geoms: list of shapely.geometry classes</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>   
+        
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">geoms</span><span class="p">)</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">geoms</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+<div class="viewcode-block" id="Layer.copy"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">identical</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        creates a copy of the instance</span>
+<span class="sd">        </span>
+<span class="sd">        :param identical: whether to use the same id or not.</span>
+<span class="sd">        :type identical: boolean</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>            
+        <span class="n">new</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="o">*</span><span class="p">[</span><span class="n">sw</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">to_wkt</span><span class="p">())</span> <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span><span class="p">])</span>        
+        <span class="k">if</span> <span class="n">identical</span><span class="p">:</span>        
+            <span class="n">new</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+<div class="viewcode-block" id="Layer.export_dict"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.export_dict">[docs]</a>    <span class="k">def</span> <span class="nf">export_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        converts the layer to a dict.</span>
+<span class="sd">        </span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;geoms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">to_wkt</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span><span class="p">]</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Layer.import_dict"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.import_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">import_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">d</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        converts a dict to a Layer instance</span>
+<span class="sd">        </span>
+<span class="sd">        :param d: the laminate in dict form</span>
+<span class="sd">        :type d: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>        
+        
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">sw</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;geoms&#39;</span><span class="p">]])</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+<div class="viewcode-block" id="Layer.plot"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        plots the layer using matplotlib.</span>
+<span class="sd">        </span>
+<span class="sd">        :param new: whether to create a new figure</span>
+<span class="sd">        :type new: boolean</span>
+<span class="sd">        &#39;&#39;&#39;</span>   
+        
+        <span class="k">if</span> <span class="s1">&#39;new&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;new&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">new</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+            <span class="n">plot_poly</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.binary_operation"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.binary_operation">[docs]</a>    <span class="k">def</span> <span class="nf">binary_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="n">function_name</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        performs a binary operation between self and other.</span>
+<span class="sd">        </span>
+<span class="sd">        :param function_name: the layer-based function to be performed</span>
+<span class="sd">        :type function_name: string</span>
+<span class="sd">        :param other: the layer-based function to be performed</span>
+<span class="sd">        :type other: Layer</span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="n">a</span> <span class="o">=</span> <span class="n">from_layer_to_shapely</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">from_layer_to_shapely</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">function</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">function_name</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">from_shapely_to_layer</span><span class="p">(</span><span class="n">c</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.union"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.union">[docs]</a>    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        returns the union between self and other.</span>
+<span class="sd">        </span>
+<span class="sd">        :param other: the other layer</span>
+<span class="sd">        :type other: Layer</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="s1">&#39;union&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.difference"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.difference">[docs]</a>    <span class="k">def</span> <span class="nf">difference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        returns the difference between self and other.</span>
+<span class="sd">        </span>
+<span class="sd">        :param other: the other layer</span>
+<span class="sd">        :type other: Layer</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.symmetric_difference"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.symmetric_difference">[docs]</a>    <span class="k">def</span> <span class="nf">symmetric_difference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        returns the symmetric difference between self and other.</span>
+<span class="sd">        </span>
+<span class="sd">        :param other: the other layer</span>
+<span class="sd">        :type other: Layer</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="s1">&#39;symmetric_difference&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.intersection"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.intersection">[docs]</a>    <span class="k">def</span> <span class="nf">intersection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        returns the intersection between self and other.</span>
+<span class="sd">        </span>
+<span class="sd">        :param other: the other layer</span>
+<span class="sd">        :type other: Layer</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="s1">&#39;intersection&#39;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="Layer.buffer"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.buffer">[docs]</a>    <span class="k">def</span> <span class="nf">buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">resolution</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        dilate (or erode) the geometries in the layer</span>
+<span class="sd">        </span>
+<span class="sd">        :param value: the positive (or negative) radius of the dilation (or erosion)</span>
+<span class="sd">        :type value: float</span>
+<span class="sd">        :param resolution: the number of interpolanting vertices to use</span>
+<span class="sd">        :type resolution: int</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span> <span class="ow">or</span> <span class="n">foldable_robotics</span><span class="o">.</span><span class="n">resolution</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dilate</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.dilate"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.dilate">[docs]</a>    <span class="k">def</span> <span class="nf">dilate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">resolution</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        dilate the geometries in the layer</span>
+<span class="sd">        </span>
+<span class="sd">        :param value: the radius of the dilation</span>
+<span class="sd">        :type value: float</span>
+<span class="sd">        :param resolution: the number of interpolanting vertices to use</span>
+<span class="sd">        :type resolution: int</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span> <span class="ow">or</span> <span class="n">foldable_robotics</span><span class="o">.</span><span class="n">resolution</span>
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">from_layer_to_shapely</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new_geoms</span> <span class="o">=</span> <span class="p">(</span><span class="n">geoms</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">resolution</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">from_shapely_to_layer</span><span class="p">(</span><span class="n">new_geoms</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.erode"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.erode">[docs]</a>    <span class="k">def</span> <span class="nf">erode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">resolution</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        erode the geometries in the layer</span>
+<span class="sd">        </span>
+<span class="sd">        :param value: the radius of the erotion</span>
+<span class="sd">        :type value: float</span>
+<span class="sd">        :param resolution: the number of interpolanting vertices to use</span>
+<span class="sd">        :type resolution: int</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>        
+        <span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span> <span class="ow">or</span> <span class="n">foldable_robotics</span><span class="o">.</span><span class="n">resolution</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dilate</span><span class="p">(</span><span class="o">-</span><span class="n">value</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="Layer.translate"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xoff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">yoff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">zoff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        translate the layer</span>
+<span class="sd">        </span>
+<span class="sd">        :param xoff: the amount of x translation</span>
+<span class="sd">        :type xoff: float</span>
+<span class="sd">        :param yoff: the amount of y translation</span>
+<span class="sd">        :type yoff: float</span>
+<span class="sd">        :param zoff: the amount of z translation</span>
+<span class="sd">        :type zoff: float</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>          
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">from_layer_to_shapely</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new_geoms</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">geoms</span><span class="p">,</span><span class="n">xoff</span><span class="p">,</span><span class="n">yoff</span><span class="p">,</span><span class="n">zoff</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">from_shapely_to_layer</span><span class="p">(</span><span class="n">new_geoms</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.scale"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xfact</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">yfact</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">zfact</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        scale the layer</span>
+<span class="sd">        </span>
+<span class="sd">        :param xfact: the amount of x scaling</span>
+<span class="sd">        :type xfact: float</span>
+<span class="sd">        :param yfact: the amount of y scaling</span>
+<span class="sd">        :type yfact: float</span>
+<span class="sd">        :param zfact: the amount of z scaling</span>
+<span class="sd">        :type zfact: float</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>           
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">from_layer_to_shapely</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new_geoms</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">geoms</span><span class="p">,</span><span class="n">xfact</span><span class="p">,</span><span class="n">yfact</span><span class="p">,</span><span class="n">zfact</span><span class="p">,</span><span class="n">origin</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">from_shapely_to_layer</span><span class="p">(</span><span class="n">new_geoms</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.rotate"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">use_radians</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        rotate the layer</span>
+<span class="sd">        </span>
+<span class="sd">        :param angle: the amount of rotation</span>
+<span class="sd">        :type angle: float</span>
+<span class="sd">        :param origin: the origin to use in calculating the rotation</span>
+<span class="sd">        :type origin: string or tuple</span>
+<span class="sd">        :param use_radians: whether to use radians or degrees</span>
+<span class="sd">        :type use_radians: boolean</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>          
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">from_layer_to_shapely</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new_geoms</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">geoms</span><span class="p">,</span><span class="n">angle</span><span class="p">,</span><span class="n">origin</span><span class="p">,</span><span class="n">use_radians</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">from_shapely_to_layer</span><span class="p">(</span><span class="n">new_geoms</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.affine_transform"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.affine_transform">[docs]</a>    <span class="k">def</span> <span class="nf">affine_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">from_layer_to_shapely</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new_geoms</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">affine_transform</span><span class="p">(</span><span class="n">geoms</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">from_shapely_to_layer</span><span class="p">(</span><span class="n">new_geoms</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.simplify"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.simplify">[docs]</a>    <span class="k">def</span> <span class="nf">simplify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tolerance</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        simplify the layer by reducing the number of coordinates. uses shapely&#39;s simplify function.</span>
+<span class="sd">        </span>
+<span class="sd">        :param tolerance: the length scale by which to simplify</span>
+<span class="sd">        :type tolerance: float</span>
+<span class="sd">        :rtype: Layer</span>
+<span class="sd">        &#39;&#39;&#39;</span>      
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">foldable_robotics</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">from_layer_to_shapely</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new_geoms</span> <span class="o">=</span> <span class="p">(</span><span class="n">geoms</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">tolerance</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">foldable_robotics</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">from_shapely_to_layer</span><span class="p">(</span><span class="n">new_geoms</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Layer.export_dxf"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.export_dxf">[docs]</a>    <span class="k">def</span> <span class="nf">export_dxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        export the layer to a dxf</span>
+<span class="sd">        </span>
+<span class="sd">        :param name: the filename to write</span>
+<span class="sd">        :type name: string</span>
+<span class="sd">        &#39;&#39;&#39;</span>  
+        
+        <span class="kn">import</span> <span class="nn">ezdxf</span>
+        <span class="n">dwg</span> <span class="o">=</span> <span class="n">ezdxf</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;R2010&#39;</span><span class="p">)</span>
+        <span class="n">msp</span> <span class="o">=</span> <span class="n">dwg</span><span class="o">.</span><span class="n">modelspace</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+            <span class="n">segments</span> <span class="o">=</span> <span class="n">get_segments</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">c0</span><span class="p">,</span><span class="n">c1</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">segment</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">segment</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                    <span class="n">msp</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">c0</span><span class="p">,</span><span class="n">c1</span><span class="p">)</span>
+        <span class="n">dwg</span><span class="o">.</span><span class="n">saveas</span><span class="p">(</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39;.dxf&#39;</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="Layer.map_line_stretch"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.map_line_stretch">[docs]</a>    <span class="k">def</span> <span class="nf">map_line_stretch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">,</span><span class="n">p3</span><span class="p">,</span><span class="n">p4</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Transforms a layer or laminate by using the translation and rotation between two lines to compute the stretch, scale, and rotation. </span>
+<span class="sd">        </span>
+<span class="sd">        :param self: input shape</span>
+<span class="sd">        :type self: Layer or Laminate</span>
+<span class="sd">        :param p1: point 1 of line 1 in (x,y) format</span>
+<span class="sd">        :type p1: tuple</span>
+<span class="sd">        :param p1: point 2 of line 1 in (x,y) format</span>
+<span class="sd">        :type p1: tuple</span>
+<span class="sd">        :param p1: point 1 of line 2 in (x,y) format</span>
+<span class="sd">        :type p1: tuple</span>
+<span class="sd">        :param p1: point 2 of line 2 in (x,y) format</span>
+<span class="sd">        :type p1: tuple</span>
+<span class="sd">        :rtype: Layer </span>
+<span class="sd">        &#39;&#39;&#39;</span>           
+        <span class="kn">import</span> <span class="nn">foldable_robotics.manufacturing</span>
+        <span class="k">return</span> <span class="n">foldable_robotics</span><span class="o">.</span><span class="n">manufacturing</span><span class="o">.</span><span class="n">map_line_stretch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">,</span><span class="n">p3</span><span class="p">,</span><span class="n">p4</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="Layer.triangulation"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.triangulation">[docs]</a>    <span class="k">def</span> <span class="nf">triangulation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        triangulate a layer</span>
+<span class="sd">        </span>
+<span class="sd">        :rtype: array of points, array of triangle indeces</span>
+<span class="sd">        &#39;&#39;&#39;</span>      
+         
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tris</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ii</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span><span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">):</span>
+                <span class="n">points2</span><span class="p">,</span><span class="n">tris2</span> <span class="o">=</span> <span class="n">triangulate_geom</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
+                <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">points2</span><span class="p">)</span>
+                <span class="n">tris</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tris2</span><span class="o">+</span><span class="n">ii</span><span class="p">)</span>
+                <span class="n">ii</span><span class="o">+=</span><span class="nb">len</span><span class="p">(</span><span class="n">points2</span><span class="p">)</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="n">tris</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">tris</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">points</span><span class="p">,</span><span class="n">tris</span></div>
+    
+<div class="viewcode-block" id="Layer.mesh_items_inner"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.mesh_items_inner">[docs]</a>    <span class="k">def</span> <span class="nf">mesh_items_inner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">z_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)):</span>
+        <span class="sd">&#39;&#39;&#39;inner loop for meshing the layer&#39;&#39;&#39;</span>
+        <span class="n">verts_outer</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">colors_outer</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span><span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">):</span>
+                
+                <span class="n">points2</span><span class="p">,</span><span class="n">tris2</span> <span class="o">=</span> <span class="n">triangulate_geom</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
+                <span class="n">points3</span> <span class="o">=</span> <span class="n">points_2d_to_3d</span><span class="p">(</span><span class="n">points2</span><span class="p">,</span><span class="n">z_offset</span><span class="p">)</span>
+                <span class="n">verts</span> <span class="o">=</span><span class="n">points3</span><span class="p">[</span><span class="n">tris2</span><span class="p">]</span>
+                <span class="n">verts_colors</span> <span class="o">=</span> <span class="p">[[</span><span class="n">color</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">tris2</span><span class="p">)</span>
+                <span class="n">verts_outer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">verts</span><span class="p">)</span>
+                <span class="n">colors_outer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">verts_colors</span><span class="p">)</span>
+        
+        <span class="n">verts_outer</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">verts_outer</span><span class="p">)</span>
+        <span class="n">colors_outer</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">colors_outer</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">verts_outer</span><span class="p">,</span><span class="n">colors_outer</span></div>
+    
+<div class="viewcode-block" id="Layer.mesh_items"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.mesh_items">[docs]</a>    <span class="k">def</span> <span class="nf">mesh_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">z_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)):</span>
+        <span class="sd">&#39;&#39;&#39;Return a pyqtgraph.opengl.GLMeshItem for the layer&#39;&#39;&#39;</span>
+        <span class="kn">import</span> <span class="nn">pyqtgraph.opengl</span> <span class="k">as</span> <span class="nn">gl</span>
+        <span class="n">verts_outer</span><span class="p">,</span><span class="n">colors_outer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_items_inner</span><span class="p">(</span><span class="n">z_offset</span><span class="p">,</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">mi</span><span class="o">=</span><span class="n">gl</span><span class="o">.</span><span class="n">GLMeshItem</span><span class="p">(</span><span class="n">vertexes</span><span class="o">=</span><span class="n">verts_outer</span><span class="p">,</span><span class="n">vertexColors</span><span class="o">=</span><span class="n">colors_outer</span><span class="p">,</span><span class="n">smooth</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">shader</span><span class="o">=</span><span class="s1">&#39;balloon&#39;</span><span class="p">,</span><span class="n">drawEdges</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mi</span></div>
+    
+<div class="viewcode-block" id="Layer.mass_props"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.mass_props">[docs]</a>    <span class="k">def</span> <span class="nf">mass_props</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">material_property</span><span class="p">,</span><span class="n">bottom</span><span class="p">,</span><span class="n">top</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;compute the mass properties of the layer&#39;&#39;&#39;</span>
+        <span class="n">area_i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">mass_i</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">volume_i</span><span class="o">=</span><span class="mi">0</span>
+        
+        <span class="n">centroid_x_i</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">centroid_y_i</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">centroid_z_i</span><span class="o">=</span><span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+            <span class="n">area_i</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">area</span>
+            <span class="n">volume_ii</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">area</span><span class="o">*</span><span class="n">material_property</span><span class="o">.</span><span class="n">thickness</span>
+            <span class="n">mass_ii</span>  <span class="o">=</span> <span class="n">volume_ii</span><span class="o">*</span><span class="n">material_property</span><span class="o">.</span><span class="n">density</span>
+
+            <span class="n">volume_i</span><span class="o">+=</span><span class="n">volume_ii</span>
+            <span class="n">mass_i</span><span class="o">+=</span><span class="n">mass_ii</span>
+            <span class="n">centroid</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">coords</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">centroid_x_i</span> <span class="o">+=</span> <span class="n">centroid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">mass_ii</span>
+            <span class="n">centroid_y_i</span> <span class="o">+=</span> <span class="n">centroid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">mass_ii</span>
+            <span class="n">centroid_z_i</span> <span class="o">+=</span> <span class="p">(</span><span class="n">bottom</span><span class="o">+</span><span class="n">top</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">mass_ii</span>
+
+        <span class="n">centroid_i</span> <span class="o">=</span> <span class="n">centroid_x_i</span><span class="o">/</span><span class="n">mass_i</span><span class="p">,</span><span class="n">centroid_y_i</span><span class="o">/</span><span class="n">mass_i</span><span class="p">,</span><span class="n">centroid_z_i</span><span class="o">/</span><span class="n">mass_i</span>
+        
+        <span class="k">return</span> <span class="n">area_i</span><span class="p">,</span><span class="n">volume_i</span><span class="p">,</span><span class="n">mass_i</span><span class="p">,</span><span class="n">centroid_i</span> </div>
+    
+<div class="viewcode-block" id="Layer.inertia"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.inertia">[docs]</a>    <span class="k">def</span> <span class="nf">inertia</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">about_point</span><span class="p">,</span><span class="n">z_lower</span><span class="p">,</span><span class="n">material_property</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;compute the inertia tensor for the layer&#39;&#39;&#39;</span>
+        <span class="n">I</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">z_upper</span> <span class="o">=</span> <span class="n">z_lower</span><span class="o">+</span><span class="n">material_property</span><span class="o">.</span><span class="n">thickness</span>
+
+        <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+            <span class="n">points</span><span class="p">,</span><span class="n">tris</span> <span class="o">=</span> <span class="n">triangulate_geom</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
+            <span class="n">I</span><span class="o">+=</span><span class="n">inertia_tensor</span><span class="p">(</span><span class="n">about_point</span><span class="p">,</span><span class="n">material_property</span><span class="o">.</span><span class="n">density</span><span class="p">,</span><span class="n">z_lower</span><span class="p">,</span><span class="n">z_upper</span><span class="p">,</span><span class="n">points</span><span class="p">,</span><span class="n">tris</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">I</span></div>
+    
+<div class="viewcode-block" id="Layer.bounding_box_coords"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.bounding_box_coords">[docs]</a>    <span class="k">def</span> <span class="nf">bounding_box_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;compute the lower left hand and upper right coordinates for computing a bounding box of the layer&#39;&#39;&#39;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">vertex</span> <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span> <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">])</span>
+        <span class="n">box</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span><span class="nb">tuple</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">0</span><span class="p">))]</span>
+        <span class="k">return</span> <span class="n">box</span></div>
+
+<div class="viewcode-block" id="Layer.bounding_box"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.bounding_box">[docs]</a>    <span class="k">def</span> <span class="nf">bounding_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;create a bounding box of the layer and return as a layer&#39;&#39;&#39;</span>
+        <span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounding_box_coords</span><span class="p">()</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="o">*</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">l</span></div>
+        
+<div class="viewcode-block" id="Layer.exteriors"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.exteriors">[docs]</a>    <span class="k">def</span> <span class="nf">exteriors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return the exterior coordinates of all shapes in the layer&#39;&#39;&#39;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span> <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">a</span></div>
+
+<div class="viewcode-block" id="Layer.interiors"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.interiors">[docs]</a>    <span class="k">def</span> <span class="nf">interiors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return the interior coordinates of all shapes in the layer&#39;&#39;&#39;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">interior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span> <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span> <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">interiors</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">a</span></div>
+
+<div class="viewcode-block" id="Layer.extrude"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.extrude">[docs]</a>    <span class="k">def</span> <span class="nf">extrude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">z_lower</span><span class="p">,</span><span class="n">material_property</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;create tetrahedra from the layer and return as a set of points and tetrahedra indeces&#39;&#39;&#39;</span>
+        <span class="n">z_upper</span> <span class="o">=</span> <span class="n">z_lower</span><span class="o">+</span><span class="n">material_property</span><span class="o">.</span><span class="n">thickness</span>
+        <span class="n">points</span><span class="p">,</span> <span class="n">tris</span> <span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">triangulation</span><span class="p">()</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">tris</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">points2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">points</span><span class="p">,[</span><span class="n">z_lower</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)],</span><span class="n">numpy</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">points</span><span class="p">,[</span><span class="n">z_upper</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)]]</span>
+        <span class="n">tris2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">tris</span><span class="p">[:,(</span><span class="mi">0</span><span class="p">)]</span><span class="o">+</span><span class="n">m</span><span class="p">,</span><span class="n">tris</span><span class="p">[:,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)]</span><span class="o">+</span><span class="n">m</span><span class="p">],</span><span class="n">numpy</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">tris</span><span class="p">[:,(</span><span class="mi">0</span><span class="p">,)]</span><span class="o">+</span><span class="n">m</span><span class="p">,</span><span class="n">tris</span><span class="p">[:,(</span><span class="mi">1</span><span class="p">,)],</span><span class="n">tris</span><span class="p">[:,(</span><span class="mi">2</span><span class="p">,)]</span><span class="o">+</span><span class="n">m</span><span class="p">,</span><span class="n">tris</span><span class="p">[:,(</span><span class="mi">2</span><span class="p">,)]],</span><span class="n">numpy</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">tris</span><span class="p">[:,(</span><span class="mi">0</span><span class="p">,)]</span><span class="o">+</span><span class="n">m</span><span class="p">,</span><span class="n">tris</span><span class="p">[:,(</span><span class="mi">1</span><span class="p">,)],</span><span class="n">tris</span><span class="p">[:,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)]</span><span class="o">+</span><span class="n">m</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">points2</span><span class="p">,</span><span class="n">tris2</span></div></div>
+    
+
+    
+        
+<div class="viewcode-block" id="layer_representer"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.layer_representer">[docs]</a><span class="k">def</span> <span class="nf">layer_representer</span><span class="p">(</span><span class="n">dumper</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;function for representing layer as a dictionary for use by yaml&#39;&#39;&#39;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">export_dict</span><span class="p">()</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">dumper</span><span class="o">.</span><span class="n">represent_mapping</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;!Layer&#39;</span><span class="p">,</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="layer_constructor"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.layer_constructor">[docs]</a><span class="k">def</span> <span class="nf">layer_constructor</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;function for constructing layer from a dictionary for use by yaml&#39;&#39;&#39;</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">construct_mapping</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="n">Layer</span><span class="o">.</span><span class="n">import_dict</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new</span></div>
+    
+<span class="kn">import</span> <span class="nn">yaml</span>        
+<span class="n">yaml</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span><span class="n">Layer</span><span class="p">,</span> <span class="n">layer_representer</span><span class="p">)</span>
+<span class="n">yaml</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;!Layer&#39;</span><span class="p">,</span> <span class="n">layer_constructor</span><span class="p">)</span>
+        
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">foldable_robotics</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../foldable_robotics/modules.html"> </a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Dan Aukes.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

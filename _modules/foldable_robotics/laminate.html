@@ -1,0 +1,495 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>foldable_robotics.laminate &#8212; foldable_robotics  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for foldable_robotics.laminate</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Written by Daniel M. Aukes and CONTRIBUTORS</span>
+<span class="sd">Email: danaukes&lt;at&gt;asu.edu.</span>
+<span class="sd">Please see LICENSE for full license.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.class_algebra</span> <span class="k">import</span> <span class="n">ClassAlgebra</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">geometry</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="c1">#from .iterable import Iterable</span>
+<span class="kn">from</span> <span class="nn">.layer</span> <span class="k">import</span> <span class="n">Layer</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">idealab_tools.iterable</span> <span class="k">import</span> <span class="n">Iterable</span>
+
+<div class="viewcode-block" id="WrongNumLayers"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.WrongNumLayers">[docs]</a><span class="k">class</span> <span class="nc">WrongNumLayers</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Custom exception for when two laminates of the wrong number of layers interact.&#39;&#39;&#39;</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Laminate"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate">[docs]</a><span class="k">class</span> <span class="nc">Laminate</span><span class="p">(</span><span class="n">Iterable</span><span class="p">,</span><span class="n">ClassAlgebra</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;The Laminate class holds a list of layers and can be operated upon with CSG-style functions.&#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">layers</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initializes the class</span>
+<span class="sd">        </span>
+<span class="sd">        :param layers: A list of layers which compose the laminate</span>
+<span class="sd">        :type layers: list</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Laminate.copy"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">identical</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        creates a copy of the instance</span>
+<span class="sd">        </span>
+<span class="sd">        :param identical: whether to use the same id or not.</span>
+<span class="sd">        :type identical: boolean</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>        
+        <span class="n">new</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="o">*</span><span class="p">[</span><span class="n">layer</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">identical</span><span class="p">)</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">identical</span><span class="p">:</span>        
+            <span class="n">new</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+<div class="viewcode-block" id="Laminate.export_dict"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.export_dict">[docs]</a>    <span class="k">def</span> <span class="nf">export_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        converts the laminate to a dict.</span>
+<span class="sd">        </span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &#39;&#39;&#39;</span>        
+
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;layers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">layer</span><span class="o">.</span><span class="n">export_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Laminate.import_dict"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.import_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">import_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">d</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        converts a dict to a Laminate class</span>
+<span class="sd">        </span>
+<span class="sd">        :param d: the laminate in dict form</span>
+<span class="sd">        :type d: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>        
+        
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">Layer</span><span class="o">.</span><span class="n">import_dict</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;layers&#39;</span><span class="p">]])</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+<div class="viewcode-block" id="Laminate.plot"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">new</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        plots the laminate using matplotlib.</span>
+<span class="sd">        </span>
+<span class="sd">        :param new: whether to create a new figure</span>
+<span class="sd">        :type new: boolean</span>
+<span class="sd">        &#39;&#39;&#39;</span>   
+        
+        <span class="kn">import</span> <span class="nn">matplotlib.cm</span>
+        <span class="n">cm</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">plasma</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span>     
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cm</span><span class="p">(</span><span class="n">ii</span><span class="o">/</span><span class="p">(</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">l</span><span class="p">)])</span>
+        <span class="n">colors</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">.</span><span class="mi">25</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">new</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">layer</span><span class="p">,</span><span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">,</span><span class="n">colors</span><span class="p">):</span>
+            <span class="n">layer</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.plot_layers"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.plot_layers">[docs]</a>    <span class="k">def</span> <span class="nf">plot_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        plots each layer of the laminate in a new figure using matplotlib.</span>
+<span class="sd">        &#39;&#39;&#39;</span>   
+                
+        <span class="kn">import</span> <span class="nn">matplotlib.cm</span>
+        <span class="n">cm</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">plasma</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span>        
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span><span class="n">geom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">geom</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="n">cm</span><span class="p">((</span><span class="n">ii</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">l</span><span class="p">)))</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;converts the laminate to a list.&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span>
+
+<div class="viewcode-block" id="Laminate.binary_operation"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.binary_operation">[docs]</a>    <span class="k">def</span> <span class="nf">binary_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">function_name</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        performs a binary operation between self and other.</span>
+<span class="sd">        </span>
+<span class="sd">        :param function_name: the layer-based function to be performed</span>
+<span class="sd">        :type function_name: string</span>
+<span class="sd">        :param other: the layer-based function to be performed</span>
+<span class="sd">        :type other: Laminate</span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span><span class="o">!=</span><span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
+            <span class="k">raise</span><span class="p">(</span><span class="n">WrongNumLayers</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">layer1</span><span class="p">,</span><span class="n">layer2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">,</span><span class="n">other</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
+                <span class="n">function</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">layer1</span><span class="p">,</span><span class="n">function_name</span><span class="p">)</span>
+                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">layer2</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+            <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.unary_operation"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.unary_operation">[docs]</a>    <span class="k">def</span> <span class="nf">unary_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">function_name</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        performs a unary operation on the laminate.</span>
+<span class="sd">        </span>
+<span class="sd">        :param function_name: the layer-based function to be performed</span>
+<span class="sd">        :type function_name: string</span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">layer1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">function</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">layer1</span><span class="p">,</span><span class="n">function_name</span><span class="p">)</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="Laminate.union"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.union">[docs]</a>    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        unions two laminates together.</span>
+<span class="sd">        </span>
+<span class="sd">        :param other: the other laminate</span>
+<span class="sd">        :type other: Laminate</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_operation</span><span class="p">(</span><span class="s1">&#39;union&#39;</span><span class="p">,</span><span class="n">other</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.difference"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.difference">[docs]</a>    <span class="k">def</span> <span class="nf">difference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        takes the difference of self - other.</span>
+<span class="sd">        </span>
+<span class="sd">        :param other:the other laminate</span>
+<span class="sd">        :type other: Laminate</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_operation</span><span class="p">(</span><span class="s1">&#39;difference&#39;</span><span class="p">,</span><span class="n">other</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.symmetric_difference"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.symmetric_difference">[docs]</a>    <span class="k">def</span> <span class="nf">symmetric_difference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        takes the symmetric difference of self and other.</span>
+<span class="sd">        </span>
+<span class="sd">        :param other: the other laminate</span>
+<span class="sd">        :type other: Laminate</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_operation</span><span class="p">(</span><span class="s1">&#39;symmetric_difference&#39;</span><span class="p">,</span><span class="n">other</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.intersection"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.intersection">[docs]</a>    <span class="k">def</span> <span class="nf">intersection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        takes the intersection of self and other.</span>
+<span class="sd">        </span>
+<span class="sd">        :param other: the other laminate</span>
+<span class="sd">        :type other: Laminate</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_operation</span><span class="p">(</span><span class="s1">&#39;intersection&#39;</span><span class="p">,</span><span class="n">other</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="Laminate.buffer"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.buffer">[docs]</a>    <span class="k">def</span> <span class="nf">buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        dilate or erode the laminate based on the arguments sent.</span>
+<span class="sd">        see the corresponding layer function for arguments and keyword-arguments</span>
+<span class="sd">        </span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unary_operation</span><span class="p">(</span><span class="s1">&#39;buffer&#39;</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.dilate"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.dilate">[docs]</a>    <span class="k">def</span> <span class="nf">dilate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        dilate the laminate.</span>
+<span class="sd">        see the corresponding layer function for arguments and keyword-arguments</span>
+<span class="sd">        </span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unary_operation</span><span class="p">(</span><span class="s1">&#39;dilate&#39;</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.erode"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.erode">[docs]</a>    <span class="k">def</span> <span class="nf">erode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        erode the laminate.</span>
+<span class="sd">        see the corresponding layer function for arguments and keyword-arguments</span>
+<span class="sd">        </span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unary_operation</span><span class="p">(</span><span class="s1">&#39;erode&#39;</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.translate"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        translate the laminate.</span>
+<span class="sd">        see the corresponding layer function for arguments and keyword-arguments</span>
+<span class="sd">        </span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unary_operation</span><span class="p">(</span><span class="s1">&#39;translate&#39;</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="Laminate.rotate"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.rotate">[docs]</a>    <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        rotate the laminate.</span>
+<span class="sd">        see the corresponding layer function for arguments and keyword-arguments</span>
+<span class="sd">        </span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unary_operation</span><span class="p">(</span><span class="s1">&#39;rotate&#39;</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.scale"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        scale the laminate.</span>
+<span class="sd">        see the corresponding layer function for arguments and keyword-arguments</span>
+<span class="sd">        </span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unary_operation</span><span class="p">(</span><span class="s1">&#39;scale&#39;</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.affine_transform"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.affine_transform">[docs]</a>    <span class="k">def</span> <span class="nf">affine_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        affine transform the laminate.</span>
+<span class="sd">        see the corresponding layer function for arguments and keyword-arguments</span>
+<span class="sd">        </span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unary_operation</span><span class="p">(</span><span class="s1">&#39;affine_transform&#39;</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.simplify"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.simplify">[docs]</a>    <span class="k">def</span> <span class="nf">simplify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        simplify the laminate.</span>
+<span class="sd">        see the corresponding layer function for arguments and keyword-arguments</span>
+<span class="sd">        </span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unary_operation</span><span class="p">(</span><span class="s1">&#39;simplify&#39;</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Laminate.map_line_stretch"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.map_line_stretch">[docs]</a>    <span class="k">def</span> <span class="nf">map_line_stretch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        transform the laminate based on two lines.</span>
+<span class="sd">        see foldable_robotics.manufacturing.map_line_stretch for arguments and keyword-arguments</span>
+<span class="sd">        </span>
+<span class="sd">        :param args: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type args: tuple</span>
+<span class="sd">        :param kwargs: keyword arguments passed to subfunction</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :rtype: Laminate</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">import</span> <span class="nn">foldable_robotics.manufacturing</span>
+        <span class="k">return</span> <span class="n">foldable_robotics</span><span class="o">.</span><span class="n">manufacturing</span><span class="o">.</span><span class="n">map_line_stretch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="Laminate.export_dxf"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.export_dxf">[docs]</a>    <span class="k">def</span> <span class="nf">export_dxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        export the laminate to a .dxf file</span>
+<span class="sd">        see the corresponding layer function for arguments and keyword-arguments</span>
+<span class="sd">        </span>
+<span class="sd">        :param name: filename to export</span>
+<span class="sd">        :type name: string</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span><span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
+            <span class="n">layername</span> <span class="o">=</span> <span class="n">name</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span>
+            <span class="n">layer</span><span class="o">.</span><span class="n">export_dxf</span><span class="p">(</span><span class="n">layername</span><span class="p">)</span></div>
+            
+<div class="viewcode-block" id="Laminate.mesh_items"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.mesh_items">[docs]</a>    <span class="k">def</span> <span class="nf">mesh_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">material_properties</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        create a mesh for 3d rendering using pyqtgraph</span>
+<span class="sd">        </span>
+<span class="sd">        :param material_properties: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type material_properties: foldable_robotics.dynamics_info.MaterialProperty</span>
+<span class="sd">        :rtype: GLMeshItem</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
+        <span class="kn">import</span> <span class="nn">pyqtgraph.opengl</span> <span class="k">as</span> <span class="nn">gl</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">vs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,(</span><span class="n">layer</span><span class="p">,</span><span class="n">mp</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">material_properties</span><span class="p">)):</span>
+            <span class="n">v</span><span class="p">,</span><span class="n">c</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">mesh_items_inner</span><span class="p">(</span><span class="n">z</span><span class="o">+</span><span class="n">mp</span><span class="o">.</span><span class="n">thickness</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">mp</span><span class="o">.</span><span class="n">color</span><span class="p">)</span>
+            <span class="n">vs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">cs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">z</span><span class="o">+=</span><span class="n">mp</span><span class="o">.</span><span class="n">thickness</span>
+            
+        <span class="n">verts_outer</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span>
+        <span class="n">colors_outer</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">cs</span><span class="p">)</span>
+
+        <span class="n">mi</span><span class="o">=</span> <span class="n">gl</span><span class="o">.</span><span class="n">GLMeshItem</span><span class="p">(</span><span class="n">vertexes</span><span class="o">=</span><span class="n">verts_outer</span><span class="p">,</span><span class="n">vertexColors</span><span class="o">=</span><span class="n">colors_outer</span><span class="p">,</span><span class="n">smooth</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">shader</span><span class="o">=</span><span class="s1">&#39;balloon&#39;</span><span class="p">,</span><span class="n">drawEdges</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mi</span></div>
+
+<div class="viewcode-block" id="Laminate.mass_properties"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.laminate.Laminate.mass_properties">[docs]</a>    <span class="k">def</span> <span class="nf">mass_properties</span><span class="p">(</span><span class="n">laminate</span><span class="p">,</span><span class="n">material_properties</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        calculate mass properties</span>
+<span class="sd">        </span>
+<span class="sd">        :param material_properties: tuple of arguments passed to subfunction</span>
+<span class="sd">        :type material_properties: foldable_robotics.dynamics_info.MaterialProperty</span>
+<span class="sd">        :rtype: tuple of mass properties</span>
+<span class="sd">        &#39;&#39;&#39;</span>        
+        <span class="n">volume</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">z</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">centroid_x</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">centroid_y</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">centroid_z</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span><span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">laminate</span><span class="p">):</span>
+            <span class="n">bottom</span> <span class="o">=</span> <span class="n">z</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">z</span><span class="o">+</span><span class="n">material_properties</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">thickness</span>
+            <span class="n">area</span><span class="o">=</span><span class="mi">0</span>
+    
+            <span class="n">area_i</span><span class="p">,</span><span class="n">volume_i</span><span class="p">,</span><span class="n">mass_i</span><span class="p">,</span><span class="n">centroid_i</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">mass_props</span><span class="p">(</span><span class="n">material_properties</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span><span class="n">bottom</span><span class="p">,</span><span class="n">top</span><span class="p">)</span>
+
+            <span class="n">centroid_x_i</span><span class="p">,</span><span class="n">centroid_y_i</span><span class="p">,</span><span class="n">centroid_z_i</span> <span class="o">=</span> <span class="n">centroid_i</span>
+            <span class="n">area</span><span class="o">+=</span><span class="n">area_i</span>
+            <span class="n">volume</span><span class="o">+=</span><span class="n">volume_i</span>
+            <span class="n">mass</span><span class="o">+=</span><span class="n">mass_i</span>
+
+            <span class="n">centroid_x</span> <span class="o">+=</span> <span class="n">centroid_x_i</span><span class="o">*</span><span class="n">mass_i</span>
+            <span class="n">centroid_y</span> <span class="o">+=</span> <span class="n">centroid_y_i</span><span class="o">*</span><span class="n">mass_i</span>
+            <span class="n">centroid_z</span> <span class="o">+=</span> <span class="n">centroid_z_i</span><span class="o">*</span><span class="n">mass_i</span>
+
+            <span class="n">z</span><span class="o">=</span><span class="n">top</span>
+        
+        <span class="n">centroid_x</span> <span class="o">/=</span> <span class="n">mass</span>
+        <span class="n">centroid_y</span> <span class="o">/=</span> <span class="n">mass</span>
+        <span class="n">centroid_z</span> <span class="o">/=</span> <span class="n">mass</span>
+        <span class="n">centroid</span> <span class="o">=</span> <span class="p">(</span><span class="n">centroid_x</span><span class="p">,</span><span class="n">centroid_y</span><span class="p">,</span><span class="n">centroid_z</span><span class="p">)</span>
+        
+        <span class="n">I</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">bottom</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span><span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">laminate</span><span class="p">):</span>
+            <span class="n">cn</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">centroid</span><span class="p">)</span>                
+            <span class="n">I</span><span class="o">+=</span><span class="n">layer</span><span class="o">.</span><span class="n">inertia</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="n">bottom</span><span class="p">,</span><span class="n">material_properties</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+            <span class="n">bottom</span> <span class="o">+=</span> <span class="n">material_properties</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">thickness</span>
+            
+        <span class="k">return</span> <span class="n">mass</span><span class="p">,</span><span class="n">volume</span><span class="p">,</span><span class="n">centroid</span><span class="p">,</span><span class="n">I</span></div></div>
+        
+        
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">foldable_robotics</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../foldable_robotics/modules.html"> </a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Dan Aukes.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

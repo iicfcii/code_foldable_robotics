@@ -1,0 +1,78 @@
+foldable\_robotics package
+==========================
+
+Submodules
+----------
+
+foldable\_robotics\.class\_algebra module
+-----------------------------------------
+
+.. automodule:: foldable_robotics.class_algebra
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+foldable\_robotics\.dxf module
+------------------------------
+
+.. automodule:: foldable_robotics.dxf
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+foldable\_robotics\.dynamics\_info module
+-----------------------------------------
+
+.. automodule:: foldable_robotics.dynamics_info
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+foldable\_robotics\.geometry module
+-----------------------------------
+
+.. automodule:: foldable_robotics.geometry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+foldable\_robotics\.laminate module
+-----------------------------------
+
+.. automodule:: foldable_robotics.laminate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+foldable\_robotics\.layer module
+--------------------------------
+
+.. automodule:: foldable_robotics.layer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+foldable\_robotics\.manufacturing module
+----------------------------------------
+
+.. automodule:: foldable_robotics.manufacturing
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+foldable\_robotics\.parts module
+--------------------------------
+
+.. automodule:: foldable_robotics.parts
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: foldable_robotics
+    :members:
+    :undoc-members:
+    :show-inheritance:

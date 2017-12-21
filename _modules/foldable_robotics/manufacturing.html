@@ -1,0 +1,509 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>foldable_robotics.manufacturing &#8212; foldable_robotics  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for foldable_robotics.manufacturing</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A collection of tools used to compute manufacturing geometry useful for laminates and layers.</span>
+
+<span class="sd">Written by Daniel M. Aukes and CONTRIBUTORS</span>
+<span class="sd">Email: danaukes&lt;at&gt;asu.edu.</span>
+<span class="sd">Please see LICENSE for full license.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">foldable_robotics</span>
+<span class="kn">from</span> <span class="nn">foldable_robotics.laminate</span> <span class="k">import</span> <span class="n">Laminate</span>
+<span class="kn">from</span> <span class="nn">foldable_robotics.layer</span> <span class="k">import</span> <span class="n">Layer</span>
+<span class="kn">import</span> <span class="nn">shapely.geometry</span> <span class="k">as</span> <span class="nn">sg</span>
+<span class="kn">import</span> <span class="nn">shapely.ops</span> <span class="k">as</span> <span class="nn">so</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="cleanup"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.cleanup">[docs]</a><span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="n">input1</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">res</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Cleans up the layer or laminate by using successive dilate and erode functions to remove small objects.  Results in rounded edges</span>
+<span class="sd">    </span>
+<span class="sd">   :param input1: input shape</span>
+<span class="sd">   :type input1: Layer or Laminate</span>
+<span class="sd">   :param value: dilate / erode radius</span>
+<span class="sd">   :type value: float</span>
+<span class="sd">   :param res: resolution</span>
+<span class="sd">   :type res: float</span>
+<span class="sd">   :rtype: Layer or Laminate</span>
+<span class="sd">    &#39;&#39;&#39;</span>   
+    <span class="k">return</span> <span class="n">input1</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">res</span><span class="p">)</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">value</span><span class="p">,</span><span class="n">res</span><span class="p">)</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">res</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="cleanup2"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.cleanup2">[docs]</a><span class="k">def</span> <span class="nf">cleanup2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">radius</span><span class="p">,</span><span class="n">res</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Cleans up the layer or laminate by using successive dilate and erode functions to remove small objects.  Attempts to address rounded corners with additional CSG logic, at the cost of computation and non-intuitive results.</span>
+<span class="sd">    </span>
+<span class="sd">   :param a: input shape</span>
+<span class="sd">   :type a: Layer or Laminate</span>
+<span class="sd">   :param radius: dilate / erode radius</span>
+<span class="sd">   :type radius: float</span>
+<span class="sd">   :param res: resolution</span>
+<span class="sd">   :type res: float</span>
+<span class="sd">   :rtype: Layer or Laminate</span>
+<span class="sd">    &#39;&#39;&#39;</span>   
+    <span class="n">c</span><span class="o">=</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="o">-</span><span class="n">radius</span><span class="p">,</span><span class="n">res</span><span class="p">))</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">radius</span><span class="p">,</span><span class="n">res</span><span class="p">)</span>
+    <span class="n">e</span><span class="o">=</span><span class="p">(</span><span class="n">a</span><span class="o">&amp;</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">bb</span><span class="o">=</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="n">radius</span><span class="p">,</span><span class="n">res</span><span class="p">))</span>
+    <span class="n">b</span><span class="o">=</span><span class="n">bb</span><span class="o">-</span><span class="n">a</span>
+    <span class="n">d</span><span class="o">=</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="o">-</span><span class="n">radius</span><span class="p">,</span><span class="n">res</span><span class="p">))</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">radius</span><span class="p">,</span><span class="n">res</span><span class="p">)</span>
+    
+    <span class="n">f</span><span class="o">=</span><span class="p">(</span><span class="n">b</span><span class="o">&amp;</span><span class="n">d</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">=</span><span class="n">bb</span><span class="o">-</span><span class="n">f</span>
+    
+    <span class="n">h</span> <span class="o">=</span> <span class="n">e</span><span class="o">^</span><span class="n">g</span>
+    
+    <span class="n">i</span> <span class="o">=</span> <span class="n">a</span><span class="o">^</span><span class="n">h</span>
+    <span class="k">return</span> <span class="n">i</span></div>
+
+<div class="viewcode-block" id="unary_union"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.unary_union">[docs]</a><span class="k">def</span> <span class="nf">unary_union</span><span class="p">(</span><span class="n">laminate</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Unions all the layers in a laminate together and returns to a new Layer.</span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :rtype: Layer</span>
+<span class="sd">    &#39;&#39;&#39;</span>   
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">laminate</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">|=</span><span class="n">layer</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="keepout_laser"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.keepout_laser">[docs]</a><span class="k">def</span> <span class="nf">keepout_laser</span><span class="p">(</span><span class="n">laminate</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function computes the keepout laminate for a laser cut operation..</span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">unary_union</span><span class="p">(</span><span class="n">laminate</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">laminate</span><span class="p">)</span>
+    <span class="n">new_lam</span>  <span class="o">=</span> <span class="n">Laminate</span><span class="p">(</span><span class="o">*</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_lam</span> </div>
+<span class="c1">#</span>
+<div class="viewcode-block" id="keepout_mill_up"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.keepout_mill_up">[docs]</a><span class="k">def</span> <span class="nf">keepout_mill_up</span><span class="p">(</span><span class="n">laminate</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function computes the keepout laminate for a milling operation with the mill above the top layer.</span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">()</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">laminate</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">result</span><span class="o">|=</span><span class="n">layer</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+    <span class="n">new_lam</span> <span class="o">=</span> <span class="n">Laminate</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">)</span>
+    <span class="n">new_lam</span> <span class="o">=</span> <span class="n">new_lam</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">new_lam</span></div>
+
+<div class="viewcode-block" id="keepout_mill_down"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.keepout_mill_down">[docs]</a><span class="k">def</span> <span class="nf">keepout_mill_down</span><span class="p">(</span><span class="n">laminate</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function computes the keepout laminate for a milling operation with the mill below the bottom layer.</span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">return</span> <span class="n">keepout_mill_up</span><span class="p">(</span><span class="n">laminate</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+<span class="c1">#</span>
+<div class="viewcode-block" id="keepout_mill_flip"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.keepout_mill_flip">[docs]</a><span class="k">def</span> <span class="nf">keepout_mill_flip</span><span class="p">(</span><span class="n">laminate</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function computes the keepout laminate for a milling operation with the mill cutting from above and below.</span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &quot;&quot;&quot;</span>        
+    <span class="n">dummy1</span> <span class="o">=</span> <span class="n">keepout_mill_up</span><span class="p">(</span><span class="n">laminate</span><span class="p">)</span>
+    <span class="n">dummy2</span> <span class="o">=</span> <span class="n">keepout_mill_down</span><span class="p">(</span><span class="n">laminate</span><span class="p">)</span>
+    <span class="n">dummy3</span> <span class="o">=</span> <span class="n">dummy1</span> <span class="o">&amp;</span> <span class="n">dummy2</span>
+    <span class="k">return</span> <span class="n">dummy3</span></div>
+<span class="c1">#    </span>
+<div class="viewcode-block" id="bounding_box"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.bounding_box">[docs]</a><span class="k">def</span> <span class="nf">bounding_box</span><span class="p">(</span><span class="n">laminate</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function computes a bounding box aligned with the x and y axes for the given laminate.</span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &quot;&quot;&quot;</span>  
+    
+    <span class="n">A</span> <span class="o">=</span> <span class="n">keepout_laser</span><span class="p">(</span><span class="n">laminate</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">unary_union</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">geoms</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="o">*</span><span class="n">b</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">laminate</span><span class="p">)</span>
+    <span class="n">new_lam</span>  <span class="o">=</span> <span class="n">Laminate</span><span class="p">(</span><span class="o">*</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_lam</span> </div>
+
+<div class="viewcode-block" id="not_removable_up"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.not_removable_up">[docs]</a><span class="k">def</span> <span class="nf">not_removable_up</span><span class="p">(</span><span class="n">laminate</span><span class="p">,</span><span class="n">is_adhesive</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function computes the non-removable material in the up direction for a given laminate.  </span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :param is_adhesive: list of booleans indicating whether the layer at that index is an adhesive layer.</span>
+<span class="sd">   :type is_adhesive: list</span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &quot;&quot;&quot;</span>      
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">()</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">laminate</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">result</span><span class="o">|=</span><span class="n">layer</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+    <span class="n">new_lam</span> <span class="o">=</span> <span class="n">Laminate</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">)</span>
+    <span class="n">new_lam</span> <span class="o">=</span> <span class="n">new_lam</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">new_lam</span> <span class="o">=</span> <span class="n">modify_up</span><span class="p">(</span><span class="n">new_lam</span><span class="p">,</span><span class="n">is_adhesive</span><span class="p">)</span>    
+
+    <span class="k">return</span> <span class="n">new_lam</span></div>
+
+<div class="viewcode-block" id="not_removable_down"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.not_removable_down">[docs]</a><span class="k">def</span> <span class="nf">not_removable_down</span><span class="p">(</span><span class="n">laminate</span><span class="p">,</span><span class="n">is_adhesive</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function computes the non-removable material in the down direction for a given laminate.  </span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :param is_adhesive: list of booleans indicating whether the layer at that index is an adhesive layer.</span>
+<span class="sd">   :type is_adhesive: list</span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &quot;&quot;&quot;</span>      
+    <span class="k">return</span> <span class="n">not_removable_up</span><span class="p">(</span><span class="n">laminate</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">is_adhesive</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="not_removable_both"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.not_removable_both">[docs]</a><span class="k">def</span> <span class="nf">not_removable_both</span><span class="p">(</span><span class="n">laminate</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function computes the non-removable material in the either direction for a given laminate.  </span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &quot;&quot;&quot;</span>      
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">laminate</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">|=</span><span class="n">layer</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">laminate</span><span class="p">)</span>
+    <span class="n">new_lam</span>  <span class="o">=</span> <span class="n">Laminate</span><span class="p">(</span><span class="o">*</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_lam</span> </div>
+    
+<div class="viewcode-block" id="modify_up"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.modify_up">[docs]</a><span class="k">def</span> <span class="nf">modify_up</span><span class="p">(</span><span class="n">laminate</span><span class="p">,</span><span class="n">is_adhesive</span><span class="p">):</span>
+    <span class="n">laminate</span> <span class="o">=</span> <span class="n">laminate</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">ii</span><span class="p">,(</span><span class="n">test1</span><span class="p">,</span><span class="n">test2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">is_adhesive</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">is_adhesive</span><span class="p">[</span><span class="mi">1</span><span class="p">:])):</span>
+        <span class="k">if</span> <span class="n">test1</span> <span class="ow">or</span> <span class="n">test2</span><span class="p">:</span>
+            <span class="n">laminate</span><span class="p">[</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">|=</span> <span class="n">laminate</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">laminate</span></div>
+    
+<div class="viewcode-block" id="zero_test"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.zero_test">[docs]</a><span class="k">def</span> <span class="nf">zero_test</span><span class="p">(</span><span class="n">laminate</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function checks whether a laminate is empty.  </span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :rtype: boolean</span>
+<span class="sd">    &quot;&quot;&quot;</span>      
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">keepout_laser</span><span class="p">(</span><span class="n">laminate</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+        
+<div class="viewcode-block" id="support"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.support">[docs]</a><span class="k">def</span> <span class="nf">support</span><span class="p">(</span><span class="n">laminate</span><span class="p">,</span><span class="n">keepout_method</span><span class="p">,</span><span class="n">width</span><span class="p">,</span><span class="n">invalid_width</span><span class="p">,</span> <span class="n">small_dim</span> <span class="o">=</span> <span class="o">.</span><span class="mi">001</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function computes support for a laminate.  </span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :param keepout_method: the keepout method selected for the computation</span>
+<span class="sd">   :type keepout_method: python function ref</span>
+<span class="sd">   :param width: gap away from the original laminate</span>
+<span class="sd">   :type width: float</span>
+<span class="sd">   :param invalid_width: value to keep support away from non-cuttable regions.</span>
+<span class="sd">   :type invalid_width: float</span>
+<span class="sd">   :param small_dim: relatively small dimension for eliminating numerical precision problems.</span>
+<span class="sd">   :type small_dim: float   </span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &quot;&quot;&quot;</span>       
+    <span class="n">keepout</span> <span class="o">=</span> <span class="n">keepout_method</span><span class="p">(</span><span class="n">laminate</span><span class="p">)</span>
+    <span class="n">all_support</span> <span class="o">=</span> <span class="p">(</span><span class="n">keepout</span><span class="o">&lt;&lt;</span><span class="n">width</span><span class="p">)</span><span class="o">-</span><span class="n">keepout</span>
+    <span class="n">not_cuttable</span> <span class="o">=</span> <span class="n">keepout</span><span class="o">-</span><span class="n">laminate</span>
+    <span class="n">not_cuttable_clean</span><span class="o">=</span> <span class="n">cleanup</span><span class="p">(</span><span class="n">not_cuttable</span><span class="p">,</span><span class="n">small_dim</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">valid_support</span> <span class="o">=</span> <span class="n">all_support</span><span class="o">-</span><span class="p">(</span><span class="n">not_cuttable_clean</span><span class="o">&lt;&lt;</span><span class="n">invalid_width</span><span class="p">)</span>
+    <span class="n">valid_support</span> <span class="o">&lt;&lt;=</span> <span class="n">small_dim</span>
+    <span class="k">return</span> <span class="n">valid_support</span></div>
+
+<div class="viewcode-block" id="split_laminate_by_geoms"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.split_laminate_by_geoms">[docs]</a><span class="k">def</span> <span class="nf">split_laminate_by_geoms</span><span class="p">(</span><span class="n">laminate</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function splits a laminate into n respective geometries and returns one laminate for each geom.  </span>
+<span class="sd">    </span>
+<span class="sd">   :param laminate: input shape</span>
+<span class="sd">   :type laminate: Laminate</span>
+<span class="sd">   :rtype: list of Laminates</span>
+<span class="sd">    &quot;&quot;&quot;</span>         
+    <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">remain</span><span class="p">)</span>
+    <span class="n">all_laminates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ii</span><span class="p">,</span><span class="n">layerfrom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">remain</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">jj</span><span class="p">,</span><span class="n">geom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">layerfrom</span><span class="o">.</span><span class="n">geoms</span><span class="p">):</span>
+            <span class="n">split_layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">Layer</span><span class="p">()]</span><span class="o">*</span><span class="n">ii</span><span class="o">+</span><span class="p">[</span><span class="n">Layer</span><span class="p">(</span><span class="n">geom</span><span class="p">)]</span><span class="o">+</span><span class="p">[</span><span class="n">Layer</span><span class="p">()]</span><span class="o">*</span><span class="p">(</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">ii</span><span class="p">)</span>
+            <span class="n">split</span><span class="o">=</span> <span class="n">Laminate</span><span class="p">(</span><span class="o">*</span><span class="n">split_layers</span><span class="p">)</span>
+            <span class="n">all_laminates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">split</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">all_laminates</span></div>
+
+<span class="k">def</span> <span class="nf">_expand_adhesive</span><span class="p">(</span><span class="n">laminate</span><span class="p">,</span><span class="n">adhesive</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Sub-function used for computing the effect of an adhesive geometry on its neighbors.</span>
+<span class="sd">    </span>
+<span class="sd">    :param laminate: input shape</span>
+<span class="sd">    :type laminate: Laminate</span>
+<span class="sd">    :param adhesive: indicates whether each layer sticks to its neighbors.</span>
+<span class="sd">    :type adhesive: list of booleans</span>
+<span class="sd">    :rtype: Laminate</span>
+<span class="sd">    &#39;&#39;&#39;</span>   
+    <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">laminate</span><span class="p">)</span>
+    <span class="n">expand_up</span> <span class="o">=</span> <span class="n">Laminate</span><span class="p">(</span><span class="o">*</span><span class="p">([</span><span class="n">Layer</span><span class="p">()]</span><span class="o">*</span><span class="n">l</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ii</span><span class="p">,(</span><span class="n">layer</span><span class="p">,</span><span class="n">test</span><span class="p">,</span><span class="n">test2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">laminate</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">adhesive</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">adhesive</span><span class="p">[</span><span class="mi">1</span><span class="p">:])):</span>
+        <span class="k">if</span> <span class="n">test</span> <span class="ow">or</span> <span class="n">test2</span><span class="p">:</span>
+            <span class="n">expand_up</span><span class="p">[</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">expand_down</span> <span class="o">=</span> <span class="n">Laminate</span><span class="p">(</span><span class="o">*</span><span class="p">([</span><span class="n">Layer</span><span class="p">()]</span><span class="o">*</span><span class="n">l</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ii</span><span class="p">,(</span><span class="n">layer</span><span class="p">,</span><span class="n">test</span><span class="p">,</span><span class="n">test2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">laminate</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">adhesive</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">adhesive</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])):</span>
+        <span class="k">if</span> <span class="n">test</span> <span class="ow">or</span> <span class="n">test2</span><span class="p">:</span>
+            <span class="n">expand_down</span><span class="p">[</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            
+    <span class="n">result</span> <span class="o">=</span> <span class="n">laminate</span><span class="o">|</span><span class="n">expand_up</span><span class="o">|</span><span class="n">expand_down</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="find_connected"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.find_connected">[docs]</a><span class="k">def</span> <span class="nf">find_connected</span><span class="p">(</span><span class="n">laminate</span><span class="p">,</span><span class="n">adhesive</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Creates a list of laminates which are topologically connected above or below and across multiple layers.</span>
+<span class="sd">    </span>
+<span class="sd">    :param laminate: input shape</span>
+<span class="sd">    :type laminate: Laminate</span>
+<span class="sd">    :param adhesive: indicates whether each layer sticks to its neighbors.</span>
+<span class="sd">    :type adhesive: list of booleans</span>
+<span class="sd">    :rtype: Laminate</span>
+<span class="sd">    &#39;&#39;&#39;</span>   
+
+    <span class="n">all_laminates</span> <span class="o">=</span> <span class="n">split_laminate_by_geoms</span><span class="p">(</span><span class="n">laminate</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="ow">not</span> <span class="n">all_laminates</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">all_laminates</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">expanded_result</span> <span class="o">=</span> <span class="n">_expand_adhesive</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">adhesive</span><span class="p">)</span>
+        <span class="n">changed</span><span class="o">=</span><span class="kc">True</span>
+        <span class="k">while</span> <span class="n">changed</span><span class="p">:</span>
+            <span class="n">changed</span><span class="o">=</span><span class="kc">False</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">all_laminates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">zero_test</span><span class="p">(</span><span class="n">item</span><span class="o">&amp;</span><span class="n">expanded_result</span><span class="p">):</span>
+                    <span class="n">result</span> <span class="o">|=</span> <span class="n">item</span>
+                    <span class="n">expanded_result</span> <span class="o">=</span> <span class="n">_expand_adhesive</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">adhesive</span><span class="p">)</span>
+                    <span class="n">all_laminates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="map_line_stretch"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.map_line_stretch">[docs]</a><span class="k">def</span> <span class="nf">map_line_stretch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">,</span><span class="n">p3</span><span class="p">,</span><span class="n">p4</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Transforms a layer or laminate by using the translation and rotation between two lines to compute the stretch, scale, and rotation. </span>
+<span class="sd">    </span>
+<span class="sd">    :param self: input shape</span>
+<span class="sd">    :type self: Layer or Laminate</span>
+<span class="sd">    :param p1: point 1 of line 1 in (x,y) format</span>
+<span class="sd">    :type p1: tuple</span>
+<span class="sd">    :param p1: point 2 of line 1 in (x,y) format</span>
+<span class="sd">    :type p1: tuple</span>
+<span class="sd">    :param p1: point 1 of line 2 in (x,y) format</span>
+<span class="sd">    :type p1: tuple</span>
+<span class="sd">    :param p1: point 2 of line 2 in (x,y) format</span>
+<span class="sd">    :type p1: tuple</span>
+<span class="sd">    :param kwargs: unused</span>
+<span class="sd">    :type kwargs: dict</span>
+<span class="sd">    :rtype: Layer or Laminate</span>
+<span class="sd">    &#39;&#39;&#39;</span>   
+
+    <span class="kn">import</span> <span class="nn">math</span>
+    <span class="kn">import</span> <span class="nn">numpy</span>
+    <span class="kn">import</span> <span class="nn">foldable_robotics.geometry</span> <span class="k">as</span> <span class="nn">geometry</span>
+    
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+    <span class="n">p3</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p3</span><span class="p">)</span>
+    <span class="n">p4</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p4</span><span class="p">)</span>
+
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">pre_rotate</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span><span class="n">p2</span><span class="o">-</span><span class="n">p1</span><span class="p">)</span>
+    <span class="n">post_rotate</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span><span class="n">p4</span><span class="o">-</span><span class="n">p3</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">length</span><span class="p">(</span><span class="n">p4</span><span class="o">-</span><span class="n">p3</span><span class="p">)</span><span class="o">/</span><span class="n">geometry</span><span class="o">.</span><span class="n">length</span><span class="p">(</span><span class="n">p2</span><span class="o">-</span><span class="n">p1</span><span class="p">)</span>
+
+    <span class="n">laminate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="n">p1</span><span class="p">))</span>
+    <span class="n">laminate</span> <span class="o">=</span> <span class="n">laminate</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="o">-</span><span class="n">pre_rotate</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">laminate</span> <span class="o">=</span> <span class="n">laminate</span><span class="o">.</span><span class="n">affine_transform</span><span class="p">([</span><span class="n">scale</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">laminate</span> <span class="o">=</span> <span class="n">laminate</span><span class="o">.</span><span class="n">rotate</span><span class="p">((</span><span class="n">post_rotate</span><span class="p">)</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">laminate</span> <span class="o">=</span> <span class="n">laminate</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="o">*</span><span class="n">p3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">laminate</span>    </div>
+    
+<div class="viewcode-block" id="modify_device"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.modify_device">[docs]</a><span class="k">def</span> <span class="nf">modify_device</span><span class="p">(</span><span class="n">device</span><span class="p">,</span><span class="n">custom_support_line</span><span class="p">,</span><span class="n">support_width</span><span class="p">,</span><span class="n">support_gap</span><span class="p">,</span><span class="n">hole_buffer</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    From a list of two-coordinate tuples, creates shapely lines.</span>
+<span class="sd">    </span>
+<span class="sd">   :param device: input shape</span>
+<span class="sd">   :type device: Laminate</span>
+<span class="sd">   :param custom_support_line: desired additional support geometry</span>
+<span class="sd">   :type custom_support_line: Laminate</span>
+<span class="sd">   :param support_width: width of desired support</span>
+<span class="sd">   :type support_width: float</span>
+<span class="sd">   :param support_gap: gap between device and support</span>
+<span class="sd">   :type support_gap: float</span>
+<span class="sd">   :param hole_buffer: gap between user-supplied support and computed support hole</span>
+<span class="sd">   :type hole_buffer: float</span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &#39;&#39;&#39;</span>   
+
+    <span class="n">custom_support</span> <span class="o">=</span> <span class="n">custom_support_line</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">support_width</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">custom_support_hole</span> <span class="o">=</span> <span class="p">(</span><span class="n">custom_support</span> <span class="o">&amp;</span> <span class="p">((</span><span class="n">device</span><span class="o">&lt;&lt;</span><span class="n">support_gap</span><span class="p">)</span><span class="o">-</span><span class="n">device</span><span class="p">))</span>
+    <span class="n">custom_support_hole2</span> <span class="o">=</span> <span class="n">keepout_laser</span><span class="p">(</span><span class="n">custom_support_hole</span><span class="o">&lt;&lt;</span><span class="n">hole_buffer</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">custom_support_hole</span><span class="o">&lt;&lt;</span><span class="mi">2</span><span class="o">*</span><span class="n">hole_buffer</span><span class="p">)</span>
+    <span class="n">modified_device</span> <span class="o">=</span> <span class="n">device</span><span class="o">-</span><span class="n">custom_support_hole2</span>
+    <span class="n">custom_cut</span> <span class="o">=</span> <span class="n">keepout_laser</span><span class="p">(</span><span class="n">custom_support_hole</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">modified_device</span><span class="p">,</span><span class="n">custom_support</span><span class="p">,</span><span class="n">custom_cut</span></div>
+
+<div class="viewcode-block" id="lines_to_shapely"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.lines_to_shapely">[docs]</a><span class="k">def</span> <span class="nf">lines_to_shapely</span><span class="p">(</span><span class="n">hinge_lines</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    From a list of two-coordinate tuples, creates shapely lines.</span>
+<span class="sd">    </span>
+<span class="sd">   :param hinge_lines: input shape</span>
+<span class="sd">   :type hinge_lines: list of tuples</span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &#39;&#39;&#39;</span>   
+    <span class="n">hinge_line</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">LineString</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)])</span>
+    <span class="n">hinge_layer</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span><span class="n">hinge_line</span><span class="p">)</span>
+    <span class="n">all_hinges1</span> <span class="o">=</span> <span class="p">[</span><span class="n">hinge_layer</span><span class="o">.</span><span class="n">map_line_stretch</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="o">*</span><span class="n">toline</span><span class="p">)</span> <span class="k">for</span> <span class="n">toline</span> <span class="ow">in</span> <span class="n">hinge_lines</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">all_hinges1</span></div>
+
+<div class="viewcode-block" id="calc_hole"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.manufacturing.calc_hole">[docs]</a><span class="k">def</span> <span class="nf">calc_hole</span><span class="p">(</span><span class="n">hinge_lines</span><span class="p">,</span><span class="n">width</span><span class="p">,</span><span class="n">resolution</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    From a list of lines computes the hole needed at a node, based on hinge gaps.</span>
+<span class="sd">    </span>
+<span class="sd">   :param hinge_lines: input shape</span>
+<span class="sd">   :type hinge_lines: list of tuples</span>
+<span class="sd">   :param width: width of the hinge</span>
+<span class="sd">   :type width: float</span>
+<span class="sd">   :rtype: Laminate</span>
+<span class="sd">    &#39;&#39;&#39;</span>   
+
+    <span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span> <span class="ow">or</span> <span class="n">foldable_robotics</span><span class="o">.</span><span class="n">hole_resolution</span>
+    <span class="n">all_hinges1</span><span class="o">=</span> <span class="n">lines_to_shapely</span><span class="p">(</span><span class="n">hinge_lines</span><span class="p">)</span>
+    <span class="n">all_hinges11</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">dilate</span><span class="p">(</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span><span class="p">,</span><span class="n">w</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">all_hinges1</span><span class="p">,</span><span class="n">width</span><span class="p">)]</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">all_hinges3</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ii</span><span class="p">,</span><span class="n">hinge</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_hinges11</span><span class="p">):</span>
+        <span class="n">all_hinges2</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">all_hinges11</span><span class="p">[:</span><span class="n">ii</span><span class="p">]</span><span class="o">+</span><span class="n">all_hinges11</span><span class="p">[</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">all_hinges2</span><span class="o">|=</span><span class="n">item</span>
+        <span class="n">all_hinges3</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hinge</span><span class="o">&amp;</span><span class="n">all_hinges2</span><span class="p">)</span>
+    
+    <span class="n">all_hinges4</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">all_hinges3</span><span class="p">:</span>
+        <span class="n">all_hinges4</span><span class="o">|=</span><span class="n">item</span>
+    <span class="n">all_hinges4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="n">holes</span> <span class="o">=</span> <span class="n">Laminate</span><span class="p">(</span><span class="o">*</span><span class="p">([</span><span class="n">all_hinges4</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">))</span>
+    
+    <span class="n">trimmed_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">-</span><span class="n">all_hinges4</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">all_hinges1</span><span class="p">]</span>
+    <span class="n">all_hinges</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">geoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">coords</span><span class="p">))</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">trimmed_lines</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">holes</span><span class="p">,</span><span class="n">all_hinges</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">foldable_robotics</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../foldable_robotics/modules.html"> </a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Dan Aukes.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

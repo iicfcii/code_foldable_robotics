@@ -1,0 +1,257 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>foldable_robotics.dynamics_info &#8212; foldable_robotics  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for foldable_robotics.dynamics_info</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Written by Daniel M. Aukes and CONTRIBUTORS</span>
+<span class="sd">Email: danaukes&lt;at&gt;asu.edu.</span>
+<span class="sd">Please see LICENSE for full license.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MaterialProperty"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dynamics_info.MaterialProperty">[docs]</a><span class="k">class</span> <span class="nc">MaterialProperty</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The MaterialProperty class holds all the information about each layer&#39;s material information.  The geometry and material prop information can be passed seaprately, permitting more complex representations.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">color</span><span class="p">,</span><span class="n">thickness</span><span class="p">,</span><span class="n">E1</span><span class="p">,</span><span class="n">E2</span><span class="p">,</span><span class="n">density</span><span class="p">,</span><span class="n">poisson</span><span class="p">,</span><span class="n">is_adhesive</span><span class="p">,</span><span class="n">is_rigid</span><span class="p">,</span><span class="n">is_conductive</span><span class="p">,</span><span class="n">is_flexible</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initializes the class</span>
+<span class="sd">        </span>
+<span class="sd">        :param name: The name of the material</span>
+<span class="sd">        :type name: string</span>
+<span class="sd">        :param color: The color of the material, in a tuple of four floats</span>
+<span class="sd">        :type color: tuple of four floats</span>
+<span class="sd">        :param thickness: the thickness of the layer</span>
+<span class="sd">        :type thickness: float</span>
+<span class="sd">        :param E1: Young&#39;s modulus along the primary direction</span>
+<span class="sd">        :type E1: float</span>
+<span class="sd">        :param E2: Young&#39;s modulus along the secondary direction</span>
+<span class="sd">        :type E2: float</span>
+<span class="sd">        :param density: density of the material</span>
+<span class="sd">        :type density: float</span>
+<span class="sd">        :param poisson: poisson&#39;s ratio of the material</span>
+<span class="sd">        :type poisson: float</span>
+<span class="sd">        :param is_adhesive: indicates whether the material is an adhesive</span>
+<span class="sd">        :type is_adhesive: bool</span>
+<span class="sd">        :param is_rigid:  indicates whether the material is rigid</span>
+<span class="sd">        :type is_rigid: bool</span>
+<span class="sd">        :param is_conductive:  indicates whether the material is conductive</span>
+<span class="sd">        :type is_conductive: bool</span>
+<span class="sd">        :param is_flexible:  indicates whether the material is flexible</span>
+<span class="sd">        :type is_flexible: bool</span>
+<span class="sd">        :rtype: MaterialProperty</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thickness</span> <span class="o">=</span> <span class="n">thickness</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E1</span> <span class="o">=</span> <span class="n">E1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E2</span> <span class="o">=</span> <span class="n">E2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">density</span> <span class="o">=</span> <span class="n">density</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">poisson</span> <span class="o">=</span> <span class="n">poisson</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_adhesive</span> <span class="o">=</span> <span class="n">is_adhesive</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_rigid</span> <span class="o">=</span> <span class="n">is_rigid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_conductive</span> <span class="o">=</span> <span class="n">is_conductive</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_flexible</span> <span class="o">=</span> <span class="n">is_flexible</span>
+<div class="viewcode-block" id="MaterialProperty.copy"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dynamics_info.MaterialProperty.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Copies the class</span>
+
+<span class="sd">        :rtype: MaterialProperty</span>
+<span class="sd">        &#39;&#39;&#39;</span>        
+        <span class="k">return</span> <span class="n">MaterialProperty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">thickness</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">E1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">E2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">poisson</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">is_adhesive</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">is_rigid</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">is_conductive</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">is_flexible</span><span class="p">)</span></div>
+<div class="viewcode-block" id="MaterialProperty.make_n_blank"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dynamics_info.MaterialProperty.make_n_blank">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">make_n_blank</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">thickness</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">E1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">E2</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">density</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">poisson</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">is_adhesive</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">is_rigid</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">is_conductive</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">is_flexible</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates several instances with slightly different colors for differentiation</span>
+<span class="sd">        </span>
+<span class="sd">        :param n: number of instances</span>
+<span class="sd">        :type n: int</span>
+<span class="sd">        :param thickness: the thickness of the layer</span>
+<span class="sd">        :type thickness: float</span>
+<span class="sd">        :param E1: Young&#39;s modulus along the primary direction</span>
+<span class="sd">        :type E1: float</span>
+<span class="sd">        :param E2: Young&#39;s modulus along the secondary direction</span>
+<span class="sd">        :type E2: float</span>
+<span class="sd">        :param density: density of the material</span>
+<span class="sd">        :type density: float</span>
+<span class="sd">        :param poisson: poisson&#39;s ratio of the material</span>
+<span class="sd">        :type poisson: float</span>
+<span class="sd">        :param is_adhesive: indicates whether the material is an adhesive</span>
+<span class="sd">        :type is_adhesive: bool</span>
+<span class="sd">        :param is_rigid:  indicates whether the material is rigid</span>
+<span class="sd">        :type is_rigid: bool</span>
+<span class="sd">        :param is_conductive:  indicates whether the material is conductive</span>
+<span class="sd">        :type is_conductive: bool</span>
+<span class="sd">        :param is_flexible:  indicates whether the material is flexible</span>
+<span class="sd">        :type is_flexible: bool</span>
+<span class="sd">        :rtype: MaterialProperty</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">import</span> <span class="nn">numpy</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.cm</span>
+        <span class="n">cm</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">plasma</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cm</span><span class="p">(</span><span class="n">ii</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)])</span>
+        <span class="n">colors</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">.</span><span class="mi">25</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span>   
+        <span class="n">materials</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span><span class="n">color</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">colors</span><span class="p">):</span>
+            <span class="n">materials</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="s1">&#39;layer&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ii</span><span class="p">),</span><span class="n">color</span><span class="p">,</span><span class="n">thickness</span><span class="p">,</span><span class="n">E1</span><span class="p">,</span><span class="n">E2</span><span class="p">,</span><span class="n">density</span><span class="p">,</span><span class="n">poisson</span><span class="p">,</span><span class="n">is_adhesive</span><span class="p">,</span><span class="n">is_rigid</span><span class="p">,</span><span class="n">is_conductive</span><span class="p">,</span><span class="n">is_flexible</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">materials</span></div></div>
+    
+<div class="viewcode-block" id="JointProps"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dynamics_info.JointProps">[docs]</a><span class="k">class</span> <span class="nc">JointProps</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The JointProps class holds all the information about each joint&#39;s dynamic properties.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stiffness</span><span class="p">,</span><span class="n">damping</span><span class="p">,</span><span class="n">preload</span><span class="p">,</span><span class="n">limit_neg</span><span class="p">,</span><span class="n">limit_pos</span><span class="p">,</span><span class="n">z_pos</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates several instances with slightly different colors for differentiation</span>
+<span class="sd">        </span>
+<span class="sd">        :param stiffness: stiffness of the joint</span>
+<span class="sd">        :type stiffness: float</span>
+<span class="sd">        :param damping: the damping coefficient of the joint</span>
+<span class="sd">        :type damping: float</span>
+<span class="sd">        :param preload: moment of preload</span>
+<span class="sd">        :type preload: float</span>
+<span class="sd">        :param limit_neg: the negative joint limit in radians</span>
+<span class="sd">        :type limit_neg: float</span>
+<span class="sd">        :param limit_pos: the positive joint limit in radians</span>
+<span class="sd">        :type limit_pos: float</span>
+<span class="sd">        :param z_pos: the height of the joint</span>
+<span class="sd">        :type z_pos: float</span>
+<span class="sd">        :rtype: JointProps</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stiffness</span> <span class="o">=</span> <span class="n">stiffness</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">damping</span> <span class="o">=</span> <span class="n">damping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preload</span> <span class="o">=</span> <span class="n">preload</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit_neg</span> <span class="o">=</span> <span class="n">limit_neg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit_pos</span> <span class="o">=</span> <span class="n">limit_pos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_pos</span> <span class="o">=</span> <span class="n">z_pos</span></div>
+
+<div class="viewcode-block" id="DynamicsInfo"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dynamics_info.DynamicsInfo">[docs]</a><span class="k">class</span> <span class="nc">DynamicsInfo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;catchall container for holding information about rigid bodies and their connections&#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">connected_items</span><span class="p">,</span><span class="n">connections</span><span class="p">,</span><span class="n">newtonian_ids</span><span class="p">,</span><span class="n">material_properties</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initialization function</span>
+
+<span class="sd">        :rtype: DynamicsInfo</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+<span class="c1">#        </span>
+<span class="c1">#        :param connected_items: </span>
+<span class="c1">#        :type connected_items: ?</span>
+<span class="c1">#        :param connections: the damping coefficient of the joint</span>
+<span class="c1">#        :type connections: ?</span>
+<span class="c1">#        :param newtonian_ids: </span>
+<span class="c1">#        :type newtonian_ids: ?</span>
+<span class="c1">#        :param material_properties: </span>
+<span class="c1">#        :type material_properties: ?</span>
+<span class="c1">#        :rtype: DynamicsInfo</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected_items</span> <span class="o">=</span> <span class="n">connected_items</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span> <span class="o">=</span> <span class="n">connections</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newtonian_ids</span> <span class="o">=</span> <span class="n">newtonian_ids</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">material_properties</span> <span class="o">=</span> <span class="n">material_properties</span></div>
+        
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">yaml</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">DynamicsInfo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;asdf.yaml&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+    
+            
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">foldable_robotics</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../foldable_robotics/modules.html"> </a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Dan Aukes.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

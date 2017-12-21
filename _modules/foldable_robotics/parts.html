@@ -1,0 +1,166 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>foldable_robotics.parts &#8212; foldable_robotics  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for foldable_robotics.parts</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Written by Daniel M. Aukes and CONTRIBUTORS</span>
+<span class="sd">Email: danaukes&lt;at&gt;asu.edu.</span>
+<span class="sd">Please see LICENSE for full license.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#import modules from shapely and matplotlib</span>
+<span class="kn">import</span> <span class="nn">shapely.geometry</span> <span class="k">as</span> <span class="nn">sg</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1">#import classes from my local modules</span>
+<span class="kn">from</span> <span class="nn">foldable_robotics.laminate</span> <span class="k">import</span> <span class="n">Laminate</span>
+<span class="kn">from</span> <span class="nn">foldable_robotics.layer</span> <span class="k">import</span> <span class="n">Layer</span>
+<span class="kn">from</span> <span class="nn">idealab_tools.geometry.tetrahedron</span> <span class="k">import</span> <span class="n">Tetrahedron</span>
+<span class="kn">from</span> <span class="nn">idealab_tools.geometry.triangle</span> <span class="k">import</span> <span class="n">Triangle</span>
+<span class="kn">import</span> <span class="nn">foldable_robotics.manufacturing</span>
+<span class="kn">from</span> <span class="nn">foldable_robotics.dynamics_info</span> <span class="k">import</span> <span class="n">DynamicsInfo</span><span class="p">,</span><span class="n">MaterialProperty</span><span class="p">,</span><span class="n">JointProps</span>
+
+<div class="viewcode-block" id="make_five_layer_hinge"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.parts.make_five_layer_hinge">[docs]</a><span class="k">def</span> <span class="nf">make_five_layer_hinge</span><span class="p">(</span><span class="n">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;makes a five layer hinge of width and height&#39;&#39;&#39;</span>
+        <span class="c1">#create a layer named box</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+    
+    <span class="c1">#initialize layer01 as box, and union with the same box translated several times</span>
+    <span class="n">layer01</span> <span class="o">=</span> <span class="n">box</span>
+    <span class="n">layer01</span> <span class="o">=</span> <span class="n">layer01</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">layer01</span> <span class="o">=</span> <span class="n">layer01</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">layer01</span> <span class="o">=</span> <span class="n">layer01</span> <span class="o">|</span> <span class="n">layer01</span><span class="o">.</span><span class="n">affine_transform</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="c1">#    layer01.plot()</span>
+    
+    <span class="n">layer34</span> <span class="o">=</span> <span class="n">layer01</span><span class="o">.</span><span class="n">affine_transform</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="n">hinge</span> <span class="o">=</span> <span class="n">Laminate</span><span class="p">(</span><span class="n">layer01</span><span class="p">,</span><span class="n">layer01</span><span class="p">,</span><span class="n">Layer</span><span class="p">(),</span><span class="n">layer34</span><span class="p">,</span><span class="n">layer34</span><span class="p">)</span>
+    <span class="n">hinge_hole</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="o">-.</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">hinge</span> <span class="o">|=</span> <span class="n">Laminate</span><span class="p">(</span><span class="n">hinge_hole</span><span class="p">,</span><span class="n">hinge_hole</span><span class="p">,</span><span class="n">hinge_hole</span><span class="p">,</span><span class="n">hinge_hole</span><span class="p">,</span><span class="n">hinge_hole</span><span class="p">)</span>
+    <span class="n">hinge</span> <span class="o">=</span> <span class="n">hinge</span><span class="o">.</span><span class="n">affine_transform</span><span class="p">([</span><span class="o">.</span><span class="mi">2</span><span class="o">*</span><span class="n">width</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="n">height</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="n">width</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">hinge</span></div>
+<span class="c1">#    plt.figure()</span>
+<span class="c1">#    hinge.plot()</span>
+<div class="viewcode-block" id="make_text"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.parts.make_text">[docs]</a><span class="k">def</span> <span class="nf">make_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    makes a layer of text</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">import</span> <span class="nn">idealab_tools.text_to_polygons</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">idealab_tools</span><span class="o">.</span><span class="n">text_to_polygons</span><span class="o">.</span><span class="n">text_to_polygons</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">Layer</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span><span class="n">item</span><span class="p">))</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">:</span>
+        <span class="n">l</span> <span class="o">^=</span> <span class="n">item</span>
+    <span class="k">return</span> <span class="n">l</span></div>
+    
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">foldable_robotics</span>
+    <span class="n">foldable_robotics</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">make_five_layer_hinge</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="o">.</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">h</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    
+    <span class="n">l</span> <span class="o">=</span> <span class="n">make_text</span><span class="p">(</span><span class="s1">&#39;Monty Python&#39;</span><span class="p">)</span>
+    <span class="n">l</span><span class="o">=</span><span class="n">l</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="o">.</span><span class="mi">2</span><span class="p">,</span><span class="o">.</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="n">b</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">bounding_box</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="mi">1</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">foldable_robotics</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../foldable_robotics/modules.html"> </a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Dan Aukes.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,1854 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>foldable_robotics package &#8212; foldable_robotics  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="foldable_robotics" href="modules.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="foldable-robotics-package">
+<h1>foldable_robotics package<a class="headerlink" href="#foldable-robotics-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-foldable_robotics.class_algebra">
+<span id="foldable-robotics-class-algebra-module"></span><h2>foldable_robotics.class_algebra module<a class="headerlink" href="#module-foldable_robotics.class_algebra" title="Permalink to this headline">¶</a></h2>
+<p>Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes&lt;at&gt;asu.edu.
+Please see LICENSE for full license.</p>
+<dl class="class">
+<dt id="foldable_robotics.class_algebra.ClassAlgebra">
+<em class="property">class </em><code class="descclassname">foldable_robotics.class_algebra.</code><code class="descname">ClassAlgebra</code><a class="reference internal" href="../_modules/foldable_robotics/class_algebra.html#ClassAlgebra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.class_algebra.ClassAlgebra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>This class is used to map standard Python operators to specific function names, making it easy for any child to implement CSG-like functionality</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-foldable_robotics.dxf">
+<span id="foldable-robotics-dxf-module"></span><h2>foldable_robotics.dxf module<a class="headerlink" href="#module-foldable_robotics.dxf" title="Permalink to this headline">¶</a></h2>
+<p>Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes&lt;at&gt;asu.edu.
+Please see LICENSE for full license.</p>
+<dl class="function">
+<dt id="foldable_robotics.dxf.calc_circle">
+<code class="descclassname">foldable_robotics.dxf.</code><code class="descname">calc_circle</code><span class="sig-paren">(</span><em>p1</em>, <em>p2</em>, <em>bulge</em>, <em>arc_approx=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/dxf.html#calc_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.dxf.calc_circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximates an arc betweem two points using a “bulge value”.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p1</strong> (<em>tuple of floats</em>) – the starting point.</li>
+<li><strong>p2</strong> (<em>tuple of floats</em>) – the ending point.</li>
+<li><strong>bulge</strong> (<em>int</em>) – the bulge value. Positive bulge is right of the segment, negative is left.</li>
+<li><strong>arc_approx</strong> (<em>int</em>) – number of interior points to approximate an arc with</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List of two-coordinate tuples.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.dxf.get_types">
+<code class="descclassname">foldable_robotics.dxf.</code><code class="descname">get_types</code><span class="sig-paren">(</span><em>filename</em>, <em>model_type</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/dxf.html#get_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.dxf.get_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>return all of the dxf items of type “type”</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>string</em>) – path to the dxf.</li>
+<li><strong>model_type</strong> (<em>string</em>) – model type you are looking for.  ex: ‘LWPOLYLINE’</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.dxf.list_attrib">
+<code class="descclassname">foldable_robotics.dxf.</code><code class="descname">list_attrib</code><span class="sig-paren">(</span><em>filename</em>, <em>attrib</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/dxf.html#list_attrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.dxf.list_attrib" title="Permalink to this definition">¶</a></dt>
+<dd><p>list the attributes of all the items in the dxf.  use a string like ‘color’ or ‘layer’</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>string</em>) – path to the dxf.</li>
+<li><strong>attrib</strong> (<em>string</em>) – attribute you wish to search.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.dxf.read_lines">
+<code class="descclassname">foldable_robotics.dxf.</code><code class="descname">read_lines</code><span class="sig-paren">(</span><em>filename</em>, <em>color=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/dxf.html#read_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.dxf.read_lines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a dxf file searching for line objects,</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>string</em>) – the file path of the source dxf</li>
+<li><strong>color</strong> – optional.  if included, this function filters for objects of only this color</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List of lines consisting of two two-coordinate tuples each.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.dxf.read_lwpolylines">
+<code class="descclassname">foldable_robotics.dxf.</code><code class="descname">read_lwpolylines</code><span class="sig-paren">(</span><em>filename</em>, <em>color=None</em>, <em>arc_approx=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/dxf.html#read_lwpolylines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.dxf.read_lwpolylines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a dxf file searching for lwpolyline objects, approximating arc elements in an lwpolyline with an n-segement set of lines</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>string</em>) – the file path of the source dxf</li>
+<li><strong>color</strong> – optional.  if included, this function filters for objects of only this color</li>
+<li><strong>arc_approx</strong> (<em>int</em>) – number of interior points to approximate an arc with</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List of lines consisting of two two-coordinate tuples each.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-foldable_robotics.dynamics_info">
+<span id="foldable-robotics-dynamics-info-module"></span><h2>foldable_robotics.dynamics_info module<a class="headerlink" href="#module-foldable_robotics.dynamics_info" title="Permalink to this headline">¶</a></h2>
+<p>Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes&lt;at&gt;asu.edu.
+Please see LICENSE for full license.</p>
+<dl class="class">
+<dt id="foldable_robotics.dynamics_info.DynamicsInfo">
+<em class="property">class </em><code class="descclassname">foldable_robotics.dynamics_info.</code><code class="descname">DynamicsInfo</code><span class="sig-paren">(</span><em>connected_items</em>, <em>connections</em>, <em>newtonian_ids</em>, <em>material_properties</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/dynamics_info.html#DynamicsInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.dynamics_info.DynamicsInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>catchall container for holding information about rigid bodies and their connections</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="foldable_robotics.dynamics_info.JointProps">
+<em class="property">class </em><code class="descclassname">foldable_robotics.dynamics_info.</code><code class="descname">JointProps</code><span class="sig-paren">(</span><em>stiffness</em>, <em>damping</em>, <em>preload</em>, <em>limit_neg</em>, <em>limit_pos</em>, <em>z_pos</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/dynamics_info.html#JointProps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.dynamics_info.JointProps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>The JointProps class holds all the information about each joint’s dynamic properties.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="foldable_robotics.dynamics_info.MaterialProperty">
+<em class="property">class </em><code class="descclassname">foldable_robotics.dynamics_info.</code><code class="descname">MaterialProperty</code><span class="sig-paren">(</span><em>name</em>, <em>color</em>, <em>thickness</em>, <em>E1</em>, <em>E2</em>, <em>density</em>, <em>poisson</em>, <em>is_adhesive</em>, <em>is_rigid</em>, <em>is_conductive</em>, <em>is_flexible</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/dynamics_info.html#MaterialProperty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.dynamics_info.MaterialProperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>The MaterialProperty class holds all the information about each layer’s material information.  The geometry and material prop information can be passed seaprately, permitting more complex representations.</p>
+<dl class="method">
+<dt id="foldable_robotics.dynamics_info.MaterialProperty.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/dynamics_info.html#MaterialProperty.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.dynamics_info.MaterialProperty.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the class</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.dynamics_info.MaterialProperty" title="foldable_robotics.dynamics_info.MaterialProperty">MaterialProperty</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="foldable_robotics.dynamics_info.MaterialProperty.make_n_blank">
+<em class="property">classmethod </em><code class="descname">make_n_blank</code><span class="sig-paren">(</span><em>n</em>, <em>thickness=1</em>, <em>E1=1</em>, <em>E2=1</em>, <em>density=1</em>, <em>poisson=1</em>, <em>is_adhesive=False</em>, <em>is_rigid=False</em>, <em>is_conductive=False</em>, <em>is_flexible=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/dynamics_info.html#MaterialProperty.make_n_blank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.dynamics_info.MaterialProperty.make_n_blank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates several instances with slightly different colors for differentiation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n</strong> (<em>int</em>) – number of instances</li>
+<li><strong>thickness</strong> (<em>float</em>) – the thickness of the layer</li>
+<li><strong>E1</strong> (<em>float</em>) – Young’s modulus along the primary direction</li>
+<li><strong>E2</strong> (<em>float</em>) – Young’s modulus along the secondary direction</li>
+<li><strong>density</strong> (<em>float</em>) – density of the material</li>
+<li><strong>poisson</strong> (<em>float</em>) – poisson’s ratio of the material</li>
+<li><strong>is_adhesive</strong> (<em>bool</em>) – indicates whether the material is an adhesive</li>
+<li><strong>is_rigid</strong> (<em>bool</em>) – indicates whether the material is rigid</li>
+<li><strong>is_conductive</strong> (<em>bool</em>) – indicates whether the material is conductive</li>
+<li><strong>is_flexible</strong> (<em>bool</em>) – indicates whether the material is flexible</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.dynamics_info.MaterialProperty" title="foldable_robotics.dynamics_info.MaterialProperty">MaterialProperty</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-foldable_robotics.geometry">
+<span id="foldable-robotics-geometry-module"></span><h2>foldable_robotics.geometry module<a class="headerlink" href="#module-foldable_robotics.geometry" title="Permalink to this headline">¶</a></h2>
+<p>Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes&lt;at&gt;asu.edu.
+Please see LICENSE for full license.</p>
+<dl class="function">
+<dt id="foldable_robotics.geometry.angle">
+<code class="descclassname">foldable_robotics.geometry.</code><code class="descname">angle</code><span class="sig-paren">(</span><em>v1</em>, <em>v2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/geometry.html#angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.geometry.angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds the angle between two vectors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>v1</strong> (<em>tuple</em><em> or </em><em>list of floats</em>) – the first vector</li>
+<li><strong>v2</strong> (<em>tuple</em><em> or </em><em>list of floats</em>) – the second vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.geometry.length">
+<code class="descclassname">foldable_robotics.geometry.</code><code class="descname">length</code><span class="sig-paren">(</span><em>v1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/geometry.html#length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.geometry.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds the length of a vector</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v1</strong> (<em>tuple</em><em> or </em><em>list of floats</em>) – the vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-foldable_robotics.laminate">
+<span id="foldable-robotics-laminate-module"></span><h2>foldable_robotics.laminate module<a class="headerlink" href="#module-foldable_robotics.laminate" title="Permalink to this headline">¶</a></h2>
+<p>Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes&lt;at&gt;asu.edu.
+Please see LICENSE for full license.</p>
+<dl class="class">
+<dt id="foldable_robotics.laminate.Laminate">
+<em class="property">class </em><code class="descclassname">foldable_robotics.laminate.</code><code class="descname">Laminate</code><span class="sig-paren">(</span><em>*layers</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">idealab_tools.iterable.Iterable</span></code>, <a class="reference internal" href="#foldable_robotics.class_algebra.ClassAlgebra" title="foldable_robotics.class_algebra.ClassAlgebra"><code class="xref py py-class docutils literal"><span class="pre">foldable_robotics.class_algebra.ClassAlgebra</span></code></a></p>
+<p>The Laminate class holds a list of layers and can be operated upon with CSG-style functions.</p>
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.affine_transform">
+<code class="descname">affine_transform</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.affine_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.affine_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>affine transform the laminate.
+see the corresponding layer function for arguments and keyword-arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.binary_operation">
+<code class="descname">binary_operation</code><span class="sig-paren">(</span><em>function_name</em>, <em>other</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.binary_operation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.binary_operation" title="Permalink to this definition">¶</a></dt>
+<dd><p>performs a binary operation between self and other.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>function_name</strong> (<em>string</em>) – the layer-based function to be performed</li>
+<li><strong>other</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – the layer-based function to be performed</li>
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.buffer">
+<code class="descname">buffer</code><span class="sig-paren">(</span><em>args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>dilate or erode the laminate based on the arguments sent.
+see the corresponding layer function for arguments and keyword-arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><em>identical=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a copy of the instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>identical</strong> (<em>boolean</em>) – whether to use the same id or not.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.difference">
+<code class="descname">difference</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.difference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>takes the difference of self - other.</p>
+<p>:param other:the other laminate
+:type other: Laminate
+:rtype: Laminate</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.dilate">
+<code class="descname">dilate</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.dilate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.dilate" title="Permalink to this definition">¶</a></dt>
+<dd><p>dilate the laminate.
+see the corresponding layer function for arguments and keyword-arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.erode">
+<code class="descname">erode</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.erode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.erode" title="Permalink to this definition">¶</a></dt>
+<dd><p>erode the laminate.
+see the corresponding layer function for arguments and keyword-arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.export_dict">
+<code class="descname">export_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.export_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.export_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts the laminate to a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.export_dxf">
+<code class="descname">export_dxf</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.export_dxf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.export_dxf" title="Permalink to this definition">¶</a></dt>
+<dd><p>export the laminate to a .dxf file
+see the corresponding layer function for arguments and keyword-arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string</em>) – filename to export</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="foldable_robotics.laminate.Laminate.import_dict">
+<em class="property">classmethod </em><code class="descname">import_dict</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.import_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.import_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts a dict to a Laminate class</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>d</strong> (<em>dict</em>) – the laminate in dict form</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.intersection">
+<code class="descname">intersection</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.intersection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.intersection" title="Permalink to this definition">¶</a></dt>
+<dd><p>takes the intersection of self and other.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – the other laminate</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="foldable_robotics.laminate.Laminate.list">
+<code class="descname">list</code><a class="headerlink" href="#foldable_robotics.laminate.Laminate.list" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts the laminate to a list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.map_line_stretch">
+<code class="descname">map_line_stretch</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.map_line_stretch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.map_line_stretch" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform the laminate based on two lines.
+see foldable_robotics.manufacturing.map_line_stretch for arguments and keyword-arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.mass_properties">
+<code class="descname">mass_properties</code><span class="sig-paren">(</span><em>laminate</em>, <em>material_properties</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.mass_properties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.mass_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate mass properties</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>material_properties</strong> (<a class="reference internal" href="#foldable_robotics.dynamics_info.MaterialProperty" title="foldable_robotics.dynamics_info.MaterialProperty"><em>foldable_robotics.dynamics_info.MaterialProperty</em></a>) – tuple of arguments passed to subfunction</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple of mass properties</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.mesh_items">
+<code class="descname">mesh_items</code><span class="sig-paren">(</span><em>material_properties</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.mesh_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.mesh_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a mesh for 3d rendering using pyqtgraph</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>material_properties</strong> (<a class="reference internal" href="#foldable_robotics.dynamics_info.MaterialProperty" title="foldable_robotics.dynamics_info.MaterialProperty"><em>foldable_robotics.dynamics_info.MaterialProperty</em></a>) – tuple of arguments passed to subfunction</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">GLMeshItem</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>new=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>plots the laminate using matplotlib.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new</strong> (<em>boolean</em>) – whether to create a new figure</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.plot_layers">
+<code class="descname">plot_layers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.plot_layers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.plot_layers" title="Permalink to this definition">¶</a></dt>
+<dd><p>plots each layer of the laminate in a new figure using matplotlib.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.rotate">
+<code class="descname">rotate</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>rotate the laminate.
+see the corresponding layer function for arguments and keyword-arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.scale">
+<code class="descname">scale</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>scale the laminate.
+see the corresponding layer function for arguments and keyword-arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.simplify">
+<code class="descname">simplify</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.simplify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.simplify" title="Permalink to this definition">¶</a></dt>
+<dd><p>simplify the laminate.
+see the corresponding layer function for arguments and keyword-arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.symmetric_difference">
+<code class="descname">symmetric_difference</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.symmetric_difference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.symmetric_difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>takes the symmetric difference of self and other.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – the other laminate</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.translate">
+<code class="descname">translate</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>translate the laminate.
+see the corresponding layer function for arguments and keyword-arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.unary_operation">
+<code class="descname">unary_operation</code><span class="sig-paren">(</span><em>function_name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.unary_operation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.unary_operation" title="Permalink to this definition">¶</a></dt>
+<dd><p>performs a unary operation on the laminate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>function_name</strong> (<em>string</em>) – the layer-based function to be performed</li>
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.laminate.Laminate.union">
+<code class="descname">union</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.union"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.union" title="Permalink to this definition">¶</a></dt>
+<dd><p>unions two laminates together.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – the other laminate</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="foldable_robotics.laminate.WrongNumLayers">
+<em class="property">exception </em><code class="descclassname">foldable_robotics.laminate.</code><code class="descname">WrongNumLayers</code><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#WrongNumLayers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.WrongNumLayers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></p>
+<p>Custom exception for when two laminates of the wrong number of layers interact.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-foldable_robotics.layer">
+<span id="foldable-robotics-layer-module"></span><h2>foldable_robotics.layer module<a class="headerlink" href="#module-foldable_robotics.layer" title="Permalink to this headline">¶</a></h2>
+<p>Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes&lt;at&gt;asu.edu.
+Please see LICENSE for full license.</p>
+<dl class="class">
+<dt id="foldable_robotics.layer.Layer">
+<em class="property">class </em><code class="descclassname">foldable_robotics.layer.</code><code class="descname">Layer</code><span class="sig-paren">(</span><em>*geoms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#foldable_robotics.class_algebra.ClassAlgebra" title="foldable_robotics.class_algebra.ClassAlgebra"><code class="xref py py-class docutils literal"><span class="pre">foldable_robotics.class_algebra.ClassAlgebra</span></code></a></p>
+<p>The Layer class is essentially a list of 2d polygons which all exist on the same plane.</p>
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.affine_transform">
+<code class="descname">affine_transform</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.affine_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.affine_transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.binary_operation">
+<code class="descname">binary_operation</code><span class="sig-paren">(</span><em>other</em>, <em>function_name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.binary_operation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.binary_operation" title="Permalink to this definition">¶</a></dt>
+<dd><p>performs a binary operation between self and other.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>function_name</strong> (<em>string</em>) – the layer-based function to be performed</li>
+<li><strong>other</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a>) – the layer-based function to be performed</li>
+<li><strong>args</strong> (<em>tuple</em>) – tuple of arguments passed to subfunction</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to subfunction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.bounding_box">
+<code class="descname">bounding_box</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.bounding_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.bounding_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a bounding box of the layer and return as a layer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.bounding_box_coords">
+<code class="descname">bounding_box_coords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.bounding_box_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.bounding_box_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>compute the lower left hand and upper right coordinates for computing a bounding box of the layer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.buffer">
+<code class="descname">buffer</code><span class="sig-paren">(</span><em>value</em>, <em>resolution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>dilate (or erode) the geometries in the layer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> (<em>float</em>) – the positive (or negative) radius of the dilation (or erosion)</li>
+<li><strong>resolution</strong> (<em>int</em>) – the number of interpolanting vertices to use</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><em>identical=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a copy of the instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>identical</strong> (<em>boolean</em>) – whether to use the same id or not.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.difference">
+<code class="descname">difference</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.difference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the difference between self and other.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a>) – the other layer</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.dilate">
+<code class="descname">dilate</code><span class="sig-paren">(</span><em>value</em>, <em>resolution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.dilate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.dilate" title="Permalink to this definition">¶</a></dt>
+<dd><p>dilate the geometries in the layer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> (<em>float</em>) – the radius of the dilation</li>
+<li><strong>resolution</strong> (<em>int</em>) – the number of interpolanting vertices to use</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.erode">
+<code class="descname">erode</code><span class="sig-paren">(</span><em>value</em>, <em>resolution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.erode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.erode" title="Permalink to this definition">¶</a></dt>
+<dd><p>erode the geometries in the layer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> (<em>float</em>) – the radius of the erotion</li>
+<li><strong>resolution</strong> (<em>int</em>) – the number of interpolanting vertices to use</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.export_dict">
+<code class="descname">export_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.export_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.export_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts the layer to a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.export_dxf">
+<code class="descname">export_dxf</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.export_dxf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.export_dxf" title="Permalink to this definition">¶</a></dt>
+<dd><p>export the layer to a dxf</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string</em>) – the filename to write</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.exteriors">
+<code class="descname">exteriors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.exteriors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.exteriors" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the exterior coordinates of all shapes in the layer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.extrude">
+<code class="descname">extrude</code><span class="sig-paren">(</span><em>z_lower</em>, <em>material_property</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.extrude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.extrude" title="Permalink to this definition">¶</a></dt>
+<dd><p>create tetrahedra from the layer and return as a set of points and tetrahedra indeces</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="foldable_robotics.layer.Layer.import_dict">
+<em class="property">classmethod </em><code class="descname">import_dict</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.import_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.import_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts a dict to a Layer instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>d</strong> (<em>dict</em>) – the laminate in dict form</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.inertia">
+<code class="descname">inertia</code><span class="sig-paren">(</span><em>about_point</em>, <em>z_lower</em>, <em>material_property</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.inertia"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.inertia" title="Permalink to this definition">¶</a></dt>
+<dd><p>compute the inertia tensor for the layer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.interiors">
+<code class="descname">interiors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.interiors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.interiors" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the interior coordinates of all shapes in the layer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.intersection">
+<code class="descname">intersection</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.intersection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.intersection" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the intersection between self and other.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a>) – the other layer</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.map_line_stretch">
+<code class="descname">map_line_stretch</code><span class="sig-paren">(</span><em>p1</em>, <em>p2</em>, <em>p3</em>, <em>p4</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.map_line_stretch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.map_line_stretch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a layer or laminate by using the translation and rotation between two lines to compute the stretch, scale, and rotation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>self</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a><em> or </em><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</li>
+<li><strong>p1</strong> (<em>tuple</em>) – point 1 of line 1 in (x,y) format</li>
+<li><strong>p1</strong> – point 2 of line 1 in (x,y) format</li>
+<li><strong>p1</strong> – point 1 of line 2 in (x,y) format</li>
+<li><strong>p1</strong> – point 2 of line 2 in (x,y) format</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.mass_props">
+<code class="descname">mass_props</code><span class="sig-paren">(</span><em>material_property</em>, <em>bottom</em>, <em>top</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.mass_props"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.mass_props" title="Permalink to this definition">¶</a></dt>
+<dd><p>compute the mass properties of the layer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.mesh_items">
+<code class="descname">mesh_items</code><span class="sig-paren">(</span><em>z_offset=0</em>, <em>color=(1</em>, <em>0</em>, <em>0</em>, <em>1)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.mesh_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.mesh_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a pyqtgraph.opengl.GLMeshItem for the layer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.mesh_items_inner">
+<code class="descname">mesh_items_inner</code><span class="sig-paren">(</span><em>z_offset=0</em>, <em>color=(1</em>, <em>0</em>, <em>0</em>, <em>1)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.mesh_items_inner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.mesh_items_inner" title="Permalink to this definition">¶</a></dt>
+<dd><p>inner loop for meshing the layer</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="foldable_robotics.layer.Layer.new">
+<em class="property">classmethod </em><code class="descname">new</code><span class="sig-paren">(</span><em>*geoms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.new" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a new class instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>geoms</strong> (<em>list of shapely.geometry classes</em>) – a list of shapely geometries contained by the layer</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>plots the layer using matplotlib.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new</strong> (<em>boolean</em>) – whether to create a new figure</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.rotate">
+<code class="descname">rotate</code><span class="sig-paren">(</span><em>angle</em>, <em>origin=(0</em>, <em>0)</em>, <em>use_radians=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>rotate the layer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>angle</strong> (<em>float</em>) – the amount of rotation</li>
+<li><strong>origin</strong> (<em>string</em><em> or </em><em>tuple</em>) – the origin to use in calculating the rotation</li>
+<li><strong>use_radians</strong> (<em>boolean</em>) – whether to use radians or degrees</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.scale">
+<code class="descname">scale</code><span class="sig-paren">(</span><em>xfact=1.0</em>, <em>yfact=1.0</em>, <em>zfact=1.0</em>, <em>origin=(0</em>, <em>0)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>scale the layer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xfact</strong> (<em>float</em>) – the amount of x scaling</li>
+<li><strong>yfact</strong> (<em>float</em>) – the amount of y scaling</li>
+<li><strong>zfact</strong> (<em>float</em>) – the amount of z scaling</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.simplify">
+<code class="descname">simplify</code><span class="sig-paren">(</span><em>tolerance</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.simplify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.simplify" title="Permalink to this definition">¶</a></dt>
+<dd><p>simplify the layer by reducing the number of coordinates. uses shapely’s simplify function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tolerance</strong> (<em>float</em>) – the length scale by which to simplify</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.symmetric_difference">
+<code class="descname">symmetric_difference</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.symmetric_difference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.symmetric_difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the symmetric difference between self and other.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a>) – the other layer</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.translate">
+<code class="descname">translate</code><span class="sig-paren">(</span><em>xoff=0.0</em>, <em>yoff=0.0</em>, <em>zoff=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>translate the layer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xoff</strong> (<em>float</em>) – the amount of x translation</li>
+<li><strong>yoff</strong> (<em>float</em>) – the amount of y translation</li>
+<li><strong>zoff</strong> (<em>float</em>) – the amount of z translation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.triangulation">
+<code class="descname">triangulation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.triangulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.triangulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>triangulate a layer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array of points, array of triangle indeces</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.union">
+<code class="descname">union</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.union"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.union" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the union between self and other.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a>) – the other layer</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.check_loop">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">check_loop</code><span class="sig-paren">(</span><em>loop</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#check_loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.check_loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove the last element of loop if it is the same as the first</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>loop</strong> (<em>iterable of tuples</em>) – list of coordinates</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">iterable of tuples</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.extract_r">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">extract_r</code><span class="sig-paren">(</span><em>item</em>, <em>list_in=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#extract_r"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.extract_r" title="Permalink to this definition">¶</a></dt>
+<dd><p>recursively extracts geometries from collections of geometries</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>item</strong> (<em>class from shapely.geometry</em>) – the shapely geometry</li>
+<li><strong>list_in</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate.list" title="foldable_robotics.laminate.Laminate.list"><em>list</em></a>) – a list to add to</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.extrude">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">extrude</code><span class="sig-paren">(</span><em>points</em>, <em>tris</em>, <em>z_lower</em>, <em>z_upper</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#extrude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.extrude" title="Permalink to this definition">¶</a></dt>
+<dd><p>create 3d tetrahedra from 2d triangles</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>points</strong> (<em>numpy.array</em>) – array of 3d points</li>
+<li><strong>tris</strong> (<em>numpy.array</em>) – the triangle coordinates</li>
+<li><strong>z_lower</strong> (<em>float</em>) – the lower z value</li>
+<li><strong>z_upper</strong> (<em>float</em>) – the upper z value</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of Tetrahedron</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.flatten">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">flatten</code><span class="sig-paren">(</span><em>geoms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.flatten" title="Permalink to this definition">¶</a></dt>
+<dd><p>eliminate any collections of geometries by flattening all into a single list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>geoms</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate.list" title="foldable_robotics.laminate.Laminate.list"><em>list</em></a><em> or </em><em>iterable</em>) – the shapely geometries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate.list" title="foldable_robotics.laminate.Laminate.list">list</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.from_layer_to_shapely">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">from_layer_to_shapely</code><span class="sig-paren">(</span><em>layer</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#from_layer_to_shapely"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.from_layer_to_shapely" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert from Layer class to shapely geometry</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>layer</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a>) – the layer instance</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">class from shapely.geometry</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.from_shapely_to_layer">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">from_shapely_to_layer</code><span class="sig-paren">(</span><em>new_geoms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#from_shapely_to_layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.from_shapely_to_layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert from shapely geometry to Layer class</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_geoms</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate.list" title="foldable_robotics.laminate.Laminate.list"><em>list</em></a><em> or </em><em>iterable</em>) – the shapely geometries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.get_segments">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">get_segments</code><span class="sig-paren">(</span><em>poly</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#get_segments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.get_segments" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the line segments of a polygon or linestring</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>poly</strong> (<em>shapely.geometry.Polygon</em><em> or </em><em>shapely.geometry.LineString</em>) – the geometry</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of two-coordinate segments</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.inertia_tensor">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">inertia_tensor</code><span class="sig-paren">(</span><em>about_point</em>, <em>density</em>, <em>z_lower</em>, <em>z_upper</em>, <em>points</em>, <em>tris</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#inertia_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.inertia_tensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>create 3d inertia tensor from a 2d list of triangles</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>about_point</strong> (<em>3d coordinate</em>) – the point about which to compute the inertia</li>
+<li><strong>density</strong> (<em>float</em>) – the density of the material</li>
+<li><strong>z_lower</strong> (<em>float</em>) – the lower z value</li>
+<li><strong>z_upper</strong> (<em>float</em>) – the upper z value</li>
+<li><strong>points</strong> (<em>numpy.array</em>) – array of 3d points</li>
+<li><strong>tris</strong> (<em>numpy.array</em>) – the triangle coordinates</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of Tetrahedron</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.is_collection">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">is_collection</code><span class="sig-paren">(</span><em>item</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#is_collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.is_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>determines whether the geometry defined by item contains multiple geometries</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>item</strong> (<em>class from shapely.geometry</em>) – the shapely geometry</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.layer_constructor">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">layer_constructor</code><span class="sig-paren">(</span><em>loader</em>, <em>node</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#layer_constructor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.layer_constructor" title="Permalink to this definition">¶</a></dt>
+<dd><p>function for constructing layer from a dictionary for use by yaml</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.layer_representer">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">layer_representer</code><span class="sig-paren">(</span><em>dumper</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#layer_representer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.layer_representer" title="Permalink to this definition">¶</a></dt>
+<dd><p>function for representing layer as a dictionary for use by yaml</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.plot_poly">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">plot_poly</code><span class="sig-paren">(</span><em>poly</em>, <em>color=None</em>, <em>edgecolor=None</em>, <em>facecolor=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#plot_poly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.plot_poly" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot a shapely geometry</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>poly</strong> (<em>tuple</em>) – the layer instance</li>
+<li><strong>poly</strong> – tuple of r,g,b,a scalars from 0 to 1</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.points_2d_to_3d">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">points_2d_to_3d</code><span class="sig-paren">(</span><em>points_2d</em>, <em>z_val</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#points_2d_to_3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.points_2d_to_3d" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert a list of 2d points to a list of 3d points</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>points_2d</strong> (<em>numpy.array</em>) – the geometry to triangulate</li>
+<li><strong>z_val</strong> (<em>float</em>) – the padded z value</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.layer.triangulate_geom">
+<code class="descclassname">foldable_robotics.layer.</code><code class="descname">triangulate_geom</code><span class="sig-paren">(</span><em>geom</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#triangulate_geom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.triangulate_geom" title="Permalink to this definition">¶</a></dt>
+<dd><p>triangulate a shapely geometry</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>geom</strong> (<em>shapely.Polygon</em>) – the geometry to triangulate</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">array of points, array of triangle indeces</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-foldable_robotics.manufacturing">
+<span id="foldable-robotics-manufacturing-module"></span><h2>foldable_robotics.manufacturing module<a class="headerlink" href="#module-foldable_robotics.manufacturing" title="Permalink to this headline">¶</a></h2>
+<p>A collection of tools used to compute manufacturing geometry useful for laminates and layers.</p>
+<p>Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes&lt;at&gt;asu.edu.
+Please see LICENSE for full license.</p>
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.bounding_box">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">bounding_box</code><span class="sig-paren">(</span><em>laminate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#bounding_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.bounding_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function computes a bounding box aligned with the x and y axes for the given laminate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.calc_hole">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">calc_hole</code><span class="sig-paren">(</span><em>hinge_lines</em>, <em>width</em>, <em>resolution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#calc_hole"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.calc_hole" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>From a list of lines computes the hole needed at a node, based on hinge gaps.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>hinge_lines</strong> (<em>list of tuples</em>) – input shape</li>
+<li><strong>width</strong> (<em>float</em>) – width of the hinge</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.cleanup">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">cleanup</code><span class="sig-paren">(</span><em>input1</em>, <em>value</em>, <em>res</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Cleans up the layer or laminate by using successive dilate and erode functions to remove small objects.  Results in rounded edges</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input1</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a><em> or </em><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</li>
+<li><strong>value</strong> (<em>float</em>) – dilate / erode radius</li>
+<li><strong>res</strong> (<em>float</em>) – resolution</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a> or <a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.cleanup2">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">cleanup2</code><span class="sig-paren">(</span><em>a</em>, <em>radius</em>, <em>res</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#cleanup2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.cleanup2" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Cleans up the layer or laminate by using successive dilate and erode functions to remove small objects.  Attempts to address rounded corners with additional CSG logic, at the cost of computation and non-intuitive results.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a><em> or </em><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</li>
+<li><strong>radius</strong> (<em>float</em>) – dilate / erode radius</li>
+<li><strong>res</strong> (<em>float</em>) – resolution</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a> or <a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.find_connected">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">find_connected</code><span class="sig-paren">(</span><em>laminate</em>, <em>adhesive</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#find_connected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.find_connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a list of laminates which are topologically connected above or below and across multiple layers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</li>
+<li><strong>adhesive</strong> (<em>list of booleans</em>) – indicates whether each layer sticks to its neighbors.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.keepout_laser">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">keepout_laser</code><span class="sig-paren">(</span><em>laminate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#keepout_laser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.keepout_laser" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function computes the keepout laminate for a laser cut operation..</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.keepout_mill_down">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">keepout_mill_down</code><span class="sig-paren">(</span><em>laminate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#keepout_mill_down"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.keepout_mill_down" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function computes the keepout laminate for a milling operation with the mill below the bottom layer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.keepout_mill_flip">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">keepout_mill_flip</code><span class="sig-paren">(</span><em>laminate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#keepout_mill_flip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.keepout_mill_flip" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function computes the keepout laminate for a milling operation with the mill cutting from above and below.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.keepout_mill_up">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">keepout_mill_up</code><span class="sig-paren">(</span><em>laminate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#keepout_mill_up"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.keepout_mill_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function computes the keepout laminate for a milling operation with the mill above the top layer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.lines_to_shapely">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">lines_to_shapely</code><span class="sig-paren">(</span><em>hinge_lines</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#lines_to_shapely"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.lines_to_shapely" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>From a list of two-coordinate tuples, creates shapely lines.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hinge_lines</strong> (<em>list of tuples</em>) – input shape</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.map_line_stretch">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">map_line_stretch</code><span class="sig-paren">(</span><em>self</em>, <em>p1</em>, <em>p2</em>, <em>p3</em>, <em>p4</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#map_line_stretch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.map_line_stretch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a layer or laminate by using the translation and rotation between two lines to compute the stretch, scale, and rotation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>self</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a><em> or </em><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</li>
+<li><strong>p1</strong> (<em>tuple</em>) – point 1 of line 1 in (x,y) format</li>
+<li><strong>p1</strong> – point 2 of line 1 in (x,y) format</li>
+<li><strong>p1</strong> – point 1 of line 2 in (x,y) format</li>
+<li><strong>p1</strong> – point 2 of line 2 in (x,y) format</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – unused</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a> or <a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.modify_device">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">modify_device</code><span class="sig-paren">(</span><em>device</em>, <em>custom_support_line</em>, <em>support_width</em>, <em>support_gap</em>, <em>hole_buffer</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#modify_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.modify_device" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>From a list of two-coordinate tuples, creates shapely lines.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>device</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</li>
+<li><strong>custom_support_line</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – desired additional support geometry</li>
+<li><strong>support_width</strong> (<em>float</em>) – width of desired support</li>
+<li><strong>support_gap</strong> (<em>float</em>) – gap between device and support</li>
+<li><strong>hole_buffer</strong> (<em>float</em>) – gap between user-supplied support and computed support hole</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.modify_up">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">modify_up</code><span class="sig-paren">(</span><em>laminate</em>, <em>is_adhesive</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#modify_up"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.modify_up" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.not_removable_both">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">not_removable_both</code><span class="sig-paren">(</span><em>laminate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#not_removable_both"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.not_removable_both" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function computes the non-removable material in the either direction for a given laminate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.not_removable_down">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">not_removable_down</code><span class="sig-paren">(</span><em>laminate</em>, <em>is_adhesive</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#not_removable_down"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.not_removable_down" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function computes the non-removable material in the down direction for a given laminate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</li>
+<li><strong>is_adhesive</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate.list" title="foldable_robotics.laminate.Laminate.list"><em>list</em></a>) – list of booleans indicating whether the layer at that index is an adhesive layer.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.not_removable_up">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">not_removable_up</code><span class="sig-paren">(</span><em>laminate</em>, <em>is_adhesive</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#not_removable_up"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.not_removable_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function computes the non-removable material in the up direction for a given laminate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</li>
+<li><strong>is_adhesive</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate.list" title="foldable_robotics.laminate.Laminate.list"><em>list</em></a>) – list of booleans indicating whether the layer at that index is an adhesive layer.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.split_laminate_by_geoms">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">split_laminate_by_geoms</code><span class="sig-paren">(</span><em>laminate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#split_laminate_by_geoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.split_laminate_by_geoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function splits a laminate into n respective geometries and returns one laminate for each geom.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of Laminates</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.support">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">support</code><span class="sig-paren">(</span><em>laminate</em>, <em>keepout_method</em>, <em>width</em>, <em>invalid_width</em>, <em>small_dim=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#support"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.support" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function computes support for a laminate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</li>
+<li><strong>keepout_method</strong> (<em>python function ref</em>) – the keepout method selected for the computation</li>
+<li><strong>width</strong> (<em>float</em>) – gap away from the original laminate</li>
+<li><strong>invalid_width</strong> (<em>float</em>) – value to keep support away from non-cuttable regions.</li>
+<li><strong>small_dim</strong> (<em>float</em>) – relatively small dimension for eliminating numerical precision problems.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate">Laminate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.unary_union">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">unary_union</code><span class="sig-paren">(</span><em>laminate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#unary_union"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.unary_union" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Unions all the layers in a laminate together and returns to a new Layer.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer">Layer</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.manufacturing.zero_test">
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">zero_test</code><span class="sig-paren">(</span><em>laminate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#zero_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.zero_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function checks whether a laminate is empty.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>laminate</strong> (<a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-foldable_robotics.parts">
+<span id="foldable-robotics-parts-module"></span><h2>foldable_robotics.parts module<a class="headerlink" href="#module-foldable_robotics.parts" title="Permalink to this headline">¶</a></h2>
+<p>Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes&lt;at&gt;asu.edu.
+Please see LICENSE for full license.</p>
+<dl class="function">
+<dt id="foldable_robotics.parts.make_five_layer_hinge">
+<code class="descclassname">foldable_robotics.parts.</code><code class="descname">make_five_layer_hinge</code><span class="sig-paren">(</span><em>width=1</em>, <em>height=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/parts.html#make_five_layer_hinge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.parts.make_five_layer_hinge" title="Permalink to this definition">¶</a></dt>
+<dd><p>makes a five layer hinge of width and height</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.parts.make_text">
+<code class="descclassname">foldable_robotics.parts.</code><code class="descname">make_text</code><span class="sig-paren">(</span><em>text</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/parts.html#make_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.parts.make_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>makes a layer of text</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-foldable_robotics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-foldable_robotics" title="Permalink to this headline">¶</a></h2>
+<p>The foldable_robotics package is useful for designing and computing layer-based geometries for cutting out robots from sheet-based materials using a laser or other CNC tool.  This collection of modules makes it easy to create foldable robotic devices and to automate the calculation of the manufacturing files.</p>
+<p>Written by Daniel M. Aukes and CONTRIBUTORS
+Email: danaukes&lt;at&gt;asu.edu.
+Please see LICENSE for full license.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">foldable_robotics</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html"> </a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">foldable_robotics package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">foldable_robotics</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">foldable_robotics</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Dan Aukes.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/foldable_robotics/foldable_robotics.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
