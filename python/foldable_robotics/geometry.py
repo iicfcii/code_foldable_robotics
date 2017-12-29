@@ -21,7 +21,7 @@ def length(v1):
     
 def angle(v1,v2):
     '''
-    finds the angle between two vectors
+    finds the interior angle between two vectors
     
     :param v1: the first vector
     :type v1: tuple or list of floats
@@ -30,11 +30,9 @@ def angle(v1,v2):
     :rtype: float
     '''
     v1 = numpy.array(v1).flatten()
+    l1 = length(v1)
     v2 = numpy.array(v2).flatten()
-    sint = numpy.cross(v1,v2).flatten()
-    if len(sint)>1:
-        sint = length(sint)
-    cost = numpy.dot(v1,v2)
-    t = math.atan2(sint,cost)
+    l2 = length(v2)
+    cost = numpy.dot(v1,v2)/l1/l2
+    t = math.acos(cost)
     return t
-
