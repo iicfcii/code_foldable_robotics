@@ -16,6 +16,7 @@ import shapely.wkt as sw
 import matplotlib.pyplot as plt
 import numpy
 import foldable_robotics
+from foldable_robotics.jupyter_support import JupyterSupport
 
 def get_segments(poly):
     '''
@@ -650,7 +651,9 @@ class Layer(ClassAlgebra):
         points2 = numpy.r_[numpy.c_[points,[z_lower]*len(points)],numpy.c_[points,[z_upper]*len(points)]]
         tris2 = numpy.r_[numpy.c_[tris[:,(0)]+m,tris[:,(1,0,2)]+m],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(2,)]+m,tris[:,(2,)]],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(1,2)]+m]]
         return points2,tris2
-    
+    def _repr_svg_(self):
+        j = JupyterSupport(self.exteriors()+self.interiors())
+        return j._repr_svg_()
 
     
         
