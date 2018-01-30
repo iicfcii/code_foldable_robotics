@@ -232,9 +232,9 @@ def split_laminate_by_geoms(laminate):
    :type laminate: Laminate
    :rtype: list of Laminates
     """         
-    l = len(remain)
+    l = len(laminate)
     all_laminates = []
-    for ii,layerfrom in enumerate(remain):
+    for ii,layerfrom in enumerate(laminate):
         for jj,geom in enumerate(layerfrom.geoms):
             split_layers = [Layer()]*ii+[Layer(geom)]+[Layer()]*(l-1-ii)
             split= Laminate(*split_layers)
@@ -293,14 +293,20 @@ def find_connected(laminate,adhesive):
         results.append(result)
     return results
 
-def map_line_stretch(self,*args,**kwargs):
+def map_line_stretch(self,p1,p2,p3,p4):
     '''
     Transforms a layer or laminate by using the translation and rotation between two lines to compute the stretch, scale, and rotation. 
     
     :param self: input shape
     :type self: Layer or Laminate
-    :param args: four coordinates of two line endpoints.
-    :type args: tuple of coordinates
+    :param p1: point 1 of line 1 in (x,y) format
+    :type p1: tuple
+    :param p1: point 2 of line 1 in (x,y) format
+    :type p1: tuple
+    :param p1: point 1 of line 2 in (x,y) format
+    :type p1: tuple
+    :param p1: point 2 of line 2 in (x,y) format
+    :type p1: tuple
     :param kwargs: unused
     :type kwargs: dict
     :rtype: Layer or Laminate
@@ -310,15 +316,15 @@ def map_line_stretch(self,*args,**kwargs):
     import numpy
     import foldable_robotics.geometry as geometry
     
-    p1 = numpy.array(args[0])
-    p2 = numpy.array(args[1])
-    p3 = numpy.array(args[2])
-    p4 = numpy.array(args[3])
+    p1 = numpy.array(p1)
+    p2 = numpy.array(p2)
+    p3 = numpy.array(p3)
+    p4 = numpy.array(p4)
 
     x_axis = numpy.array([1,0])
 
-    pre_rotate = geometry.planar_angle(x_axis,p2-p1)
-    post_rotate = geometry.planar_angle(x_axis,p4-p3)
+    pre_rotate = geometry.angle(x_axis,p2-p1)
+    post_rotate = geometry.angle(x_axis,p4-p3)
     scale = geometry.length(p4-p3)/geometry.length(p2-p1)
 
     laminate = self.translate(*(-p1))
