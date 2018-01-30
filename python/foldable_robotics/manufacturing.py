@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 plt.ion()
 
 
-def cleanup(input1,value,res):
+def cleanup(input1,value,resolution=None):
     '''
     Cleans up the layer or laminate by using successive dilate and erode functions to remove small objects.  Results in rounded edges
     
@@ -24,13 +24,15 @@ def cleanup(input1,value,res):
    :type input1: Layer or Laminate
    :param value: dilate / erode radius
    :type value: float
-   :param res: resolution
-   :type res: float
+   :param resolution: resolution
+   :type resolution: float
    :rtype: Layer or Laminate
     '''   
-    return input1.buffer(value,res).buffer(-2*value,res).buffer(value,res)
+    resolution = resolution or foldable_robotics.resolution
+
+    return input1.buffer(value,resolution).buffer(-2*value,resolution).buffer(value,resolution)
     
-def cleanup2(a,radius,res):
+def cleanup2(a,radius,,resolution=None):
     '''
     Cleans up the layer or laminate by using successive dilate and erode functions to remove small objects.  Attempts to address rounded corners with additional CSG logic, at the cost of computation and non-intuitive results.
     
@@ -38,15 +40,17 @@ def cleanup2(a,radius,res):
    :type a: Layer or Laminate
    :param radius: dilate / erode radius
    :type radius: float
-   :param res: resolution
-   :type res: float
+   :param resolution: resolution
+   :type resolution: float
    :rtype: Layer or Laminate
     '''   
-    c=(a.buffer(-radius,res)).buffer(2*radius,res)
+    resolution = resolution or foldable_robotics.resolution
+
+    c=(a.buffer(-radius,resolution)).buffer(2*radius,resolution)
     e=(a&c)
-    bb=(a.buffer(10*radius,res))
+    bb=(a.buffer(10*radius,resolution))
     b=bb-a
-    d=(b.buffer(-radius,res)).buffer(2*radius,res)
+    d=(b.buffer(-radius,resolution)).buffer(2*radius,resolution)
     
     f=(b&d)
     g=bb-f
