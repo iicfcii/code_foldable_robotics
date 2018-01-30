@@ -57,6 +57,7 @@ hinge_lines.append(((0,0),(-1,1)))
 hinge_lines.append(((0,0),(1,-1)))
 
 holes,hinge_lines2 = foldable_robotics.manufacturing.calc_hole(hinge_lines,[.1]*len(hinge_lines))
+holes = Laminate(*([holes]*5))
 
 #create an empty laminate
 all_hinges = Laminate(empty_layer,empty_layer,empty_layer,empty_layer,empty_layer)
