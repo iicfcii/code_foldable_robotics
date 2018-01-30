@@ -55,6 +55,7 @@ class MaterialProperty(object):
         :rtype: MaterialProperty
         '''        
         return MaterialProperty(self.name,self.color,self.thickness,self.E1,self.E2,self.density,self.poisson,self.is_adhesive,self.is_rigid,self.is_conductive,self.is_flexible)
+
     @classmethod
     def make_n_blank(cls,n,thickness = 1,E1 = 1,E2 = 1,density = 1, poisson = 1,is_adhesive = False, is_rigid = False, is_conductive = False, is_flexible = False ):
         '''

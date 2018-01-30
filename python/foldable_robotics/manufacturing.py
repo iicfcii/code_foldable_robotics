@@ -323,8 +323,14 @@ def map_line_stretch(self,p1,p2,p3,p4):
 
     x_axis = numpy.array([1,0])
 
-    pre_rotate = geometry.angle(x_axis,p2-p1)
+    v1 = p2-p1
+#    pre_rotate = geometry.angle(x_axis,p2-p1)
+    pre_rotate = math.atan2(*v1[::-1])
+
+    v2 = p4-p3
     post_rotate = geometry.angle(x_axis,p4-p3)
+    post_rotate = math.atan2(*v2[::-1])
+
     scale = geometry.length(p4-p3)/geometry.length(p2-p1)
 
     laminate = self.translate(*(-p1))
@@ -382,6 +388,13 @@ def calc_hole(hinge_lines,width,resolution = None):
    :rtype: Laminate
     '''   
 
+    m = len(hinge_lines)
+
+    try:
+        iter(width)
+    except TypeError:
+        width = [width]*m
+
     resolution = resolution or foldable_robotics.hole_resolution
     all_hinges1= lines_to_shapely(hinge_lines)
     all_hinges11 = [item.dilate(w/2,resolution = resolution) for item,w in zip(all_hinges1,width)]
@@ -397,13 +410,13 @@ def calc_hole(hinge_lines,width,resolution = None):
     all_hinges4 = Layer()
     for item in all_hinges3:
         all_hinges4|=item
-    all_hinges4.plot(new=True)
+#    all_hinges4.plot(new=True)
     
-    holes = Laminate(*([all_hinges4]*5))
+#    holes = Layer(all_hinges4)
     
     trimmed_lines = [item-all_hinges4 for item in all_hinges1]
     all_hinges = [tuple(sorted(item.geoms[0].coords)) for item in trimmed_lines]
-    return holes,all_hinges
+    return all_hinges4,all_hinges
 
 if __name__=='__main__':
     pass
