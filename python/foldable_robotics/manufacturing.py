@@ -32,7 +32,7 @@ def cleanup(input1,value,resolution=None):
 
     return input1.buffer(value,resolution).buffer(-2*value,resolution).buffer(value,resolution)
     
-def cleanup2(a,radius,,resolution=None):
+def cleanup2(a,radius,resolution=None):
     '''
     Cleans up the layer or laminate by using successive dilate and erode functions to remove small objects.  Attempts to address rounded corners with additional CSG logic, at the cost of computation and non-intuitive results.
     
