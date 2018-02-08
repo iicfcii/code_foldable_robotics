@@ -423,7 +423,7 @@ to_index = dict([(rgb,ii) for ii,rgb in mapping])
 
 if __name__=='__main__':
     #Here goes the file name of the dxf.
-    filename ='C:/Users/daukes/code/foldable_robotics/python/tests/test2.DXF'
+    filename ='C:/Users/daukes/code/foldable_robotics/python/foldable_robotics_tests/test2.DXF'
     dwg = ezdxf.readfile(filename)
     modelspace = dwg.modelspace()
     hinge_lines = read_lines(filename)

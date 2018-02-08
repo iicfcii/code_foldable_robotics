@@ -14,10 +14,10 @@ script:
 #  - echo $PYTHONPATH
 #  - ls -la
 #  - ls -la python
-#  - "python python/tests/test1.py"
-  #- "python python/tests/test2.py"  
-  - "python python/tests/manufacturing_example1.py"
-  - "python python/tests/manufacturing_example2.py"
-  - "python python/tests/manufacturing_example3.py"
-  - "python python/tests/manufacturing_example4.py"
+#  - "python python/foldable_robotics_tests/test1.py"
+  #- "python python/foldable_robotics_tests/test2.py"  
+  - "python python/foldable_robotics_tests/manufacturing_example1.py"
+  - "python python/foldable_robotics_tests/manufacturing_example2.py"
+  - "python python/foldable_robotics_tests/manufacturing_example3.py"
+  - "python python/foldable_robotics_tests/manufacturing_example4.py"
   

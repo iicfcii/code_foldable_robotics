@@ -126,7 +126,7 @@ d = DynamicsInfo(connected_export,connection,[connected[0].id],material_properti
 
 
 import yaml
-with open('../tests/dynamics-info.yaml','w') as f:
+with open('../foldable_robotics_tests/dynamics-info.yaml','w') as f:
     yaml.dump(d,f)
     
     
