@@ -332,7 +332,7 @@ def map_line_stretch(self,p1,p2,p3,p4):
     pre_rotate = math.atan2(*v1[::-1])
 
     v2 = p4-p3
-    post_rotate = geometry.angle(x_axis,p4-p3)
+    post_rotate = geometry.total_angle(x_axis,p4-p3)
     post_rotate = math.atan2(*v2[::-1])
 
     scale = geometry.length(p4-p3)/geometry.length(p2-p1)
