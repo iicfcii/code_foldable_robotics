@@ -60,9 +60,9 @@
     <span class="n">l</span> <span class="o">=</span> <span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v1</span><span class="p">))</span><span class="o">**.</span><span class="mi">5</span>
     <span class="k">return</span> <span class="n">l</span></div>
     
-<div class="viewcode-block" id="angle"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.geometry.angle">[docs]</a><span class="k">def</span> <span class="nf">angle</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">):</span>
+<div class="viewcode-block" id="inner_angle"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.geometry.inner_angle">[docs]</a><span class="k">def</span> <span class="nf">inner_angle</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    finds the angle between two vectors</span>
+<span class="sd">    finds the interior angle between two vectors</span>
 <span class="sd">    </span>
 <span class="sd">    :param v1: the first vector</span>
 <span class="sd">    :type v1: tuple or list of floats</span>
@@ -71,14 +71,44 @@
 <span class="sd">    :rtype: float</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">v1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">l1</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span>
     <span class="n">v2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-    <span class="n">sint</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sint</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
-        <span class="n">sint</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">sint</span><span class="p">)</span>
-    <span class="n">cost</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">)</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sint</span><span class="p">,</span><span class="n">cost</span><span class="p">)</span>
+    <span class="n">l2</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+    <span class="n">cost</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">)</span><span class="o">/</span><span class="n">l1</span><span class="o">/</span><span class="n">l2</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">t</span></div>
+    
+<div class="viewcode-block" id="total_angle"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.geometry.total_angle">[docs]</a><span class="k">def</span> <span class="nf">total_angle</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">v3</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    finds the interior angle between two vectors</span>
+<span class="sd">    </span>
+<span class="sd">    :param v1: the first vector</span>
+<span class="sd">    :type v1: tuple or list of floats</span>
+<span class="sd">    :param v2: the second vector</span>
+<span class="sd">    :type v2: tuple or list of floats</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+        <span class="n">v1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">v1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">v2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">v2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">v3</span> <span class="o">=</span> <span class="n">v3</span> <span class="ow">or</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">costheta</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">)</span>
+    <span class="n">sintheta</span>  <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">)</span>
+    <span class="n">l_sintheta</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">sintheta</span><span class="p">)</span>
+    <span class="n">neg</span> <span class="o">=</span> <span class="n">sintheta</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">neg</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">neg</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">neg</span><span class="o">=</span><span class="mi">1</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">neg</span><span class="o">*</span><span class="n">l_sintheta</span><span class="p">,</span><span class="n">costheta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">theta</span>    </div>
 </pre></div>
 
           </div>

@@ -1,0 +1,22 @@
+foldable\_robotics\.parts package
+=================================
+
+Submodules
+----------
+
+foldable\_robotics\.parts\.castellated\_hinge1 module
+-----------------------------------------------------
+
+.. automodule:: foldable_robotics.parts.castellated_hinge1
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: foldable_robotics.parts
+    :members:
+    :undoc-members:
+    :show-inheritance:

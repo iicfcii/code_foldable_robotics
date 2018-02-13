@@ -1,0 +1,188 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>foldable_robotics.jupyter_support &#8212; foldable_robotics  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for foldable_robotics.jupyter_support</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Fri Dec 29 13:06:11 2017</span>
+
+<span class="sd">@author: danaukes</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">path_template</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;M </span><span class="si">{path}</span><span class="s1"> Z&#39;&#39;&#39;</span>
+
+<span class="n">svg_template</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">&lt;svg width=&quot;</span><span class="si">{width:f}</span><span class="s1">&quot; height=&quot;</span><span class="si">{height:f}</span><span class="s1">&quot;&gt;</span>
+<span class="s1">    &lt;path d=&quot;</span><span class="si">{paths}</span><span class="s1">&quot; style=&quot;</span><span class="si">{style}</span><span class="s1">&quot;/&gt;</span>
+<span class="s1">&lt;/svg&gt;</span>
+<span class="s1">&#39;&#39;&#39;</span>    
+
+<div class="viewcode-block" id="JupyterSupport"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.jupyter_support.JupyterSupport">[docs]</a><span class="k">class</span> <span class="nc">JupyterSupport</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">loops</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loops</span> <span class="o">=</span> <span class="n">loops</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">3</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">svg_style</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;create the style string for svg&#39;&#39;&#39;</span>
+        
+        <span class="c1">#fill = &#39;fill:none&#39;</span>
+        <span class="n">fill</span> <span class="o">=</span> <span class="s1">&#39;fill:#00FF00&#39;</span>
+        <span class="n">fill_opacity</span> <span class="o">=</span> <span class="s1">&#39;fill-opacity:1&#39;</span>
+        <span class="n">fill_rule</span> <span class="o">=</span> <span class="s1">&#39;fill-rule:evenodd&#39;</span>
+        <span class="n">stroke</span> <span class="o">=</span> <span class="s1">&#39;stroke:#808080&#39;</span>
+        <span class="n">stroke_width</span> <span class="o">=</span> <span class="s1">&#39;stroke-width:</span><span class="si">{0}</span><span class="s1">px&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linewidth</span><span class="p">)</span>
+        <span class="n">stroke_linecap</span> <span class="o">=</span> <span class="s1">&#39;stroke-linecap:round&#39;</span>
+        <span class="n">stroke_linejoin</span> <span class="o">=</span> <span class="s1">&#39;stroke-linejoin:round&#39;</span>
+        <span class="n">stroke_opacity</span> <span class="o">=</span> <span class="s1">&#39;stroke-opacity:1&#39;</span>
+        <span class="n">style_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">fill</span><span class="p">,</span><span class="n">fill_opacity</span><span class="p">,</span><span class="n">fill_rule</span><span class="p">,</span><span class="n">stroke</span><span class="p">,</span><span class="n">stroke_width</span><span class="p">,</span><span class="n">stroke_linecap</span><span class="p">,</span><span class="n">stroke_linejoin</span><span class="p">,</span><span class="n">stroke_opacity</span><span class="p">]</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">style_list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">style</span>
+    
+<div class="viewcode-block" id="JupyterSupport.loop_string"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.jupyter_support.JupyterSupport.loop_string">[docs]</a>    <span class="k">def</span> <span class="nf">loop_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">loop</span><span class="p">):</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">c1</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">loop_string</span> <span class="o">=</span> <span class="s1">&#39;M &#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="si">{0:f}</span><span class="s1"> </span><span class="si">{1:f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">c1</span><span class="p">)</span><span class="o">+</span> <span class="s1">&#39; L &#39;</span> <span class="o">+</span><span class="p">(</span><span class="s1">&#39; L &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([(</span><span class="s1">&#39;</span><span class="si">{0:f}</span><span class="s1"> </span><span class="si">{1:f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="n">loop</span><span class="p">]))</span><span class="o">+</span><span class="s1">&#39; z&#39;</span>
+        <span class="k">return</span> <span class="n">loop_string</span> </div>
+    
+    <span class="k">def</span> <span class="nf">_repr_svg_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;create a svg representation&#39;&#39;&#39;</span>
+        <span class="kn">import</span> <span class="nn">numpy</span>
+        <span class="n">loops</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span> <span class="k">for</span> <span class="n">loop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">]</span>
+        
+        <span class="n">all_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">loops</span><span class="p">)</span>
+        
+        <span class="c1">#mirror along y</span>
+        <span class="n">loops</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">loops</span><span class="p">]</span>
+        <span class="n">all_points</span> <span class="o">*=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1">#shift minimum point to 0,0</span>
+        <span class="n">shift</span> <span class="o">=</span> <span class="n">all_points</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">loops</span> <span class="o">=</span> <span class="p">[</span><span class="n">loop</span><span class="o">-</span><span class="n">shift</span> <span class="k">for</span> <span class="n">loop</span> <span class="ow">in</span> <span class="n">loops</span><span class="p">]</span>
+        <span class="n">all_points</span> <span class="o">-=</span> <span class="n">shift</span>
+        <span class="c1">#find the dimensions of the shape</span>
+        <span class="n">dim</span> <span class="o">=</span> <span class="n">all_points</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-</span><span class="n">all_points</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1">#calculate the scaling according to drawing 100 pixels tall</span>
+        <span class="n">scaling</span> <span class="o">=</span> <span class="mi">100</span><span class="o">/</span><span class="n">dim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="c1">#scale the dimensions and exterior by the scaling factor</span>
+        <span class="n">dim</span><span class="o">*=</span><span class="n">scaling</span>
+        <span class="n">loops</span><span class="o">=</span> <span class="p">[</span><span class="n">loop</span><span class="o">*</span><span class="n">scaling</span> <span class="k">for</span> <span class="n">loop</span> <span class="ow">in</span> <span class="n">loops</span><span class="p">]</span>
+        
+        <span class="c1">#shift the exterior and dimensions by the width of the line</span>
+        <span class="n">loops</span> <span class="o">=</span> <span class="p">[</span><span class="n">loop</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">linewidth</span><span class="o">/</span><span class="mi">2</span> <span class="k">for</span> <span class="n">loop</span> <span class="ow">in</span> <span class="n">loops</span><span class="p">]</span>
+        <span class="n">dim</span><span class="o">+=</span><span class="bp">self</span><span class="o">.</span><span class="n">linewidth</span>
+        
+        <span class="c1">#create the path string</span>
+        
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loop_string</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span> <span class="k">for</span> <span class="n">loop</span> <span class="ow">in</span> <span class="n">loops</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">dim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">dim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">paths2</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>    
+        <span class="c1">#create the svg string</span>
+        <span class="n">svg_string</span> <span class="o">=</span> <span class="n">svg_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">paths</span> <span class="o">=</span> <span class="n">paths2</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">svg_style</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">h</span><span class="p">,</span> <span class="n">width_i</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="n">height_i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">svg_string</span>
+    
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;Shape: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">)</span></div>
+    
+<span class="n">shape</span> <span class="o">=</span> <span class="n">JupyterSupport</span><span class="p">([[(</span><span class="mf">0.</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">10</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">)],[(</span><span class="mf">1.5</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mf">9.5</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mf">9.5</span><span class="p">,</span><span class="mi">9</span><span class="p">)]])</span>
+<span class="n">shape</span><span class="o">.</span><span class="n">_repr_svg_</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>    
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">foldable_robotics</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../foldable_robotics/modules.html"> </a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Dan Aukes.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

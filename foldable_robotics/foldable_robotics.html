@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="foldable_robotics.parts package" href="foldable_robotics.parts.html" />
     <link rel="prev" title="foldable_robotics" href="modules.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -41,6 +42,19 @@
             
   <div class="section" id="foldable-robotics-package">
 <h1>foldable_robotics package<a class="headerlink" href="#foldable-robotics-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="foldable_robotics.parts.html">foldable_robotics.parts package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="foldable_robotics.parts.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="foldable_robotics.parts.html#module-foldable_robotics.parts.castellated_hinge1">foldable_robotics.parts.castellated_hinge1 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="foldable_robotics.parts.html#module-foldable_robotics.parts">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -241,9 +255,9 @@ Please see LICENSE for full license.</p>
 Email: danaukes&lt;at&gt;asu.edu.
 Please see LICENSE for full license.</p>
 <dl class="function">
-<dt id="foldable_robotics.geometry.angle">
-<code class="descclassname">foldable_robotics.geometry.</code><code class="descname">angle</code><span class="sig-paren">(</span><em>v1</em>, <em>v2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/geometry.html#angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.geometry.angle" title="Permalink to this definition">¶</a></dt>
-<dd><p>finds the angle between two vectors</p>
+<dt id="foldable_robotics.geometry.inner_angle">
+<code class="descclassname">foldable_robotics.geometry.</code><code class="descname">inner_angle</code><span class="sig-paren">(</span><em>v1</em>, <em>v2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/geometry.html#inner_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.geometry.inner_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds the interior angle between two vectors</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -275,6 +289,49 @@ Please see LICENSE for full license.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.geometry.total_angle">
+<code class="descclassname">foldable_robotics.geometry.</code><code class="descname">total_angle</code><span class="sig-paren">(</span><em>v1</em>, <em>v2</em>, <em>v3=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/geometry.html#total_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.geometry.total_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds the interior angle between two vectors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>v1</strong> (<em>tuple</em><em> or </em><em>list of floats</em>) – the first vector</li>
+<li><strong>v2</strong> (<em>tuple</em><em> or </em><em>list of floats</em>) – the second vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-foldable_robotics.jupyter_support">
+<span id="foldable-robotics-jupyter-support-module"></span><h2>foldable_robotics.jupyter_support module<a class="headerlink" href="#module-foldable_robotics.jupyter_support" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Dec 29 13:06:11 2017</p>
+<p>&#64;author: danaukes</p>
+<dl class="class">
+<dt id="foldable_robotics.jupyter_support.JupyterSupport">
+<em class="property">class </em><code class="descclassname">foldable_robotics.jupyter_support.</code><code class="descname">JupyterSupport</code><span class="sig-paren">(</span><em>loops</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/jupyter_support.html#JupyterSupport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.jupyter_support.JupyterSupport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="foldable_robotics.jupyter_support.JupyterSupport.loop_string">
+<code class="descname">loop_string</code><span class="sig-paren">(</span><em>loop</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/jupyter_support.html#JupyterSupport.loop_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.jupyter_support.JupyterSupport.loop_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="foldable_robotics.jupyter_support.JupyterSupport.svg_style">
+<code class="descname">svg_style</code><a class="headerlink" href="#foldable_robotics.jupyter_support.JupyterSupport.svg_style" title="Permalink to this definition">¶</a></dt>
+<dd><p>create the style string for svg</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -335,7 +392,7 @@ see the corresponding layer function for arguments and keyword-arguments</p>
 
 <dl class="method">
 <dt id="foldable_robotics.laminate.Laminate.buffer">
-<code class="descname">buffer</code><span class="sig-paren">(</span><em>args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.buffer" title="Permalink to this definition">¶</a></dt>
+<code class="descname">buffer</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/laminate.html#Laminate.buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.laminate.Laminate.buffer" title="Permalink to this definition">¶</a></dt>
 <dd><p>dilate or erode the laminate based on the arguments sent.
 see the corresponding layer function for arguments and keyword-arguments</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1427,7 +1484,7 @@ Please see LICENSE for full license.</p>
 
 <dl class="function">
 <dt id="foldable_robotics.manufacturing.cleanup">
-<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">cleanup</code><span class="sig-paren">(</span><em>input1</em>, <em>value</em>, <em>res</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.cleanup" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">cleanup</code><span class="sig-paren">(</span><em>input1</em>, <em>value</em>, <em>resolution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.cleanup" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div>Cleans up the layer or laminate by using successive dilate and erode functions to remove small objects.  Results in rounded edges</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1437,7 +1494,7 @@ Please see LICENSE for full license.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>input1</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a><em> or </em><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</li>
 <li><strong>value</strong> (<em>float</em>) – dilate / erode radius</li>
-<li><strong>res</strong> (<em>float</em>) – resolution</li>
+<li><strong>resolution</strong> (<em>float</em>) – resolution</li>
 </ul>
 </td>
 </tr>
@@ -1450,7 +1507,7 @@ Please see LICENSE for full license.</p>
 
 <dl class="function">
 <dt id="foldable_robotics.manufacturing.cleanup2">
-<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">cleanup2</code><span class="sig-paren">(</span><em>a</em>, <em>radius</em>, <em>res</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#cleanup2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.cleanup2" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">foldable_robotics.manufacturing.</code><code class="descname">cleanup2</code><span class="sig-paren">(</span><em>a</em>, <em>radius</em>, <em>resolution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/manufacturing.html#cleanup2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.manufacturing.cleanup2" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div>Cleans up the layer or laminate by using successive dilate and erode functions to remove small objects.  Attempts to address rounded corners with additional CSG logic, at the cost of computation and non-intuitive results.</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1460,7 +1517,7 @@ Please see LICENSE for full license.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>a</strong> (<a class="reference internal" href="#foldable_robotics.layer.Layer" title="foldable_robotics.layer.Layer"><em>Layer</em></a><em> or </em><a class="reference internal" href="#foldable_robotics.laminate.Laminate" title="foldable_robotics.laminate.Laminate"><em>Laminate</em></a>) – input shape</li>
 <li><strong>radius</strong> (<em>float</em>) – dilate / erode radius</li>
-<li><strong>res</strong> (<em>float</em>) – resolution</li>
+<li><strong>resolution</strong> (<em>float</em>) – resolution</li>
 </ul>
 </td>
 </tr>
@@ -1762,21 +1819,11 @@ Please see LICENSE for full license.</p>
 </div>
 <div class="section" id="module-foldable_robotics.parts">
 <span id="foldable-robotics-parts-module"></span><h2>foldable_robotics.parts module<a class="headerlink" href="#module-foldable_robotics.parts" title="Permalink to this headline">¶</a></h2>
-<p>Written by Daniel M. Aukes and CONTRIBUTORS
-Email: danaukes&lt;at&gt;asu.edu.
-Please see LICENSE for full license.</p>
-<dl class="function">
-<dt id="foldable_robotics.parts.make_five_layer_hinge">
-<code class="descclassname">foldable_robotics.parts.</code><code class="descname">make_five_layer_hinge</code><span class="sig-paren">(</span><em>width=1</em>, <em>height=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/parts.html#make_five_layer_hinge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.parts.make_five_layer_hinge" title="Permalink to this definition">¶</a></dt>
-<dd><p>makes a five layer hinge of width and height</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="foldable_robotics.parts.make_text">
-<code class="descclassname">foldable_robotics.parts.</code><code class="descname">make_text</code><span class="sig-paren">(</span><em>text</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/parts.html#make_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.parts.make_text" title="Permalink to this definition">¶</a></dt>
-<dd><p>makes a layer of text</p>
-</dd></dl>
-
+<p>Created on Mon Jan 29 22:01:27 2018</p>
+<p>&#64;author: danaukes</p>
+</div>
+<div class="section" id="foldable-robotics-pdf-module">
+<h2>foldable_robotics.pdf module<a class="headerlink" href="#foldable-robotics-pdf-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-foldable_robotics">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-foldable_robotics" title="Permalink to this headline">¶</a></h2>
@@ -1817,6 +1864,7 @@ Please see LICENSE for full license.</p>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="modules.html">foldable_robotics</a><ul>
       <li>Previous: <a href="modules.html" title="previous chapter">foldable_robotics</a></li>
+      <li>Next: <a href="foldable_robotics.parts.html" title="next chapter">foldable_robotics.parts package</a></li>
   </ul></li>
   </ul></li>
 </ul>

@@ -1,6 +1,13 @@
 foldable\_robotics package
 ==========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    foldable_robotics.parts
+
 Submodules
 ----------
 
@@ -36,6 +43,14 @@ foldable\_robotics\.geometry module
     :undoc-members:
     :show-inheritance:
 
+foldable\_robotics\.jupyter\_support module
+-------------------------------------------
+
+.. automodule:: foldable_robotics.jupyter_support
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 foldable\_robotics\.laminate module
 -----------------------------------
 
@@ -64,6 +79,14 @@ foldable\_robotics\.parts module
 --------------------------------
 
 .. automodule:: foldable_robotics.parts
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+foldable\_robotics\.pdf module
+------------------------------
+
+.. automodule:: foldable_robotics.pdf
     :members:
     :undoc-members:
     :show-inheritance:
