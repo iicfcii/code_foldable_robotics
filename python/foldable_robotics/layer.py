@@ -654,6 +654,10 @@ class Layer(ClassAlgebra):
     def _repr_svg_(self):
         j = JupyterSupport(self.exteriors()+self.interiors())
         return j._repr_svg_()
+    def to_laminate(self,value):
+        from foldable_robotics.laminate import Laminate
+        laminate = Laminate(*([self]*value))
+        return laminate
 
     
         

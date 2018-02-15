@@ -12,13 +12,14 @@ import numpy
 
 
 #def read_lines(filename, color = None ,layer = None):
-def read_lines(filename, color = None):
+def read_lines(filename, color = None, layer = None):
     '''
     Reads a dxf file searching for line objects,
 
     :param filename: the file path of the source dxf
     :type filename: string
     :param color: optional.  if included, this function filters for objects of only this color
+    :param layer: optional.  if included, this function filters for objects of only this layer
     :rtype: List of lines consisting of two two-coordinate tuples each.
     '''
     dwg = ezdxf.readfile(filename)
@@ -27,21 +28,25 @@ def read_lines(filename, color = None):
     for e in modelspace:
         if e.dxftype() == 'LINE':
     #        red is code 1, gets added to hinge lines
-            if color is None:
-                lines.append([(e.dxf.start[0],e.dxf.start[1]),(e.dxf.end[0],e.dxf.end[1])])
-            else:
+            if color is not None:
                 if e.get_dxf_attrib('color')==color:
                     lines.append([(e.dxf.start[0],e.dxf.start[1]),(e.dxf.end[0],e.dxf.end[1])])
+            elif layer is not None:
+                if e.get_dxf_attrib('layer')==layer:
+                    lines.append([(e.dxf.start[0],e.dxf.start[1]),(e.dxf.end[0],e.dxf.end[1])])
+            else:
+                lines.append([(e.dxf.start[0],e.dxf.start[1]),(e.dxf.end[0],e.dxf.end[1])])
     return lines
 
 #def read_lwpolylines(filename,color = None,layer = None):
-def read_lwpolylines(filename,color = None,arc_approx = 0):
+def read_lwpolylines(filename,color = None,layer = None,arc_approx = 0):
     '''
     Reads a dxf file searching for lwpolyline objects, approximating arc elements in an lwpolyline with an n-segement set of lines
 
     :param filename: the file path of the source dxf
     :type filename: string
     :param color: optional.  if included, this function filters for objects of only this color
+    :param layer: optional.  if included, this function filters for objects of only this layer
     :param arc_approx: number of interior points to approximate an arc with
     :type arc_approx: int
     :rtype: List of lines consisting of two two-coordinate tuples each.
@@ -51,7 +56,27 @@ def read_lwpolylines(filename,color = None,arc_approx = 0):
     lines = []
     for e in modelspace:
         if e.dxftype() == 'LWPOLYLINE':
-            if color is None or e.get_dxf_attrib('color')==color:
+            if color is not None:
+                if e.get_dxf_attrib('color')==color:
+                    line = numpy.array(list(e.get_points()))
+                    line_out = []
+                    for ii in range(len(line)):
+                        if line[ii,4]!=0:
+                            line_out.extend(calc_circle(line[ii,:2],line[ii+1,:2],line[ii,4],arc_approx))
+                        else:
+                            line_out.append(line[ii,:2].tolist())
+                    lines.append(line_out)
+            elif layer is not None:
+                if e.get_dxf_attrib('layer')==layer:
+                    line = numpy.array(list(e.get_points()))
+                    line_out = []
+                    for ii in range(len(line)):
+                        if line[ii,4]!=0:
+                            line_out.extend(calc_circle(line[ii,:2],line[ii+1,:2],line[ii,4],arc_approx))
+                        else:
+                            line_out.append(line[ii,:2].tolist())
+                    lines.append(line_out)
+            else:
                 line = numpy.array(list(e.get_points()))
                 line_out = []
                 for ii in range(len(line)):
@@ -60,6 +85,7 @@ def read_lwpolylines(filename,color = None,arc_approx = 0):
                     else:
                         line_out.append(line[ii,:2].tolist())
                 lines.append(line_out)
+
     return lines
 
             
