@@ -154,8 +154,8 @@ def not_removable_up(laminate,is_adhesive):
         result|=layer
         results.append(result.copy())
     new_lam = Laminate(*results)
-    new_lam = new_lam[::-1]
     new_lam = modify_up(new_lam,is_adhesive)    
+    new_lam = new_lam[::-1]
 
     return new_lam
 
