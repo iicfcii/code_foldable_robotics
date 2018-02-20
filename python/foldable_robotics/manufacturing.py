@@ -178,11 +178,8 @@ def not_removable_both(laminate):
    :rtype: Laminate
     """      
     
-    result = Layer()
-    for layer in laminate:
-        result|=layer
-    result = [result]*len(laminate)
-    new_lam  = Laminate(*result)
+    result = unary_union(laminate)
+    new_lam = result.to_laminate(len(laminate)) 
     return new_lam 
     
 def modify_up(laminate,is_adhesive):

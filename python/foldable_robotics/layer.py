@@ -108,20 +108,24 @@ def from_layer_to_shapely(layer):
     geoms = so.unary_union(layer.geoms)
     return geoms
 
-def plot_poly(poly,color = None,edgecolor = None, facecolor =None):
+def plot_poly(poly,color = None,edgecolor = None, facecolor =None, linewidth = .25):
     '''
     plot a shapely geometry
     
     :param poly: the layer instance
     :type poly: class from shapely.geometry
-    :param poly: tuple of r,g,b,a scalars from 0 to 1
-    :type poly: tuple
+    :param edgecolor: tuple of r,g,b,a scalars from 0 to 1
+    :type edgecolor: tuple
+    :param facecolor: tuple of r,g,b,a scalars from 0 to 1
+    :type facecolor: tuple
+    :param linewidth: width of the line
+    :type linewidth: scalar or None for default
     '''  
 
     color = color or (1,0,0,.25)
     
     facecolor = facecolor or color
-    edgecolor = edgecolor or tuple(list(color[:3])+[1])
+    edgecolor = edgecolor or (0,0,0,.5)
     
     import numpy
     from matplotlib.patches import PathPatch
@@ -138,7 +142,7 @@ def plot_poly(poly,color = None,edgecolor = None, facecolor =None):
             vertices.extend(item+[(0,0)])
             codes.extend([Path.MOVETO]+([Path.LINETO]*(len(item)-1))+[Path.CLOSEPOLY])
         path = Path(vertices,codes)
-        patch = PathPatch(path,facecolor=facecolor,edgecolor=edgecolor)        
+        patch = PathPatch(path,facecolor=facecolor,edgecolor=edgecolor, linewidth= linewidth)        
         axes.add_patch(patch)
 
     elif isinstance(poly,sg.LineString):
