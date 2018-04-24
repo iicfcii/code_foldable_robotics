@@ -119,8 +119,46 @@ def read_circles(filename,color = None,layer = None):
                     radius = e.get_dxf_attrib('radius')
                     circles.append((center,radius))
     return circles
-
             
+def read_text(filename,color=None,layer=None):
+    '''
+    Reads a dxf file searching for text objects,
+
+    :param filename: the file path of the source dxf
+    :type filename: string
+    :param color: optional.  if included, this function filters for objects of only this color
+    :param layer: optional.  if included, this function filters for objects of only this layer
+    :rtype: List of tuples consisting ((x,y),text,height, and rotation) representing each text element.
+    '''
+    dwg = ezdxf.readfile(filename)
+    modelspace = dwg.modelspace()
+    elements = []
+    for item in modelspace:
+        if item.dxftype() == 'TEXT':    
+            if color is not None:
+                if e.get_dxf_attrib('color')==color:
+                    h = item.get_dxf_attrib('height')
+                    r = item.get_dxf_attrib('rotation')
+                    x,y,z = item.get_pos()[1]
+                    text = item.get_dxf_attrib('text')
+                    elements.append(((x,y),text,h,r))
+            elif layer is not None:
+                if e.get_dxf_attrib('layer')==layer:
+                    h = item.get_dxf_attrib('height')
+                    r = item.get_dxf_attrib('rotation')
+                    x,y,z = item.get_pos()[1]
+                    text = item.get_dxf_attrib('text')
+                    elements.append(((x,y),text,h,r))
+            else:
+                h = item.get_dxf_attrib('height')
+                r = item.get_dxf_attrib('rotation')
+                x,y,z = item.get_pos()[1]
+                text = item.get_dxf_attrib('text')
+                elements.append(((x,y),text,h,r))
+
+    return elements
+            
+
 def calc_circle(p1,p2,bulge,arc_approx=0):
     '''
     Approximates an arc betweem two points using a "bulge value".
