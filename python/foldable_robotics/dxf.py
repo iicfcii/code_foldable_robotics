@@ -88,6 +88,38 @@ def read_lwpolylines(filename,color = None,layer = None,arc_approx = 0):
 
     return lines
 
+
+def read_circles(filename,color = None,layer = None):
+    '''
+    Reads a dxf file searching for circle objects, approximating arc elements in an lwpolyline with an n-segement set of lines
+
+    :param filename: the file path of the source dxf
+    :type filename: string
+    :param color: optional.  if included, this function filters for objects of only this color
+    :param layer: optional.  if included, this function filters for objects of only this layer
+    :rtype: List of tuples consisting (center and radius) representing each circle.
+    '''
+    dwg = ezdxf.readfile(filename)
+    modelspace = dwg.modelspace()
+    circles= []
+    for e in modelspace:
+        if e.dxftype() == 'CIRCLE':
+            if color is not None:
+                if e.get_dxf_attrib('color')==color:
+                    center = e.get_dxf_attrib('center')
+                    radius = e.get_dxf_attrib('radius')
+                    circles.append((center,radius))
+            elif layer is not None:
+                if e.get_dxf_attrib('layer')==layer:
+                    center = e.get_dxf_attrib('center')
+                    radius = e.get_dxf_attrib('radius')
+                    circles.append((center,radius))
+            else:
+                    center = e.get_dxf_attrib('center')
+                    radius = e.get_dxf_attrib('radius')
+                    circles.append((center,radius))
+    return circles
+
             
 def calc_circle(p1,p2,bulge,arc_approx=0):
     '''
