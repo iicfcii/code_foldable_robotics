@@ -83,6 +83,7 @@ class JupyterSupport(object):
     def __repr__(self):
         return 'Shape: '+str(self.loops)
     
-shape = JupyterSupport([[(0.,0),(10,0),(10,10)],[(1.5,1),(9.5,1),(9.5,9)]])
-shape._repr_svg_()
-print(shape)    
+if __name__=='__main__':    
+    shape = JupyterSupport([[(0.,0),(10,0),(10,10)],[(1.5,1),(9.5,1),(9.5,9)]])
+    shape._repr_svg_()
+    print(shape)    
