@@ -18,7 +18,7 @@ import cairo
 ppi = 72
 ppmm = 72/25.4
 
-page_width = 44
+page_width = 40
 page_height = 28
 
 class Page(object):
