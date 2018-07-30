@@ -205,7 +205,7 @@ def calc_circle(p1,p2,bulge,arc_approx=0):
     
     if bulge<0:
         if t2>t1:
-            t2 = t2 - math.pi
+            t2 = t2 - 2* math.pi
     
     t = numpy.r_[t1:t2:(arc_approx+2)*1j]
     points = r*numpy.c_[numpy.cos(t),numpy.sin(t)] +p

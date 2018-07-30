@@ -80,7 +80,10 @@ class Laminate(Iterable,ClassAlgebra):
         import matplotlib.cm
         cm = matplotlib.cm.plasma
         l = len(self.layers)     
-        colors = numpy.array([cm(ii/(l-1)) for ii in range(l)])
+        if l>1:
+            colors = numpy.array([cm(ii/(l-1)) for ii in range(l)])
+        else:
+            colors = numpy.array([cm(1)])
         colors[:,3] = .25
         colors = [tuple(item) for item in colors]
         if new:
