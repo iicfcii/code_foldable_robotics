@@ -44,6 +44,19 @@ class Page(object):
         self._context.set_source_rgba(*line_color)
         self._context.set_line_width(line_width)
         self._context.stroke()
+
+    def draw_linestring(self,geom,line_color = (0,0,0,1),line_width=.01,fill_color=(0,0,0,1)):
+        coords = list(geom.coords)
+        pt = coords.pop(0)
+        self._context.move_to(*pt)
+        
+        for pt in coords:
+            self._context.line_to(*pt)
+        
+#        self._context.close_path()
+        self._context.set_source_rgba(*line_color)
+        self._context.set_line_width(line_width)
+        self._context.stroke()
     
     def close(self):
         self._surface.finish()
