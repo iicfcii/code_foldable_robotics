@@ -662,7 +662,11 @@ class Layer(ClassAlgebra):
         from foldable_robotics.laminate import Laminate
         laminate = Laminate(*([self]*value))
         return laminate
-
+    def contains(self,*args):
+        geom = from_layer_to_shapely(self)
+        bools = [geom.contains(sg.Point(*item)) for item in args]
+        return bools
+        
     
         
 def layer_representer(dumper, v):
