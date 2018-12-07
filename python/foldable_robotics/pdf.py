@@ -35,10 +35,18 @@ class Page(object):
     def draw_poly(self,poly,line_color = (0,0,0,1),line_width=.01,fill_color=(0,0,0,1)):
         
         pt = poly.pop(0)
-        self._context.move_to (*pt)
+        self._context.move_to(*pt)
         
+#        lastpt = pt
+#        for pt in poly:
+#            pt1x = (lastpt[0]*2+pt[0])/3
+#            pt1y = (lastpt[1]*2+pt[1])/3
+#            pt2x = (lastpt[0]+2*pt[0])/3
+#            pt2y = (lastpt[1]+2*pt[1])/3
+#            self._context.curve_to(pt1x,pt1y,pt2x,pt2y,*pt)
+#            lastpt = pt
         for pt in poly:
-            self._context.line_to (*pt)
+            self._context.line_to(*pt)
         
         self._context.close_path ()
         self._context.set_source_rgba(*line_color)
@@ -50,7 +58,15 @@ class Page(object):
         pt = coords.pop(0)
         self._context.move_to(*pt)
         
-        for pt in coords:
+#        lastpt = pt
+#        for pt in poly:
+#            pt1x = (lastpt[0]*2+pt[0])/3
+#            pt1y = (lastpt[1]*2+pt[1])/3
+#            pt2x = (lastpt[0]+2*pt[0])/3
+#            pt2y = (lastpt[1]+2*pt[1])/3
+#            self._context.curve_to(pt1x,pt1y,pt2x,pt2y,*pt)
+#            lastpt = pt
+        for pt in poly:
             self._context.line_to(*pt)
         
 #        self._context.close_path()
