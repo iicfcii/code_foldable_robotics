@@ -517,8 +517,9 @@ class Layer(ClassAlgebra):
         for geom in self.geoms:
             segments = get_segments(geom)
             for segment in segments:
-                for c0,c1 in zip(segment[:-1],segment[1:]):
-                    msp.add_line(c0,c1)
+                msp.add_lwpolyline(segment)
+#                for c0,c1 in zip(segment[:-1],segment[1:]):
+#                    msp.add_line(c0,c1)
         dwg.saveas(name+'.dxf')
         
     def map_line_stretch(self,p1,p2,p3,p4):
