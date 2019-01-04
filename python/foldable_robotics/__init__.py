@@ -8,6 +8,5 @@ Email: danaukes<at>asu.edu.
 Please see LICENSE for full license.
 """
 
-
 resolution = 0
 hole_resolution = 2
