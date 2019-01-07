@@ -39,17 +39,7 @@ def make_five_layer_hinge(width = 1, height = 1):
     return hinge
 #    plt.figure()
 #    hinge.plot()
-def make_text(text,*args,**kwargs):
-    '''
-    makes a layer of text
-    '''
-    import idealab_tools.text_to_polygons
-    p = idealab_tools.text_to_polygons.text_to_polygons(text,*args,**kwargs)
-    layers = [Layer(sg.Polygon(item)) for item in p]
-    l = Layer()
-    for item in layers:
-        l ^= item
-    return l
+
     
 
 if __name__=='__main__':
