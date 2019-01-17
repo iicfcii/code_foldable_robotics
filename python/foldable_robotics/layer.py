@@ -18,25 +18,6 @@ import numpy
 import foldable_robotics
 from foldable_robotics.jupyter_support import JupyterSupport
 
-def get_segments(poly):
-    '''
-    get the line segments of a polygon or linestring
-    
-    :param poly: the geometry
-    :type poly: shapely.geometry.Polygon or shapely.geometry.LineString
-    :rtype: list of two-coordinate segments
-    '''         
-    if isinstance(poly,sg.Polygon):
-        exterior = list(poly.exterior.coords)
-        interiors = [list(interior.coords) for interior in poly.interiors]
-        segments = [exterior]+interiors
-        segments = [loop+loop[0:1] for loop in segments]
-        
-    elif isinstance(poly,sg.LineString):
-        segments = list(poly.coords)
-        
-    return segments
-
 def is_collection(item):
     '''
     determines whether the geometry defined by item contains multiple geometries
@@ -514,12 +495,19 @@ class Layer(ClassAlgebra):
         import ezdxf
         dwg = ezdxf.new('R2010')
         msp = dwg.modelspace()
+#        loops = self.exteriors()+self.interiors()
         for geom in self.geoms:
-            segments = get_segments(geom)
-            for segment in segments:
-                msp.add_lwpolyline(segment)
-#                for c0,c1 in zip(segment[:-1],segment[1:]):
-#                    msp.add_line(c0,c1)
+            if isinstance(geom,sg.Polygon):
+                exterior = list(geom.exterior.coords)
+                interiors = [list(interior.coords) for interior in geom.interiors]
+                loops = [exterior]+interiors
+
+            elif isinstance(geom,sg.LineString):
+                line = list(geom.coords)
+                loops = [line]
+            
+            for loop in loops:
+                msp.add_lwpolyline(loop)
         dwg.saveas(name+'.dxf')
         
     def map_line_stretch(self,p1,p2,p3,p4):
@@ -667,7 +655,43 @@ class Layer(ClassAlgebra):
         geom = from_layer_to_shapely(self)
         bools = [geom.contains(sg.Point(*item)) for item in args]
         return bools
+    def get_segments(self):
+        '''
+        get the line segments of a layer or linestring
         
+        :param poly: the geometry
+        :type poly: shapely.geometry.Polygon or shapely.geometry.LineString
+        :rtype: list of two-coordinate segments
+        '''         
+        all_segments = []
+        for geom in self.geoms:
+            if isinstance(geom,sg.Polygon):
+                exterior = list(geom.exterior.coords)
+                interiors = [list(interior.coords) for interior in geom.interiors]
+                loops = [exterior]+interiors
+                for loop in loops:
+                    segments = list(zip(loop[:-1],loop[1:]))
+                    all_segments.extend(segments)
+                
+            elif isinstance(geom,sg.LineString):
+                line = list(geom.coords)
+                segments = list(zip(line[:-1],line[1:]))
+                all_segments.extend(segments)
+            
+        return all_segments
+
+    @classmethod
+    def make_text(cls,text,*args,**kwargs):
+        '''
+        makes a layer of text
+        '''
+        import idealab_tools.text_to_polygons
+        p = idealab_tools.text_to_polygons.text_to_polygons(text,*args,**kwargs)
+        layers = [cls(sg.Polygon(item)) for item in p]
+        l = Layer()
+        for item in layers:
+            l ^= item
+        return l        
     
         
 def layer_representer(dumper, v):
