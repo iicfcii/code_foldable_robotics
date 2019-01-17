@@ -15,7 +15,7 @@ def length(v1):
     :type v1: tuple or list of floats
     :rtype: float
     '''
-    v1 = numpy.array(v1)
+    v1 = numpy.array(v1).flatten()
     l = (v1.dot(v1))**.5
     return l
     
