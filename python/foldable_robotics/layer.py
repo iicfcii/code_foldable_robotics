@@ -483,7 +483,6 @@ class Layer(ClassAlgebra):
         new_geoms = (geoms.simplify(tolerance))
         return foldable_robotics.layer.from_shapely_to_layer(new_geoms)
 
-
     def export_dxf(self,name):
         '''
         export the layer to a dxf
@@ -496,18 +495,8 @@ class Layer(ClassAlgebra):
         dwg = ezdxf.new('R2010')
         msp = dwg.modelspace()
 #        loops = self.exteriors()+self.interiors()
-        for geom in self.geoms:
-            if isinstance(geom,sg.Polygon):
-                exterior = list(geom.exterior.coords)
-                interiors = [list(interior.coords) for interior in geom.interiors]
-                loops = [exterior]+interiors
-
-            elif isinstance(geom,sg.LineString):
-                line = list(geom.coords)
-                loops = [line]
-            
-            for loop in loops:
-                msp.add_lwpolyline(loop)
+        for loop in self.get_paths():
+            msp.add_lwpolyline(loop)
         dwg.saveas(name+'.dxf')
         
     def map_line_stretch(self,p1,p2,p3,p4):
@@ -625,15 +614,15 @@ class Layer(ClassAlgebra):
         l = Layer(p)
         return l
         
-    def exteriors(self):
-        '''return the exterior coordinates of all shapes in the layer'''
-        a = [list(geom.exterior.coords) for geom in self.geoms]
-        return a
-
-    def interiors(self):
-        '''return the interior coordinates of all shapes in the layer'''
-        a = [list(interior.coords) for geom in self.geoms for interior in geom.interiors]
-        return a
+#    def exteriors(self):
+#        '''return the exterior coordinates of all shapes in the layer'''
+#        a = [list(geom.exterior.coords) for geom in self.geoms]
+#        return a
+#
+#    def interiors(self):
+#        '''return the interior coordinates of all shapes in the layer'''
+#        a = [list(interior.coords) for geom in self.geoms for interior in geom.interiors]
+#        return a
 
     def extrude(self,z_lower,material_property):
         '''create tetrahedra from the layer and return as a set of points and tetrahedra indeces'''
@@ -644,17 +633,21 @@ class Layer(ClassAlgebra):
         points2 = numpy.r_[numpy.c_[points,[z_lower]*len(points)],numpy.c_[points,[z_upper]*len(points)]]
         tris2 = numpy.r_[numpy.c_[tris[:,(0)]+m,tris[:,(1,0,2)]+m],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(2,)]+m,tris[:,(2,)]],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(1,2)]+m]]
         return points2,tris2
+
     def _repr_svg_(self):
-        j = JupyterSupport(self.exteriors()+self.interiors())
+        j = JupyterSupport(self.get_paths())
         return j._repr_svg_()
+
     def to_laminate(self,value):
         from foldable_robotics.laminate import Laminate
         laminate = Laminate(*([self]*value))
         return laminate
+
     def contains(self,*args):
         geom = from_layer_to_shapely(self)
         bools = [geom.contains(sg.Point(*item)) for item in args]
         return bools
+    
     def get_segments(self):
         '''
         get the line segments of a layer or linestring
@@ -679,6 +672,26 @@ class Layer(ClassAlgebra):
                 all_segments.extend(segments)
             
         return all_segments
+
+    def get_paths(self):
+        '''
+        get the inner and outer paths of a layer's geometry
+        
+        :param self: the geometry
+        :type self: foldable_robotics.layer.Layer
+        :rtype: list of list of coordinate tuples
+        '''        
+        paths = []
+        for geom in self.geoms:
+            if isinstance(geom,sg.Polygon):
+                exterior = list(geom.exterior.coords)
+                interiors = [list(interior.coords) for interior in geom.interiors]
+                paths.extend([exterior]+interiors)
+
+            elif isinstance(geom,sg.LineString):
+                line = list(geom.coords)
+                paths.extend([line])
+        return paths
 
     @classmethod
     def make_text(cls,text,*args,**kwargs):
