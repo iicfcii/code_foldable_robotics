@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>foldable_robotics.dxf &#8212; foldable_robotics  documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
@@ -29,13 +21,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for foldable_robotics.dxf</h1><div class="highlight"><pre>
@@ -53,13 +46,14 @@
 
 
 <span class="c1">#def read_lines(filename, color = None ,layer = None):</span>
-<div class="viewcode-block" id="read_lines"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dxf.read_lines">[docs]</a><span class="k">def</span> <span class="nf">read_lines</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="read_lines"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dxf.read_lines">[docs]</a><span class="k">def</span> <span class="nf">read_lines</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">layer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Reads a dxf file searching for line objects,</span>
 
 <span class="sd">    :param filename: the file path of the source dxf</span>
 <span class="sd">    :type filename: string</span>
 <span class="sd">    :param color: optional.  if included, this function filters for objects of only this color</span>
+<span class="sd">    :param layer: optional.  if included, this function filters for objects of only this layer</span>
 <span class="sd">    :rtype: List of lines consisting of two two-coordinate tuples each.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">dwg</span> <span class="o">=</span> <span class="n">ezdxf</span><span class="o">.</span><span class="n">readfile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -68,21 +62,25 @@
     <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">modelspace</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">dxftype</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;LINE&#39;</span><span class="p">:</span>
     <span class="c1">#        red is code 1, gets added to hinge lines</span>
-            <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">([(</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]),(</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">end</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">)</span><span class="o">==</span><span class="n">color</span><span class="p">:</span>
                     <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">([(</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]),(</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">end</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
+            <span class="k">elif</span> <span class="n">layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;layer&#39;</span><span class="p">)</span><span class="o">==</span><span class="n">layer</span><span class="p">:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">([(</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]),(</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">end</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">([(</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]),(</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">e</span><span class="o">.</span><span class="n">dxf</span><span class="o">.</span><span class="n">end</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
     <span class="k">return</span> <span class="n">lines</span></div>
 
 <span class="c1">#def read_lwpolylines(filename,color = None,layer = None):</span>
-<div class="viewcode-block" id="read_lwpolylines"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dxf.read_lwpolylines">[docs]</a><span class="k">def</span> <span class="nf">read_lwpolylines</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">arc_approx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="read_lwpolylines"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dxf.read_lwpolylines">[docs]</a><span class="k">def</span> <span class="nf">read_lwpolylines</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">layer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">arc_approx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Reads a dxf file searching for lwpolyline objects, approximating arc elements in an lwpolyline with an n-segement set of lines</span>
 
 <span class="sd">    :param filename: the file path of the source dxf</span>
 <span class="sd">    :type filename: string</span>
 <span class="sd">    :param color: optional.  if included, this function filters for objects of only this color</span>
+<span class="sd">    :param layer: optional.  if included, this function filters for objects of only this layer</span>
 <span class="sd">    :param arc_approx: number of interior points to approximate an arc with</span>
 <span class="sd">    :type arc_approx: int</span>
 <span class="sd">    :rtype: List of lines consisting of two two-coordinate tuples each.</span>
@@ -92,7 +90,27 @@
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">modelspace</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">dxftype</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;LWPOLYLINE&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">)</span><span class="o">==</span><span class="n">color</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">)</span><span class="o">==</span><span class="n">color</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">get_points</span><span class="p">()))</span>
+                    <span class="n">line_out</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+                            <span class="n">line_out</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">calc_circle</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">ii</span><span class="p">,:</span><span class="mi">2</span><span class="p">],</span><span class="n">line</span><span class="p">[</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">,:</span><span class="mi">2</span><span class="p">],</span><span class="n">line</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="n">arc_approx</span><span class="p">))</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">line_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">ii</span><span class="p">,:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_out</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;layer&#39;</span><span class="p">)</span><span class="o">==</span><span class="n">layer</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">get_points</span><span class="p">()))</span>
+                    <span class="n">line_out</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+                            <span class="n">line_out</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">calc_circle</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">ii</span><span class="p">,:</span><span class="mi">2</span><span class="p">],</span><span class="n">line</span><span class="p">[</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">,:</span><span class="mi">2</span><span class="p">],</span><span class="n">line</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="n">arc_approx</span><span class="p">))</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">line_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">ii</span><span class="p">,:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_out</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">get_points</span><span class="p">()))</span>
                 <span class="n">line_out</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)):</span>
@@ -101,9 +119,80 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">line_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">ii</span><span class="p">,:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_out</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">lines</span></div>
 
+
+<div class="viewcode-block" id="read_circles"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dxf.read_circles">[docs]</a><span class="k">def</span> <span class="nf">read_circles</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">layer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Reads a dxf file searching for circle objects, approximating arc elements in an lwpolyline with an n-segement set of lines</span>
+
+<span class="sd">    :param filename: the file path of the source dxf</span>
+<span class="sd">    :type filename: string</span>
+<span class="sd">    :param color: optional.  if included, this function filters for objects of only this color</span>
+<span class="sd">    :param layer: optional.  if included, this function filters for objects of only this layer</span>
+<span class="sd">    :rtype: List of tuples consisting (center and radius) representing each circle.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">dwg</span> <span class="o">=</span> <span class="n">ezdxf</span><span class="o">.</span><span class="n">readfile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">modelspace</span> <span class="o">=</span> <span class="n">dwg</span><span class="o">.</span><span class="n">modelspace</span><span class="p">()</span>
+    <span class="n">circles</span><span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">modelspace</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">dxftype</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;CIRCLE&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">)</span><span class="o">==</span><span class="n">color</span><span class="p">:</span>
+                    <span class="n">center</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+                    <span class="n">radius</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;radius&#39;</span><span class="p">)</span>
+                    <span class="n">circles</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">center</span><span class="p">,</span><span class="n">radius</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;layer&#39;</span><span class="p">)</span><span class="o">==</span><span class="n">layer</span><span class="p">:</span>
+                    <span class="n">center</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+                    <span class="n">radius</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;radius&#39;</span><span class="p">)</span>
+                    <span class="n">circles</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">center</span><span class="p">,</span><span class="n">radius</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                    <span class="n">center</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+                    <span class="n">radius</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;radius&#39;</span><span class="p">)</span>
+                    <span class="n">circles</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">center</span><span class="p">,</span><span class="n">radius</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">circles</span></div>
             
+<div class="viewcode-block" id="read_text"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dxf.read_text">[docs]</a><span class="k">def</span> <span class="nf">read_text</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Reads a dxf file searching for text objects,</span>
+
+<span class="sd">    :param filename: the file path of the source dxf</span>
+<span class="sd">    :type filename: string</span>
+<span class="sd">    :param color: optional.  if included, this function filters for objects of only this color</span>
+<span class="sd">    :param layer: optional.  if included, this function filters for objects of only this layer</span>
+<span class="sd">    :rtype: List of tuples consisting ((x,y),text,height, and rotation) representing each text element.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">dwg</span> <span class="o">=</span> <span class="n">ezdxf</span><span class="o">.</span><span class="n">readfile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">modelspace</span> <span class="o">=</span> <span class="n">dwg</span><span class="o">.</span><span class="n">modelspace</span><span class="p">()</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">modelspace</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">dxftype</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">:</span>    
+            <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">)</span><span class="o">==</span><span class="n">color</span><span class="p">:</span>
+                    <span class="n">h</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;rotation&#39;</span><span class="p">)</span>
+                    <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+                    <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="n">text</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">r</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;layer&#39;</span><span class="p">)</span><span class="o">==</span><span class="n">layer</span><span class="p">:</span>
+                    <span class="n">h</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;rotation&#39;</span><span class="p">)</span>
+                    <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+                    <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="n">text</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">r</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;rotation&#39;</span><span class="p">)</span>
+                <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_dxf_attrib</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+                <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="n">text</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">r</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">elements</span></div>
+            
+
 <div class="viewcode-block" id="calc_circle"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.dxf.calc_circle">[docs]</a><span class="k">def</span> <span class="nf">calc_circle</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">,</span><span class="n">bulge</span><span class="p">,</span><span class="n">arc_approx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Approximates an arc betweem two points using a &quot;bulge value&quot;.</span>
@@ -150,7 +239,7 @@
     
     <span class="k">if</span> <span class="n">bulge</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">t2</span><span class="o">&gt;</span><span class="n">t1</span><span class="p">:</span>
-            <span class="n">t2</span> <span class="o">=</span> <span class="n">t2</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+            <span class="n">t2</span> <span class="o">=</span> <span class="n">t2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
     
     <span class="n">t</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">t1</span><span class="p">:</span><span class="n">t2</span><span class="p">:(</span><span class="n">arc_approx</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="mi">1</span><span class="n">j</span><span class="p">]</span>
     <span class="n">points</span> <span class="o">=</span> <span class="n">r</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="n">numpy</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span> <span class="o">+</span><span class="n">p</span>
@@ -491,6 +580,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -521,12 +611,14 @@
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -537,8 +629,8 @@
       &copy;2017, Dan Aukes.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

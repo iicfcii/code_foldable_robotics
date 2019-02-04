@@ -1,0 +1,7 @@
+ezdxf
+idealab_tools
+matplotlib
+numpy
+pypoly2tri
+shapely
+pyyaml
