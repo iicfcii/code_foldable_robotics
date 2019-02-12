@@ -142,7 +142,7 @@ def check_loop(loop):
     if loop[-1]==loop[0]:
         return loop[:-1]
         
-def triangulate_geom(geom):
+def z(geom):
     '''
     triangulate a shapely geometry
     
@@ -150,27 +150,29 @@ def triangulate_geom(geom):
     :type geom: shapely.Polygon
     :rtype: array of points, array of triangle indeces
     '''      
-    import pypoly2tri
-    from pypoly2tri.cdt import CDT
-    import numpy
-    exterior = list(geom.exterior.coords)
-    exterior = check_loop(exterior)
-    exterior2 = [pypoly2tri.shapes.Point(*item) for item in exterior]
-    cdt = CDT(exterior2)
-    interiors = []
-    for interior in geom.interiors:
-        interior= list(interior.coords)
-        interior = check_loop(interior)
-        interiors.append(interior)
-    for interior in interiors:
-        interior2 = [pypoly2tri.shapes.Point(*item) for item in interior]
-        cdt.AddHole(interior2)
-    cdt.Triangulate()
-    tris =cdt.GetTriangles()
-    points = cdt.GetPoints()
-    points2 = numpy.array([item.toTuple() for item in points])
-    tris2 = numpy.array([[points.index(point) for point in tri.points_] for tri in tris],dtype = int)
-    return points2,tris2
+
+    if isinstance(geom,sg.Polygon):	
+		import pypoly2tri
+		from pypoly2tri.cdt import CDT
+		import numpy
+		exterior = list(geom.exterior.coords)
+		exterior = check_loop(exterior)
+		exterior2 = [pypoly2tri.shapes.Point(*item) for item in exterior]
+		cdt = CDT(exterior2)
+		interiors = []
+		for interior in geom.interiors:
+			interior= list(interior.coords)
+			interior = check_loop(interior)
+			interiors.append(interior)
+		for interior in interiors:
+			interior2 = [pypoly2tri.shapes.Point(*item) for item in interior]
+			cdt.AddHole(interior2)
+		cdt.Triangulate()
+		tris =cdt.GetTriangles()
+		points = cdt.GetPoints()
+		points2 = numpy.array([item.toTuple() for item in points])
+		tris2 = numpy.array([[points.index(point) for point in tri.points_] for tri in tris],dtype = int)
+		return points2,tris2
 
 def points_2d_to_3d(points_2d,z_val):
     '''
@@ -614,15 +616,23 @@ class Layer(ClassAlgebra):
         l = Layer(p)
         return l
         
-#    def exteriors(self):
-#        '''return the exterior coordinates of all shapes in the layer'''
-#        a = [list(geom.exterior.coords) for geom in self.geoms]
-#        return a
-#
-#    def interiors(self):
-#        '''return the interior coordinates of all shapes in the layer'''
-#        a = [list(interior.coords) for geom in self.geoms for interior in geom.interiors]
-#        return a
+    def exteriors(self):
+        '''return the exterior coordinates of all closed shapes in the layer'''
+        paths = []
+        for geom in self.geoms:
+            if isinstance(geom,sg.Polygon):
+                exterior = list(geom.exterior.coords)
+                paths.extend([exterior])
+        return paths
+
+    def interiors(self):
+        '''return the interior coordinates of all shapes in the layer'''
+        paths = []
+        for geom in self.geoms:
+            if isinstance(geom,sg.Polygon):
+                interiors = [list(interior.coords) for interior in geom.interiors]
+                paths.extend(interiors)
+        return paths
 
     def extrude(self,z_lower,material_property):
         '''create tetrahedra from the layer and return as a set of points and tetrahedra indeces'''

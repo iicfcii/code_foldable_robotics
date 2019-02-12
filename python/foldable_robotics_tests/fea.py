@@ -23,7 +23,13 @@ a = Layer(sg.box(-1,-1,1,1))
 b = a.scale(.5,.5)
 c=a-b
 
-boundary_points = [item for loop in c.exteriors()for item in loop]
+paths = []
+for geom in c.geoms:
+	if isinstance(geom,sg.Polygon):
+		exterior = list(geom.exterior.coords)
+		paths.append(exterior)
+
+boundary_points = [item for loop in paths for item in loop]
 d =Layer(*[sg.Point(item) for item in boundary_points]).buffer(.1)
 
 c.plot()
