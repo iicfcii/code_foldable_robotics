@@ -142,7 +142,7 @@ def check_loop(loop):
     if loop[-1]==loop[0]:
         return loop[:-1]
         
-def z(geom):
+def triangulate_geom(geom):
     '''
     triangulate a shapely geometry
     
@@ -151,28 +151,28 @@ def z(geom):
     :rtype: array of points, array of triangle indeces
     '''      
 
-    if isinstance(geom,sg.Polygon):	
-		import pypoly2tri
-		from pypoly2tri.cdt import CDT
-		import numpy
-		exterior = list(geom.exterior.coords)
-		exterior = check_loop(exterior)
-		exterior2 = [pypoly2tri.shapes.Point(*item) for item in exterior]
-		cdt = CDT(exterior2)
-		interiors = []
-		for interior in geom.interiors:
-			interior= list(interior.coords)
-			interior = check_loop(interior)
-			interiors.append(interior)
-		for interior in interiors:
-			interior2 = [pypoly2tri.shapes.Point(*item) for item in interior]
-			cdt.AddHole(interior2)
-		cdt.Triangulate()
-		tris =cdt.GetTriangles()
-		points = cdt.GetPoints()
-		points2 = numpy.array([item.toTuple() for item in points])
-		tris2 = numpy.array([[points.index(point) for point in tri.points_] for tri in tris],dtype = int)
-		return points2,tris2
+    if isinstance(geom,sg.Polygon):
+        import pypoly2tri
+        from pypoly2tri.cdt import CDT
+        import numpy
+        exterior = list(geom.exterior.coords)
+        exterior = check_loop(exterior)
+        exterior2 = [pypoly2tri.shapes.Point(*item) for item in exterior]
+        cdt = CDT(exterior2)
+        interiors = []
+        for interior in geom.interiors:
+            interior= list(interior.coords)
+            interior = check_loop(interior)
+            interiors.append(interior)
+        for interior in interiors:
+            interior2 = [pypoly2tri.shapes.Point(*item) for item in interior]
+            cdt.AddHole(interior2)
+        cdt.Triangulate()
+        tris =cdt.GetTriangles()
+        points = cdt.GetPoints()
+        points2 = numpy.array([item.toTuple() for item in points])
+        tris2 = numpy.array([[points.index(point) for point in tri.points_] for tri in tris],dtype = int)
+        return points2,tris2
 
 def points_2d_to_3d(points_2d,z_val):
     '''

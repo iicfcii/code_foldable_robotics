@@ -24,22 +24,22 @@ page_height = 28
 class Page(object):
 
     '''
-	This class defines a pdf page, which can hold vector geometry.
+    This class defines a pdf page, which can hold vector geometry.
     '''    
 
     def __init__(self,filename='output.pdf',width=page_width,height=page_height):
-		'''
-		Initialize a Page class
-		
-		:param filename: desired output filename.  defaults to 'output.pdf'
-		:type filename: string
-		:param width: width of the page, in inches
-		:type width: float
-		:param height: height of the page, in inches
-		:type height float
-		:rtype: Page instance
-		'''    
-	
+        '''
+        Initialize a Page class
+        
+        :param filename: desired output filename.  defaults to 'output.pdf'
+        :type filename: string
+        :param width: width of the page, in inches
+        :type width: float
+        :param height: height of the page, in inches
+        :type height float
+        :rtype: Page instance
+        '''    
+    
         surface = cairo.PDFSurface(filename, page_width*ppi, page_height*ppi)
 
         ctx = cairo.Context(surface)
@@ -50,19 +50,19 @@ class Page(object):
         self._context = ctx
 
     def draw_poly(self,poly,line_color = (0,0,0,1),line_width=.01,fill_color=(0,0,0,1)):
-		'''
-		Draw a closed polygon.
-		
-		:param poly: describes each vertex of the polygon.
-		:type poly: list of tuples 
-		:param line_color: line color in (r,g,b,a) format.
-		:type line_color: tuple of floats
-		:param line_width: width of the line
-		:type line_width: float
-		:param fill_color: color of the polygon interior, in (r,g,b,a) format
-		:type line_width: tuple of floats
-		:rtype: None
-		'''    
+        '''
+        Draw a closed polygon.
+        
+        :param poly: describes each vertex of the polygon.
+        :type poly: list of tuples 
+        :param line_color: line color in (r,g,b,a) format.
+        :type line_color: tuple of floats
+        :param line_width: width of the line
+        :type line_width: float
+        :param fill_color: color of the polygon interior, in (r,g,b,a) format
+        :type line_width: tuple of floats
+        :rtype: None
+        '''    
         
         pt = poly.pop(0)
         self._context.move_to(*pt)
@@ -84,19 +84,19 @@ class Page(object):
         self._context.stroke()
 
     def draw_linestring(self,geom,line_color = (0,0,0,1),line_width=.01,fill_color=(0,0,0,1)):
-		'''
-		Draw an open linestring.
-		
-		:param poly: describes each vertex of the linestring.
-		:type poly: list of tuples 
-		:param line_color: line color in (r,g,b,a) format.
-		:type line_color: tuple of floats
-		:param line_width: width of the line
-		:type line_width: float
-		:param fill_color: color of the linestring interior, in (r,g,b,a) format
-		:type line_width: tuple of floats
-		:rtype: None
-		'''    
+        '''
+        Draw an open linestring.
+        
+        :param poly: describes each vertex of the linestring.
+        :type poly: list of tuples 
+        :param line_color: line color in (r,g,b,a) format.
+        :type line_color: tuple of floats
+        :param line_width: width of the line
+        :type line_width: float
+        :param fill_color: color of the linestring interior, in (r,g,b,a) format
+        :type line_width: tuple of floats
+        :rtype: None
+        '''    
         coords = list(geom.coords)
         pt = coords.pop(0)
         self._context.move_to(*pt)
@@ -118,9 +118,9 @@ class Page(object):
         self._context.stroke()
     
     def close(self):
-		'''
-		close the surface 
+        '''
+        close the surface 
 
-		:rtype: None
-		'''
+        :rtype: None
+        '''
         self._surface.finish()
