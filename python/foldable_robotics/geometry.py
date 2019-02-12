@@ -51,12 +51,12 @@ def total_angle(v1,v2,v3=None):
     v1 = numpy.array(v1).flatten()
     if len(v1)==2:
         v1 = numpy.r_[v1,0]
+        v3 = numpy.array([0,0,1])
 
         v2 = numpy.array(v2).flatten()
     if len(v2)==2:
         v2 = numpy.r_[v2,0]
-
-    v3 = v3 or numpy.array([0,0,1])
+        v3 = numpy.array([0,0,1])
 
     costheta = numpy.dot(v1,v2)
     sintheta  = numpy.cross(v1,v2)
