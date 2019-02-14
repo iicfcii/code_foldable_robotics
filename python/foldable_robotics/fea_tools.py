@@ -21,7 +21,7 @@ import numpy
 import pygmsh as pg
 import matplotlib.pyplot as plt
 plt.ion()
-import idealab_tools.fea_tetra.fea as fea
+#import idealab_tools.fea_tetra.fea as fea
 
 def layer_to_mesh(layer):
     points2 = []
@@ -101,17 +101,34 @@ def poly_2_flat_mesh(layer,thickness,lcar=.5):
     
     return coordinates,elements,triangles_outer
 
+def find_points(layer):
+    test = layer.contains(*points3[:,:2])
+    ii = numpy.array(range(len(points3)))
+    jj = ii[test]
+    return jj
+
+def find_quads_from_point_indeces(quads,indeces):
+    selected_quads = []
+    for ii in indeces:
+        for jj,quad in enumerate(quads):
+            if ii in quad:
+                selected_quads.append(jj)
+    
+    selected_quads = numpy.array(jj)    
+    return selected_quads
 
 layer = Layer(sg.Polygon([(0,0),(1,0),(1,1),(0,1)]))
 layer2 = (layer<<1)-layer
 points3,tris3,outer3 = layer_to_mesh(layer2)
 
+line = Layer(sg.LineString([(0,0),(1,0)]))<<.1
+
 boundary = (layer<<.1)-(layer>>.1)
 boundary.plot(new=True)
 
-test = boundary.contains(*points3[:,:2])
-ii = numpy.array(range(len(points3)))
-jj = ii[test]
+jj = find_points(boundary)
+#kk = find_quads_from_point_indeces(tris3,jj)
+#constrained_quads = tris3[]
 
 #layer = layer.scale(20,20)
 
@@ -142,4 +159,19 @@ jj = ii[test]
 fea.plot_triangles(points3,outer3)
 #fea.plot_tetrahedra(points3,tris3,jj)
 
+quads = tris3
+selected_quads = []
+for item in jj:
+    for item2 in quads:
+        if item in item2:
+            selected_quads.append(item2)
 
+selected_quads = numpy.array(selected_quads)
+constrained_tris = selected_quads[:,[(0,1,2),(1,2,3),(2,3,0),(3,0,1)]]
+constrained_tris = constrained_tris.reshape((-1,3))
+
+fea.plot_triangles(points3,constrained_tris)
+
+
+    
+    
