@@ -1,0 +1,273 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>foldable_robotics.fea_tools &#8212; foldable_robotics  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for foldable_robotics.fea_tools</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Thu Dec  6 20:28:23 2018</span>
+
+<span class="sd">@author: danaukes</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Tue Nov 13 09:51:18 2018</span>
+
+<span class="sd">@author: danaukes</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">idealab_tools.text_to_polygons</span>
+<span class="kn">from</span> <span class="nn">foldable_robotics.layer</span> <span class="k">import</span> <span class="n">Layer</span>
+<span class="kn">import</span> <span class="nn">shapely.geometry</span> <span class="k">as</span> <span class="nn">sg</span>
+<span class="kn">import</span> <span class="nn">idealab_tools.fea_tetra.fea</span> <span class="k">as</span> <span class="nn">fea</span>
+<span class="kn">import</span> <span class="nn">idealab_tools.matplotlib_tools</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">pygmsh</span> <span class="k">as</span> <span class="nn">pg</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
+<span class="c1">#import idealab_tools.fea_tetra.fea as fea</span>
+
+<div class="viewcode-block" id="layer_to_mesh"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.fea_tools.layer_to_mesh">[docs]</a><span class="k">def</span> <span class="nf">layer_to_mesh</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
+    <span class="n">points2</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cells2</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">outer</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">layer</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+        <span class="n">layer4</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        
+        <span class="n">points</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span><span class="n">triangles_outer</span> <span class="o">=</span> <span class="n">poly_2_flat_mesh</span><span class="p">(</span><span class="n">layer4</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">points2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+        <span class="n">triangles_outer</span><span class="o">+=</span><span class="n">l</span>
+        <span class="n">outer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">triangles_outer</span><span class="p">)</span>
+        
+        <span class="n">cells</span><span class="o">+=</span><span class="n">l</span>
+        <span class="n">cells2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+        
+        <span class="n">l</span><span class="o">+=</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    
+        
+    <span class="n">points3</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">points2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">cells3</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">cells2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">outer3</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">outer</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">points3</span><span class="p">,</span><span class="n">cells3</span><span class="p">,</span><span class="n">outer3</span></div>
+
+<div class="viewcode-block" id="poly_2_flat_mesh"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.fea_tools.poly_2_flat_mesh">[docs]</a><span class="k">def</span> <span class="nf">poly_2_flat_mesh</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span><span class="n">thickness</span><span class="p">,</span><span class="n">lcar</span><span class="o">=.</span><span class="mi">5</span><span class="p">):</span>
+    
+    <span class="n">geom</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">built_in</span><span class="o">.</span><span class="n">Geometry</span><span class="p">()</span>
+    
+    <span class="n">holes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="n">layer</span><span class="o">.</span><span class="n">interiors</span><span class="p">():</span>
+<span class="c1">#        poly2= list(poly.exterior.coords)</span>
+        <span class="n">poly2</span> <span class="o">=</span> <span class="n">poly</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">poly2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">poly2</span><span class="p">]</span>
+        <span class="n">poly2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">poly2</span><span class="p">,</span><span class="n">poly2</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="n">hole</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">add_polygon</span><span class="p">(</span><span class="n">poly2</span><span class="p">,</span><span class="n">lcar</span><span class="o">=</span><span class="n">lcar</span><span class="p">,</span><span class="n">make_surface</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">holes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hole</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="n">layer</span><span class="o">.</span><span class="n">exteriors</span><span class="p">():</span>
+<span class="c1">#        poly2= list(poly.exterior.coords)</span>
+        <span class="n">poly2</span> <span class="o">=</span> <span class="n">poly</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">poly2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">poly2</span><span class="p">]</span>
+        <span class="n">poly2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">poly2</span><span class="p">,</span><span class="n">poly2</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">0</span><span class="p">]</span>
+        
+    <span class="n">poly</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">add_polygon</span><span class="p">(</span><span class="n">poly2</span><span class="p">,</span><span class="n">lcar</span><span class="o">=</span><span class="n">lcar</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">line_loop</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">holes</span><span class="p">])</span>
+
+    
+    <span class="n">axis</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">thickness</span><span class="p">]</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="n">geom</span><span class="o">.</span><span class="n">extrude</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span><span class="n">translation_axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span><span class="n">rotation_axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span><span class="n">point_on_axis</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">angle</span><span class="o">=</span><span class="n">theta</span><span class="p">)</span>
+    
+    <span class="n">points</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">point_data</span><span class="p">,</span> <span class="n">cell_data</span><span class="p">,</span> <span class="n">field_data</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">generate_mesh</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
+
+    <span class="n">triangles_outer</span> <span class="o">=</span> <span class="n">cells</span><span class="p">[</span><span class="s1">&#39;triangle&#39;</span><span class="p">]</span>
+
+    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:]</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="n">cells</span><span class="p">[</span><span class="s1">&#39;tetra&#39;</span><span class="p">]</span>
+    
+    <span class="n">used_elements</span> <span class="o">=</span> <span class="n">fea</span><span class="o">.</span><span class="n">find_used_elements</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span><span class="n">triangles_outer</span><span class="p">)</span>
+    <span class="n">coordinates</span><span class="p">,</span><span class="n">mapping</span> <span class="o">=</span> <span class="n">fea</span><span class="o">.</span><span class="n">coord_reduce</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span><span class="n">used_elements</span><span class="p">)</span>
+    <span class="n">triangles_outer</span> <span class="o">=</span> <span class="n">fea</span><span class="o">.</span><span class="n">element_reduce</span><span class="p">(</span><span class="n">triangles_outer</span><span class="p">,</span><span class="n">mapping</span><span class="p">)</span>
+    <span class="n">elements</span><span class="o">=</span> <span class="n">fea</span><span class="o">.</span><span class="n">element_reduce</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span><span class="n">mapping</span><span class="p">)</span>
+    
+    <span class="n">a</span><span class="o">=</span><span class="n">fea</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span><span class="n">elements</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">elements</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[</span><span class="n">a</span><span class="p">][:,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)]</span>
+    <span class="n">a</span><span class="o">=</span><span class="n">fea</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span><span class="n">elements</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="c1">#    </span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">elements</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]]</span><span class="o">-</span><span class="n">coordinates</span><span class="p">[</span><span class="n">elements</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">T</span><span class="p">])</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[</span><span class="n">dt</span><span class="o">!=</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">coordinates</span><span class="p">,</span><span class="n">elements</span><span class="p">,</span><span class="n">triangles_outer</span></div>
+
+<div class="viewcode-block" id="find_points"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.fea_tools.find_points">[docs]</a><span class="k">def</span> <span class="nf">find_points</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="o">*</span><span class="n">points3</span><span class="p">[:,:</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">ii</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points3</span><span class="p">)))</span>
+    <span class="n">jj</span> <span class="o">=</span> <span class="n">ii</span><span class="p">[</span><span class="n">test</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">jj</span></div>
+
+<div class="viewcode-block" id="find_quads_from_point_indeces"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.fea_tools.find_quads_from_point_indeces">[docs]</a><span class="k">def</span> <span class="nf">find_quads_from_point_indeces</span><span class="p">(</span><span class="n">quads</span><span class="p">,</span><span class="n">indeces</span><span class="p">):</span>
+    <span class="n">selected_quads</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">indeces</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">jj</span><span class="p">,</span><span class="n">quad</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">quads</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">quad</span><span class="p">:</span>
+                <span class="n">selected_quads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jj</span><span class="p">)</span>
+    
+    <span class="n">selected_quads</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">jj</span><span class="p">)</span>    
+    <span class="k">return</span> <span class="n">selected_quads</span></div>
+
+<span class="n">layer</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)]))</span>
+<span class="n">layer2</span> <span class="o">=</span> <span class="p">(</span><span class="n">layer</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">layer</span>
+<span class="n">points3</span><span class="p">,</span><span class="n">tris3</span><span class="p">,</span><span class="n">outer3</span> <span class="o">=</span> <span class="n">layer_to_mesh</span><span class="p">(</span><span class="n">layer2</span><span class="p">)</span>
+
+<span class="n">line</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">LineString</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)]))</span><span class="o">&lt;&lt;.</span><span class="mi">1</span>
+
+<span class="n">boundary</span> <span class="o">=</span> <span class="p">(</span><span class="n">layer</span><span class="o">&lt;&lt;.</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="p">(</span><span class="n">layer</span><span class="o">&gt;&gt;.</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">boundary</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">jj</span> <span class="o">=</span> <span class="n">find_points</span><span class="p">(</span><span class="n">boundary</span><span class="p">)</span>
+<span class="c1">#kk = find_quads_from_point_indeces(tris3,jj)</span>
+<span class="c1">#constrained_quads = tris3[]</span>
+
+<span class="c1">#layer = layer.scale(20,20)</span>
+
+<span class="c1">#polygons = idealab_tools.text_to_polygons.text_to_polygons(&#39;Test&#39;,{&#39;family&#39;:&#39;Roboto&#39;})</span>
+<span class="c1">#</span>
+<span class="c1">#layers = []</span>
+<span class="c1">#for item in polygons:</span>
+<span class="c1">##    points = [sg.Point(*item2) for item2 in item]</span>
+<span class="c1">#    if len(item)&gt;=3:</span>
+<span class="c1">#        layers.append(Layer(sg.Polygon(item)))</span>
+<span class="c1">#    </span>
+<span class="c1">#layer = Layer()</span>
+<span class="c1">#for item in layers:</span>
+<span class="c1">#    layer ^= item</span>
+<span class="c1">#</span>
+<span class="c1">#layer2= layer.simplify(.1)    </span>
+<span class="c1">#layer2.plot()</span>
+<span class="c1">#</span>
+<span class="c1">#bb = (layer2&lt;&lt;.5).bounding_box()</span>
+<span class="c1">#layer3 = bb-layer2</span>
+<span class="c1">#layer3.plot(new=True)</span>
+<span class="c1">#</span>
+<span class="c1">#points3,tris3,outer3 = layer_to_mesh(layer3)</span>
+
+<span class="c1">#tris3 = numpy.r_[tris3[:,(0,1,2)],tris3[:,(1,2,3)],tris3[:,(2,3,0)],tris3[:,(3,0,1)]]</span>
+
+<span class="c1">#fea.plot_triangles(points3,tris3)</span>
+<span class="n">fea</span><span class="o">.</span><span class="n">plot_triangles</span><span class="p">(</span><span class="n">points3</span><span class="p">,</span><span class="n">outer3</span><span class="p">)</span>
+<span class="c1">#fea.plot_tetrahedra(points3,tris3,jj)</span>
+
+<span class="n">quads</span> <span class="o">=</span> <span class="n">tris3</span>
+<span class="n">selected_quads</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">jj</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">item2</span> <span class="ow">in</span> <span class="n">quads</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">item2</span><span class="p">:</span>
+            <span class="n">selected_quads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item2</span><span class="p">)</span>
+
+<span class="n">selected_quads</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">selected_quads</span><span class="p">)</span>
+<span class="n">constrained_tris</span> <span class="o">=</span> <span class="n">selected_quads</span><span class="p">[:,[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)]]</span>
+<span class="n">constrained_tris</span> <span class="o">=</span> <span class="n">constrained_tris</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+
+<span class="n">fea</span><span class="o">.</span><span class="n">plot_triangles</span><span class="p">(</span><span class="n">points3</span><span class="p">,</span><span class="n">constrained_tris</span><span class="p">)</span>
+
+
+    
+    
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">foldable_robotics</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../foldable_robotics/modules.html"> </a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Dan Aukes.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

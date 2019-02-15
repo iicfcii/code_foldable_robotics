@@ -184,27 +184,29 @@
 <span class="sd">    :type geom: shapely.Polygon</span>
 <span class="sd">    :rtype: array of points, array of triangle indeces</span>
 <span class="sd">    &#39;&#39;&#39;</span>      
-    <span class="kn">import</span> <span class="nn">pypoly2tri</span>
-    <span class="kn">from</span> <span class="nn">pypoly2tri.cdt</span> <span class="k">import</span> <span class="n">CDT</span>
-    <span class="kn">import</span> <span class="nn">numpy</span>
-    <span class="n">exterior</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
-    <span class="n">exterior</span> <span class="o">=</span> <span class="n">check_loop</span><span class="p">(</span><span class="n">exterior</span><span class="p">)</span>
-    <span class="n">exterior2</span> <span class="o">=</span> <span class="p">[</span><span class="n">pypoly2tri</span><span class="o">.</span><span class="n">shapes</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="o">*</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">exterior</span><span class="p">]</span>
-    <span class="n">cdt</span> <span class="o">=</span> <span class="n">CDT</span><span class="p">(</span><span class="n">exterior2</span><span class="p">)</span>
-    <span class="n">interiors</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">interiors</span><span class="p">:</span>
-        <span class="n">interior</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">interior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
-        <span class="n">interior</span> <span class="o">=</span> <span class="n">check_loop</span><span class="p">(</span><span class="n">interior</span><span class="p">)</span>
-        <span class="n">interiors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interior</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="n">interiors</span><span class="p">:</span>
-        <span class="n">interior2</span> <span class="o">=</span> <span class="p">[</span><span class="n">pypoly2tri</span><span class="o">.</span><span class="n">shapes</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="o">*</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">interior</span><span class="p">]</span>
-        <span class="n">cdt</span><span class="o">.</span><span class="n">AddHole</span><span class="p">(</span><span class="n">interior2</span><span class="p">)</span>
-    <span class="n">cdt</span><span class="o">.</span><span class="n">Triangulate</span><span class="p">()</span>
-    <span class="n">tris</span> <span class="o">=</span><span class="n">cdt</span><span class="o">.</span><span class="n">GetTriangles</span><span class="p">()</span>
-    <span class="n">points</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">GetPoints</span><span class="p">()</span>
-    <span class="n">points2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">item</span><span class="o">.</span><span class="n">toTuple</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">points</span><span class="p">])</span>
-    <span class="n">tris2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">points</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">point</span><span class="p">)</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">tri</span><span class="o">.</span><span class="n">points_</span><span class="p">]</span> <span class="k">for</span> <span class="n">tri</span> <span class="ow">in</span> <span class="n">tris</span><span class="p">],</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">int</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">points2</span><span class="p">,</span><span class="n">tris2</span></div>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span><span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">pypoly2tri</span>
+        <span class="kn">from</span> <span class="nn">pypoly2tri.cdt</span> <span class="k">import</span> <span class="n">CDT</span>
+        <span class="kn">import</span> <span class="nn">numpy</span>
+        <span class="n">exterior</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+        <span class="n">exterior</span> <span class="o">=</span> <span class="n">check_loop</span><span class="p">(</span><span class="n">exterior</span><span class="p">)</span>
+        <span class="n">exterior2</span> <span class="o">=</span> <span class="p">[</span><span class="n">pypoly2tri</span><span class="o">.</span><span class="n">shapes</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="o">*</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">exterior</span><span class="p">]</span>
+        <span class="n">cdt</span> <span class="o">=</span> <span class="n">CDT</span><span class="p">(</span><span class="n">exterior2</span><span class="p">)</span>
+        <span class="n">interiors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">interiors</span><span class="p">:</span>
+            <span class="n">interior</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">interior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+            <span class="n">interior</span> <span class="o">=</span> <span class="n">check_loop</span><span class="p">(</span><span class="n">interior</span><span class="p">)</span>
+            <span class="n">interiors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interior</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="n">interiors</span><span class="p">:</span>
+            <span class="n">interior2</span> <span class="o">=</span> <span class="p">[</span><span class="n">pypoly2tri</span><span class="o">.</span><span class="n">shapes</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="o">*</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">interior</span><span class="p">]</span>
+            <span class="n">cdt</span><span class="o">.</span><span class="n">AddHole</span><span class="p">(</span><span class="n">interior2</span><span class="p">)</span>
+        <span class="n">cdt</span><span class="o">.</span><span class="n">Triangulate</span><span class="p">()</span>
+        <span class="n">tris</span> <span class="o">=</span><span class="n">cdt</span><span class="o">.</span><span class="n">GetTriangles</span><span class="p">()</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">GetPoints</span><span class="p">()</span>
+        <span class="n">points2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">item</span><span class="o">.</span><span class="n">toTuple</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">points</span><span class="p">])</span>
+        <span class="n">tris2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">points</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">point</span><span class="p">)</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">tri</span><span class="o">.</span><span class="n">points_</span><span class="p">]</span> <span class="k">for</span> <span class="n">tri</span> <span class="ow">in</span> <span class="n">tris</span><span class="p">],</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">points2</span><span class="p">,</span><span class="n">tris2</span></div>
 
 <div class="viewcode-block" id="points_2d_to_3d"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.points_2d_to_3d">[docs]</a><span class="k">def</span> <span class="nf">points_2d_to_3d</span><span class="p">(</span><span class="n">points_2d</span><span class="p">,</span><span class="n">z_val</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
@@ -648,15 +650,23 @@
         <span class="n">l</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">l</span></div>
         
-<span class="c1">#    def exteriors(self):</span>
-<span class="c1">#        &#39;&#39;&#39;return the exterior coordinates of all shapes in the layer&#39;&#39;&#39;</span>
-<span class="c1">#        a = [list(geom.exterior.coords) for geom in self.geoms]</span>
-<span class="c1">#        return a</span>
-<span class="c1">#</span>
-<span class="c1">#    def interiors(self):</span>
-<span class="c1">#        &#39;&#39;&#39;return the interior coordinates of all shapes in the layer&#39;&#39;&#39;</span>
-<span class="c1">#        a = [list(interior.coords) for geom in self.geoms for interior in geom.interiors]</span>
-<span class="c1">#        return a</span>
+<div class="viewcode-block" id="Layer.exteriors"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.exteriors">[docs]</a>    <span class="k">def</span> <span class="nf">exteriors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return the exterior coordinates of all closed shapes in the layer&#39;&#39;&#39;</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span><span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">):</span>
+                <span class="n">exterior</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">exterior</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">paths</span></div>
+
+<div class="viewcode-block" id="Layer.interiors"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.interiors">[docs]</a>    <span class="k">def</span> <span class="nf">interiors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return the interior coordinates of all shapes in the layer&#39;&#39;&#39;</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span><span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">):</span>
+                <span class="n">interiors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">interior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span> <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">interiors</span><span class="p">]</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">interiors</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">paths</span></div>
 
 <div class="viewcode-block" id="Layer.extrude"><a class="viewcode-back" href="../../foldable_robotics/foldable_robotics.html#foldable_robotics.layer.Layer.extrude">[docs]</a>    <span class="k">def</span> <span class="nf">extrude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">z_lower</span><span class="p">,</span><span class="n">material_property</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;create tetrahedra from the layer and return as a set of points and tetrahedra indeces&#39;&#39;&#39;</span>

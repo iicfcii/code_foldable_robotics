@@ -288,8 +288,30 @@ Please see LICENSE for full license.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="foldable-robotics-fea-tools-module">
-<h2>foldable_robotics.fea_tools module<a class="headerlink" href="#foldable-robotics-fea-tools-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-foldable_robotics.fea_tools">
+<span id="foldable-robotics-fea-tools-module"></span><h2>foldable_robotics.fea_tools module<a class="headerlink" href="#module-foldable_robotics.fea_tools" title="Permalink to this headline">¶</a></h2>
+<p>Created on Thu Dec  6 20:28:23 2018</p>
+<p>&#64;author: danaukes</p>
+<dl class="function">
+<dt id="foldable_robotics.fea_tools.find_points">
+<code class="descclassname">foldable_robotics.fea_tools.</code><code class="descname">find_points</code><span class="sig-paren">(</span><em>layer</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/fea_tools.html#find_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.fea_tools.find_points" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.fea_tools.find_quads_from_point_indeces">
+<code class="descclassname">foldable_robotics.fea_tools.</code><code class="descname">find_quads_from_point_indeces</code><span class="sig-paren">(</span><em>quads</em>, <em>indeces</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/fea_tools.html#find_quads_from_point_indeces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.fea_tools.find_quads_from_point_indeces" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.fea_tools.layer_to_mesh">
+<code class="descclassname">foldable_robotics.fea_tools.</code><code class="descname">layer_to_mesh</code><span class="sig-paren">(</span><em>layer</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/fea_tools.html#layer_to_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.fea_tools.layer_to_mesh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.fea_tools.poly_2_flat_mesh">
+<code class="descclassname">foldable_robotics.fea_tools.</code><code class="descname">poly_2_flat_mesh</code><span class="sig-paren">(</span><em>layer</em>, <em>thickness</em>, <em>lcar=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/fea_tools.html#poly_2_flat_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.fea_tools.poly_2_flat_mesh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-foldable_robotics.general">
 <span id="foldable-robotics-general-module"></span><h2>foldable_robotics.general module<a class="headerlink" href="#module-foldable_robotics.general" title="Permalink to this headline">¶</a></h2>
@@ -1005,6 +1027,12 @@ Please see LICENSE for full license.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="foldable_robotics.layer.Layer.exteriors">
+<code class="descname">exteriors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.exteriors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.exteriors" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the exterior coordinates of all closed shapes in the layer</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="foldable_robotics.layer.Layer.extrude">
 <code class="descname">extrude</code><span class="sig-paren">(</span><em>z_lower</em>, <em>material_property</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.extrude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.extrude" title="Permalink to this definition">¶</a></dt>
 <dd><p>create tetrahedra from the layer and return as a set of points and tetrahedra indeces</p>
@@ -1062,6 +1090,12 @@ Please see LICENSE for full license.</p>
 <dt id="foldable_robotics.layer.Layer.inertia">
 <code class="descname">inertia</code><span class="sig-paren">(</span><em>about_point</em>, <em>z_lower</em>, <em>material_property</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.inertia"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.inertia" title="Permalink to this definition">¶</a></dt>
 <dd><p>compute the inertia tensor for the layer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.layer.Layer.interiors">
+<code class="descname">interiors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/layer.html#Layer.interiors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.layer.Layer.interiors" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the interior coordinates of all shapes in the layer</p>
 </dd></dl>
 
 <dl class="method">
@@ -1894,8 +1928,77 @@ Please see LICENSE for full license.</p>
 <div class="section" id="foldable-robotics-parts-old-module">
 <h2>foldable_robotics.parts-old module<a class="headerlink" href="#foldable-robotics-parts-old-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="foldable-robotics-pdf-module">
-<h2>foldable_robotics.pdf module<a class="headerlink" href="#foldable-robotics-pdf-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-foldable_robotics.pdf">
+<span id="foldable-robotics-pdf-module"></span><h2>foldable_robotics.pdf module<a class="headerlink" href="#module-foldable_robotics.pdf" title="Permalink to this headline">¶</a></h2>
+<p>Created on Wed Feb  7 20:34:27 2018</p>
+<p>&#64;author: danaukes</p>
+<dl class="class">
+<dt id="foldable_robotics.pdf.Page">
+<em class="property">class </em><code class="descclassname">foldable_robotics.pdf.</code><code class="descname">Page</code><span class="sig-paren">(</span><em>filename='output.pdf'</em>, <em>width=40</em>, <em>height=28</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/pdf.html#Page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.pdf.Page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class defines a pdf page, which can hold vector geometry.</p>
+<dl class="method">
+<dt id="foldable_robotics.pdf.Page.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/pdf.html#Page.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.pdf.Page.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>close the surface</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.pdf.Page.draw_linestring">
+<code class="descname">draw_linestring</code><span class="sig-paren">(</span><em>geom</em>, <em>line_color=(0</em>, <em>0</em>, <em>0</em>, <em>1)</em>, <em>line_width=0.01</em>, <em>fill_color=(0</em>, <em>0</em>, <em>0</em>, <em>1)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/pdf.html#Page.draw_linestring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.pdf.Page.draw_linestring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw an open linestring.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>poly</strong> (<em>list of tuples</em>) – describes each vertex of the linestring.</li>
+<li><strong>line_color</strong> (<em>tuple of floats</em>) – line color in (r,g,b,a) format.</li>
+<li><strong>line_width</strong> (<em>tuple of floats</em>) – width of the line</li>
+<li><strong>fill_color</strong> – color of the linestring interior, in (r,g,b,a) format</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="foldable_robotics.pdf.Page.draw_poly">
+<code class="descname">draw_poly</code><span class="sig-paren">(</span><em>poly</em>, <em>line_color=(0</em>, <em>0</em>, <em>0</em>, <em>1)</em>, <em>line_width=0.01</em>, <em>fill_color=(0</em>, <em>0</em>, <em>0</em>, <em>1)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/pdf.html#Page.draw_poly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.pdf.Page.draw_poly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a closed polygon.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>poly</strong> (<em>list of tuples</em>) – describes each vertex of the polygon.</li>
+<li><strong>line_color</strong> (<em>tuple of floats</em>) – line color in (r,g,b,a) format.</li>
+<li><strong>line_width</strong> (<em>tuple of floats</em>) – width of the line</li>
+<li><strong>fill_color</strong> – color of the polygon interior, in (r,g,b,a) format</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-foldable_robotics.solidworks_support">
 <span id="foldable-robotics-solidworks-support-module"></span><h2>foldable_robotics.solidworks_support module<a class="headerlink" href="#module-foldable_robotics.solidworks_support" title="Permalink to this headline">¶</a></h2>
@@ -1926,6 +2029,11 @@ Please see LICENSE for full license.</p>
 <dl class="function">
 <dt id="foldable_robotics.solidworks_support.get_joints">
 <code class="descclassname">foldable_robotics.solidworks_support.</code><code class="descname">get_joints</code><span class="sig-paren">(</span><em>*component_layers</em>, <em>round_digits</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/solidworks_support.html#get_joints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.solidworks_support.get_joints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="foldable_robotics.solidworks_support.length">
+<code class="descclassname">foldable_robotics.solidworks_support.</code><code class="descname">length</code><span class="sig-paren">(</span><em>segment</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/foldable_robotics/solidworks_support.html#length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#foldable_robotics.solidworks_support.length" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="class">
