@@ -15,6 +15,7 @@ from foldable_robotics.laminate import Laminate
 import meshio
 import idealab_tools.plot_tris
 import numpy
+import os
 
 class GmshObject(object):
     ii = 0
@@ -133,14 +134,20 @@ class GeoFile(object):
     def point_tuples(self):
         return [item.comp() for item in self.points]
 
-    def make_mesh(self):
+    def make_mesh(self,delete_files=True):
         with open('output.geo','w') as f:
             f.writelines(self.string())
         
-        string = 'gmsh output.geo -2 -format msh'
+        string = 'gmsh output.geo -3 -format msh'
         p = subprocess.Popen(string)
         p.wait()
-        return 'output.msh'
+        mesh_file = 'output.msh'
+        data = meshio.read(mesh_file)
+        if delete_files:
+            os.remove('output.msh')
+            os.remove('output.geo')
+        return data
+
 
 def laminate_to_geo(lam):
     z=0
@@ -149,10 +156,6 @@ def laminate_to_geo(lam):
     extrusions_by_layer = []
     
     for layer in lam:
-    #    layer_points = []
-    #    layer_lines = []
-    #    layer_loops = []
-    #    layer_surfaces = []
         extrusions = []
         for geo in layer.geoms:
             if isinstance(geo,sg.Polygon):
@@ -175,58 +178,36 @@ def laminate_to_geo(lam):
     
         extrusions_by_layer.append(extrusions)
         z+=t
-    
-    
-    
-    #new_points = []
-    #z = t
-    #coords = geofile.point_tuples()
-    #for item in geofile.extrusions:
-    #    coords+=item.extruded_points()
-    
+   
     for ext1,ext2 in zip(extrusions_by_layer[:-1],extrusions_by_layer[1:]):
         geofile.layer_coherence.append(Coherence(ext1,ext2))
-    #    result = layer1&layer2
-    #    result.plot(new=True)
-    #    for geo in result.geoms:
-    #        xy = list(geo.exterior.coords)
-    #        xyzp = [(coord[0],coord[1],z,1) for coord in xy]
-    #        my_new_points=list(set(xyzp) - set(coords))
-    #        for item in my_new_points:
-    #            geofile.points.append(Point(*item))
-    #            
-    #        new_points.extend(my_new_points)
-    #    z+=t
-    #
-    #new_points = numpy.array(new_points)
-    #print(new_points)
-    #plt.plot(new_points[:,0],new_points[:,1],'ro')
+
     return geofile
 
-tri = sg.Polygon([(0,0),(1,0),(1,1)])
-tri
+if __name__=='__main__':
+    tri = sg.Polygon([(0,0),(1,0),(1,1)])
+    tri
 
-circle = sg.Point(0,0).buffer(.5)
-circle
+    circle = sg.Point(0,0).buffer(.5)
+    circle
 
-square = sg.box(-1,-1,-.25,1)
-
-
-lam = Laminate(Layer(circle),Layer(tri,square))
-lam = lam.simplify(.001)
-lam.plot(new=True)
-
-    
-geofile = laminate_to_geo(lam)
-mesh_file = geofile.make_mesh()
-
-            
-#print(geofile.string())
+    square = sg.box(-1,-1,-.25,1)
 
 
-data = meshio.read(mesh_file)
-#quads = data.cells['tetra']
-tris = data.cells['triangle']
-points = data.points
-face_colors = numpy.array([(1,0,0,.5) for item in tris])
-idealab_tools.plot_tris.plot_tris(points,tris,face_colors=face_colors,drawEdges=True, edgeColor = (0,0,0,1))
+    lam = Laminate(Layer(circle),Layer(tri,square))
+    lam = lam.simplify(.001)
+    lam.plot(new=True)
+
+        
+    geofile = laminate_to_geo(lam)
+    data = geofile.make_mesh()
+
+                
+    #print(geofile.string())
+
+
+    quads = data.cells['tetra']
+    tris = data.cells['triangle']
+    points = data.points
+    face_colors = numpy.array([(1,0,0,.5) for item in tris])
+    idealab_tools.plot_tris.plot_tris(points,tris,face_colors=face_colors,drawEdges=True, edgeColor = (0,0,0,1))
