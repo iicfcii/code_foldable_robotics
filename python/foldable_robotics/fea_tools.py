@@ -117,61 +117,62 @@ def find_quads_from_point_indeces(quads,indeces):
     selected_quads = numpy.array(jj)    
     return selected_quads
 
-layer = Layer(sg.Polygon([(0,0),(1,0),(1,1),(0,1)]))
-layer2 = (layer<<1)-layer
-points3,tris3,outer3 = layer_to_mesh(layer2)
+if __name__=='__main__':
+    layer = Layer(sg.Polygon([(0,0),(1,0),(1,1),(0,1)]))
+    layer2 = (layer<<1)-layer
+    points3,tris3,outer3 = layer_to_mesh(layer2)
 
-line = Layer(sg.LineString([(0,0),(1,0)]))<<.1
+    line = Layer(sg.LineString([(0,0),(1,0)]))<<.1
 
-boundary = (layer<<.1)-(layer>>.1)
-boundary.plot(new=True)
+    boundary = (layer<<.1)-(layer>>.1)
+    boundary.plot(new=True)
 
-jj = find_points(boundary)
-#kk = find_quads_from_point_indeces(tris3,jj)
-#constrained_quads = tris3[]
+    jj = find_points(boundary)
+    #kk = find_quads_from_point_indeces(tris3,jj)
+    #constrained_quads = tris3[]
 
-#layer = layer.scale(20,20)
+    #layer = layer.scale(20,20)
 
-#polygons = idealab_tools.text_to_polygons.text_to_polygons('Test',{'family':'Roboto'})
-#
-#layers = []
-#for item in polygons:
-##    points = [sg.Point(*item2) for item2 in item]
-#    if len(item)>=3:
-#        layers.append(Layer(sg.Polygon(item)))
-#    
-#layer = Layer()
-#for item in layers:
-#    layer ^= item
-#
-#layer2= layer.simplify(.1)    
-#layer2.plot()
-#
-#bb = (layer2<<.5).bounding_box()
-#layer3 = bb-layer2
-#layer3.plot(new=True)
-#
-#points3,tris3,outer3 = layer_to_mesh(layer3)
+    #polygons = idealab_tools.text_to_polygons.text_to_polygons('Test',{'family':'Roboto'})
+    #
+    #layers = []
+    #for item in polygons:
+    ##    points = [sg.Point(*item2) for item2 in item]
+    #    if len(item)>=3:
+    #        layers.append(Layer(sg.Polygon(item)))
+    #    
+    #layer = Layer()
+    #for item in layers:
+    #    layer ^= item
+    #
+    #layer2= layer.simplify(.1)    
+    #layer2.plot()
+    #
+    #bb = (layer2<<.5).bounding_box()
+    #layer3 = bb-layer2
+    #layer3.plot(new=True)
+    #
+    #points3,tris3,outer3 = layer_to_mesh(layer3)
 
-#tris3 = numpy.r_[tris3[:,(0,1,2)],tris3[:,(1,2,3)],tris3[:,(2,3,0)],tris3[:,(3,0,1)]]
+    #tris3 = numpy.r_[tris3[:,(0,1,2)],tris3[:,(1,2,3)],tris3[:,(2,3,0)],tris3[:,(3,0,1)]]
 
-#fea.plot_triangles(points3,tris3)
-fea.plot_triangles(points3,outer3)
-#fea.plot_tetrahedra(points3,tris3,jj)
+    #fea.plot_triangles(points3,tris3)
+    fea.plot_triangles(points3,outer3)
+    #fea.plot_tetrahedra(points3,tris3,jj)
 
-quads = tris3
-selected_quads = []
-for item in jj:
-    for item2 in quads:
-        if item in item2:
-            selected_quads.append(item2)
+    quads = tris3
+    selected_quads = []
+    for item in jj:
+        for item2 in quads:
+            if item in item2:
+                selected_quads.append(item2)
 
-selected_quads = numpy.array(selected_quads)
-constrained_tris = selected_quads[:,[(0,1,2),(1,2,3),(2,3,0),(3,0,1)]]
-constrained_tris = constrained_tris.reshape((-1,3))
+    selected_quads = numpy.array(selected_quads)
+    constrained_tris = selected_quads[:,[(0,1,2),(1,2,3),(2,3,0),(3,0,1)]]
+    constrained_tris = constrained_tris.reshape((-1,3))
 
-fea.plot_triangles(points3,constrained_tris)
+    fea.plot_triangles(points3,constrained_tris)
 
 
-    
-    
+        
+        

@@ -23,7 +23,7 @@ package_data['foldable_robotics'] = []
 
 setup_kwargs = {}
 setup_kwargs['name']='foldable_robotics'
-setup_kwargs['version']='0.0.21'
+setup_kwargs['version']='0.0.22'
 setup_kwargs['classifiers']=['Programming Language :: Python','Programming Language :: Python :: 3']   
 setup_kwargs['description']='Foldable robotics is a package for designing and analyzing foldable laminate robots'
 setup_kwargs['author']='Dan Aukes'
