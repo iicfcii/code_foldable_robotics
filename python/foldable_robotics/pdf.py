@@ -109,7 +109,7 @@ class Page(object):
 #            pt2y = (lastpt[1]+2*pt[1])/3
 #            self._context.curve_to(pt1x,pt1y,pt2x,pt2y,*pt)
 #            lastpt = pt
-        for pt in poly:
+        for pt in geom:
             self._context.line_to(*pt)
         
 #        self._context.close_path()
