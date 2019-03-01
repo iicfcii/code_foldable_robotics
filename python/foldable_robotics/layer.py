@@ -317,6 +317,10 @@ class Layer(ClassAlgebra):
             plt.figure()
         for geom in self.geoms:
             plot_poly(geom,*args,**kwargs)
+        if len(self.geoms)>0:
+            d,e=self.bounding_box_coords()
+            ax = plt.gca()
+            ax.axis([d[0],e[0],d[1],e[1]])
 
     def binary_operation(self,other,function_name,*args,**kwargs):
         '''
@@ -605,7 +609,7 @@ class Layer(ClassAlgebra):
     
     def bounding_box_coords(self):
         '''compute the lower left hand and upper right coordinates for computing a bounding box of the layer'''
-        a = numpy.array([vertex for geom in self.geoms for vertex in geom.exterior.coords])
+        a = numpy.array([vertex for path in self.get_paths() for vertex in path])
         box = [tuple(a.min(0)),tuple(a.max(0))]
         return box
 

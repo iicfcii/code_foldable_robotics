@@ -90,6 +90,10 @@ class Laminate(Iterable,ClassAlgebra):
             plt.figure()
         for layer,color in zip(self.layers,colors):
             layer.plot(color = color)
+        d,e=self.bounding_box_coords()
+        ax = plt.gca()
+        ax.axis([d[0],e[0],d[1],e[1]])
+            
 
     def plot_layers(self):
         '''
@@ -395,4 +399,16 @@ class Laminate(Iterable,ClassAlgebra):
             
         return mass,volume,centroid,I
         
+    def bounding_box(self):
+        '''create a bounding box of the layer and return as a layer'''
+        import foldable_robotics.manufacturing
+        l = foldable_robotics.manufacturing.unary_union(self)
+        box = l.bounding_box()
+        box = box.to_laminate(len(self))
+        return box
         
+    def bounding_box_coords(self):
+        '''compute the lower left hand and upper right coordinates for computing a bounding box of the layer'''
+        import foldable_robotics.manufacturing
+        l = foldable_robotics.manufacturing.unary_union(self)
+        return l.bounding_box_coords()
