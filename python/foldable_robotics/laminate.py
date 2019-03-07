@@ -412,3 +412,13 @@ class Laminate(Iterable,ClassAlgebra):
         import foldable_robotics.manufacturing
         l = foldable_robotics.manufacturing.unary_union(self)
         return l.bounding_box_coords()
+
+if __name__=='__main__':
+    from layer import Layer
+    import shapely.geometry as sg
+    l=Layer(sg.Polygon([(0,0),(1,0),(0,1)]))
+    lam=Laminate(l,l.translate(.1,.1))
+    l1 = Layer(sg.LineString([(0,0),(1,0),(0,1)]))
+    l1.plot(new=True)
+
+        

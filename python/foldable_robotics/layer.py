@@ -322,6 +322,10 @@ class Layer(ClassAlgebra):
             ax = plt.gca()
             ax.axis([d[0],e[0],d[1],e[1]])
 
+    def _repr_svg_(self):
+        j = JupyterSupport(self.get_paths())
+        return j._repr_svg_()
+
     def binary_operation(self,other,function_name,*args,**kwargs):
         '''
         performs a binary operation between self and other.
@@ -647,10 +651,6 @@ class Layer(ClassAlgebra):
         points2 = numpy.r_[numpy.c_[points,[z_lower]*len(points)],numpy.c_[points,[z_upper]*len(points)]]
         tris2 = numpy.r_[numpy.c_[tris[:,(0)]+m,tris[:,(1,0,2)]+m],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(2,)]+m,tris[:,(2,)]],numpy.c_[tris[:,(0,)]+m,tris[:,(1,)],tris[:,(1,2)]+m]]
         return points2,tris2
-
-    def _repr_svg_(self):
-        j = JupyterSupport(self.get_paths())
-        return j._repr_svg_()
 
     def to_laminate(self,value):
         from foldable_robotics.laminate import Laminate
