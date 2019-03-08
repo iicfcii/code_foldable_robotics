@@ -334,7 +334,7 @@ class Layer(ClassAlgebra):
     def make_svg(self):
         repr_height = foldable_robotics.display_height
         line_width=foldable_robotics.line_width
-        fill_color=foldable_robotics.default_fill_color
+        fill_color=foldable_robotics.layer_fill_color
         hh = repr_height-line_width
         
         self = self.scale(1,-1)
