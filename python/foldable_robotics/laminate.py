@@ -125,12 +125,13 @@ class Laminate(Iterable,ClassAlgebra):
         
         colors = self.gen_colors()
 
-        self = self.scale(1,-1)
         min1,max1 = self.bounding_box_coords()
         min1=numpy.array(min1)
         max1=numpy.array(max1)
         width,height = max1-min1
 
+        self = self.translate(*(-min1))
+        self = self.scale(1,-1)
         self = self.scale(hh/height,hh/height)
         self = self.translate(line_width/2,hh+line_width/2)
 
