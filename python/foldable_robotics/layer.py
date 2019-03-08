@@ -16,7 +16,7 @@ import shapely.wkt as sw
 import matplotlib.pyplot as plt
 import numpy
 import foldable_robotics
-from foldable_robotics.jupyter_support import JupyterSupport
+import foldable_robotics.jupyter_support as fj
 
 def is_collection(item):
     '''
@@ -238,10 +238,6 @@ class Layer(ClassAlgebra):
     The Layer class is essentially a list of 2d polygons which all exist on the same plane.
     '''
     
-    repr_height = 100
-    line_width=2    
-    fill_color='#00FF00'
-
     def __init__(self, *geoms):
         '''
         create a new class instance
@@ -330,15 +326,15 @@ class Layer(ClassAlgebra):
     def _repr_svg_(self):
         return self.make_svg()
 
-    def make_svg_path(self,line_width,fill_color):
-        paths = [fj.make_svg_path(item,line_width,fill_color) for item in self.geoms]
+    def make_svg_path(self,*args):
+        paths = [fj.make_svg_path(item,*args) for item in self.geoms]
         paths = '\n'.join(paths)
         return paths
 
     def make_svg(self):
-        repr_height = self.repr_height
-        line_width=self.line_width
-        fill_color=self.fill_color
+        repr_height = foldable_robotics.display_height
+        line_width=foldable_robotics.line_width
+        fill_color=foldable_robotics.default_fill_color
         hh = repr_height-line_width
         
         self = self.scale(1,-1)
@@ -350,7 +346,8 @@ class Layer(ClassAlgebra):
         self = self.scale(hh/height,hh/height)
         self = self.translate(line_width/2,hh+line_width/2)
         
-        paths = self.make_svg_path(line_width,fill_color)
+        fill_opacity = 1
+        paths = self.make_svg_path(line_width,fill_opacity,fill_color)
 
         min1,max1 = self.bounding_box_coords()
         min1=numpy.array(min1)

@@ -10,3 +10,8 @@ Please see LICENSE for full license.
 
 resolution = 0
 hole_resolution = 2
+
+display_height = 100
+line_width=2    
+layer_fill_color='#00FF00'
+fill_opacity =.25

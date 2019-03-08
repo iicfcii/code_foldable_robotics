@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 from .layer import Layer
 import numpy
 from idealab_tools.iterable import Iterable
+import foldable_robotics
+import foldable_robotics.jupyter_support as fj
+import foldable_robotics.manufacturing
 
 class WrongNumLayers(Exception):
     '''Custom exception for when two laminates of the wrong number of layers interact.'''
@@ -19,6 +22,7 @@ class WrongNumLayers(Exception):
 
 class Laminate(Iterable,ClassAlgebra):
     '''The Laminate class holds a list of layers and can be operated upon with CSG-style functions.'''
+    
     def __init__(self, *layers):
         '''
         Initializes the class
@@ -76,16 +80,8 @@ class Laminate(Iterable,ClassAlgebra):
         :param new: whether to create a new figure
         :type new: boolean
         '''   
+        colors = self.gen_colors(.25)
         
-        import matplotlib.cm
-        cm = matplotlib.cm.plasma
-        l = len(self.layers)     
-        if l>1:
-            colors = numpy.array([cm(ii/(l-1)) for ii in range(l)])
-        else:
-            colors = numpy.array([cm(1)])
-        colors[:,3] = .25
-        colors = [tuple(item) for item in colors]
         if new:
             plt.figure()
         for layer,color in zip(self.layers,colors):
@@ -94,18 +90,65 @@ class Laminate(Iterable,ClassAlgebra):
         ax = plt.gca()
         ax.axis([d[0],e[0],d[1],e[1]])
             
-
+    def gen_colors(self,alpha=None):
+        import matplotlib.cm
+        cm = matplotlib.cm.plasma
+        l = len(self.layers)     
+        if l>1:
+            colors = numpy.array([cm(ii/(l-1)) for ii in range(l)])
+        else:
+            colors = numpy.array([cm(1)])
+        if alpha is not None:
+            colors[:,3] = alpha
+        colors = [tuple(item) for item in colors]
+        return colors
+    
     def plot_layers(self):
         '''
         plots each layer of the laminate in a new figure using matplotlib.
         '''   
-                
-        import matplotlib.cm
-        cm = matplotlib.cm.plasma
-        l = len(self.layers)        
-        for ii,geom in enumerate(self.layers):
+
+        colors = self.gen_colors()
+        
+        for color,geom in zip(colors,self.layers):
             plt.figure()
-            geom.plot(color = cm((ii)/(l)))
+            geom.plot(color = color)
+
+    def _repr_svg_(self):
+        return self.make_svg()
+
+    def make_svg(self):
+        repr_height = foldable_robotics.display_height
+        line_width=foldable_robotics.line_width
+        fill_opacity = foldable_robotics.fill_opacity
+
+        hh = repr_height-line_width
+        
+        colors = self.gen_colors()
+
+        self = self.scale(1,-1)
+        min1,max1 = self.bounding_box_coords()
+        min1=numpy.array(min1)
+        max1=numpy.array(max1)
+        width,height = max1-min1
+
+        self = self.scale(hh/height,hh/height)
+        self = self.translate(line_width/2,hh+line_width/2)
+
+        paths = []        
+        for layer,color in zip(self,colors):
+            fill_color = fj.color_tuple_to_hex(color[:3])
+            paths.append(layer.make_svg_path(line_width,fill_opacity,fill_color))
+        paths = '\n'.join(paths)
+
+        min1,max1 = self.bounding_box_coords()
+        min1=numpy.array(min1)
+        max1=numpy.array(max1)
+        width,height = max1-min1
+
+        svg_string = fj.make_svg(paths,width+line_width,height+line_width)
+        return svg_string
+
     
     @property
     def list(self):
@@ -401,7 +444,6 @@ class Laminate(Iterable,ClassAlgebra):
         
     def bounding_box(self):
         '''create a bounding box of the layer and return as a layer'''
-        import foldable_robotics.manufacturing
         l = foldable_robotics.manufacturing.unary_union(self)
         box = l.bounding_box()
         box = box.to_laminate(len(self))
@@ -409,7 +451,6 @@ class Laminate(Iterable,ClassAlgebra):
         
     def bounding_box_coords(self):
         '''compute the lower left hand and upper right coordinates for computing a bounding box of the layer'''
-        import foldable_robotics.manufacturing
         l = foldable_robotics.manufacturing.unary_union(self)
         return l.bounding_box_coords()
 
@@ -417,8 +458,9 @@ if __name__=='__main__':
     from layer import Layer
     import shapely.geometry as sg
     l=Layer(sg.Polygon([(0,0),(1,0),(0,1)]))
+    l2 = l | l.translate(2,0)
     lam=Laminate(l,l.translate(.1,.1))
     l1 = Layer(sg.LineString([(0,0),(1,0),(0,1)]))
     l1.plot(new=True)
-
+    lam._repr_svg_()
         
