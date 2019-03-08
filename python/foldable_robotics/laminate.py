@@ -127,8 +127,7 @@ class Laminate(Iterable,ClassAlgebra):
 
         min1,max1 = self.bounding_box_coords()
         min1=numpy.array(min1)
-        max1=numpy.array(max1)
-        width,height = max1-min1
+        width,height = self.get_dimensions()
 
         self = self.translate(*(-min1))
         self = self.scale(1,-1)
@@ -141,15 +140,31 @@ class Laminate(Iterable,ClassAlgebra):
             paths.append(layer.make_svg_path(line_width,fill_opacity,fill_color))
         paths = '\n'.join(paths)
 
-        min1,max1 = self.bounding_box_coords()
-        min1=numpy.array(min1)
-        max1=numpy.array(max1)
-        width,height = max1-min1
+        width,height = self.get_dimensions()
 
         svg_string = fj.make_svg(paths,width+line_width,height+line_width)
         return svg_string
 
-    
+    def get_dimensions(self):
+        min1,max1 = self.bounding_box_coords()
+        min1=numpy.array(min1)
+        max1=numpy.array(max1)
+        width,height = max1-min1
+        return width, height
+
+    def plot_3d(self,material_properties=None):
+        import idealab_tools.plot_tris as pt
+        material_properties = self.create_material_properties()
+        mi = self.mesh_items(material_properties)
+        pt.plot_mi(mi)
+
+    def create_material_properties(self):
+        colors = self.gen_colors()
+        m = []
+        for color,layer in zip(colors,self):
+            m.append(layer.create_material_property(color=color))
+        return m
+
     @property
     def list(self):
         '''converts the laminate to a list.'''

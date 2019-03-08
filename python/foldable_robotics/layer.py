@@ -339,8 +339,7 @@ class Layer(ClassAlgebra):
         
         min1,max1 = self.bounding_box_coords()
         min1=numpy.array(min1)
-        max1=numpy.array(max1)
-        width,height = max1-min1
+        width,height = self.get_dimensions()
 
         self = self.translate(*(-min1))
         self = self.scale(1,-1)
@@ -350,13 +349,25 @@ class Layer(ClassAlgebra):
         fill_opacity = 1
         paths = self.make_svg_path(line_width,fill_opacity,fill_color)
 
+        width,height = self.get_dimensions()
+
+        svg_string = fj.make_svg(paths,width+line_width,height+line_width)
+        return svg_string
+    
+    def create_material_property(self,color=None):
+        from foldable_robotics.dynamics_info import MaterialProperty
+        width,height = self.get_dimensions()
+        l=max(width,height)
+        color = color or foldable_robotics.layer_fill_color
+        m = MaterialProperty('',color,l/100,0,0,0,0,0,0,0,0)
+        return m
+    
+    def get_dimensions(self):
         min1,max1 = self.bounding_box_coords()
         min1=numpy.array(min1)
         max1=numpy.array(max1)
         width,height = max1-min1
-
-        svg_string = fj.make_svg(paths,width+line_width,height+line_width)
-        return svg_string
+        return width, height
 
     def binary_operation(self,other,function_name,*args,**kwargs):
         '''
