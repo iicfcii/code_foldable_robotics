@@ -237,6 +237,11 @@ class Layer(ClassAlgebra):
     '''
     The Layer class is essentially a list of 2d polygons which all exist on the same plane.
     '''
+    
+    repr_height = 100
+    line_width=2    
+    fill_color='#00FF00'
+
     def __init__(self, *geoms):
         '''
         create a new class instance
@@ -323,8 +328,37 @@ class Layer(ClassAlgebra):
             ax.axis([d[0],e[0],d[1],e[1]])
 
     def _repr_svg_(self):
-        j = JupyterSupport(self.get_paths())
-        return j._repr_svg_()
+        return self.make_svg()
+
+    def make_svg_path(self,line_width,fill_color):
+        paths = [fj.make_svg_path(item,line_width,fill_color) for item in self.geoms]
+        paths = '\n'.join(paths)
+        return paths
+
+    def make_svg(self):
+        repr_height = self.repr_height
+        line_width=self.line_width
+        fill_color=self.fill_color
+        hh = repr_height-line_width
+        
+        self = self.scale(1,-1)
+        min1,max1 = self.bounding_box_coords()
+        min1=numpy.array(min1)
+        max1=numpy.array(max1)
+        width,height = max1-min1
+
+        self = self.scale(hh/height,hh/height)
+        self = self.translate(line_width/2,hh+line_width/2)
+        
+        paths = self.make_svg_path(line_width,fill_color)
+
+        min1,max1 = self.bounding_box_coords()
+        min1=numpy.array(min1)
+        max1=numpy.array(max1)
+        width,height = max1-min1
+
+        svg_string = fj.make_svg(paths,width+line_width,height+line_width)
+        return svg_string
 
     def binary_operation(self,other,function_name,*args,**kwargs):
         '''
@@ -736,4 +770,4 @@ def layer_constructor(loader, node):
 import yaml        
 yaml.add_representer(Layer, layer_representer)
 yaml.add_constructor(u'!Layer', layer_constructor)
-        
+
