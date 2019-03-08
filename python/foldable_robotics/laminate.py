@@ -14,7 +14,6 @@ import numpy
 from idealab_tools.iterable import Iterable
 import foldable_robotics
 import foldable_robotics.jupyter_support as fj
-import foldable_robotics.manufacturing
 
 class WrongNumLayers(Exception):
     '''Custom exception for when two laminates of the wrong number of layers interact.'''
@@ -444,6 +443,7 @@ class Laminate(Iterable,ClassAlgebra):
         
     def bounding_box(self):
         '''create a bounding box of the layer and return as a layer'''
+        import foldable_robotics.manufacturing
         l = foldable_robotics.manufacturing.unary_union(self)
         box = l.bounding_box()
         box = box.to_laminate(len(self))
@@ -451,8 +451,22 @@ class Laminate(Iterable,ClassAlgebra):
         
     def bounding_box_coords(self):
         '''compute the lower left hand and upper right coordinates for computing a bounding box of the layer'''
+        import foldable_robotics.manufacturing
         l = foldable_robotics.manufacturing.unary_union(self)
         return l.bounding_box_coords()
+
+    def unary_union(self,*others):
+        l = [len(item) for item in [self]+list(others)]
+        if len(set(l))!=1:
+            raise(WrongNumLayers())
+        l = l[0]
+        layers = []
+        for ii in range(l):
+            other_ii = [item[ii] for item in others]
+            layer = self[ii].unary_union(*other_ii)
+            layers.append(layer)
+        return type(self)(*layers)
+        
 
 if __name__=='__main__':
     from layer import Layer

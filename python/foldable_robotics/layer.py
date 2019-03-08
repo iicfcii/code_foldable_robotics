@@ -751,6 +751,13 @@ class Layer(ClassAlgebra):
             l ^= item
         return l        
     
+    def unary_union(self,*others):
+        a = from_layer_to_shapely(self)
+        b = [from_layer_to_shapely(other) for other in others]
+        c = so.unary_union([a]+b)
+        return from_shapely_to_layer(c)
+        
+        
         
 def layer_representer(dumper, v):
     '''function for representing layer as a dictionary for use by yaml'''
