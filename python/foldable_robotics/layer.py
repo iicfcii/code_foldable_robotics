@@ -18,6 +18,9 @@ import numpy
 import foldable_robotics
 import foldable_robotics.jupyter_support as fj
 
+class NoGeoms(Exception):
+    pass
+
 def is_collection(item):
     '''
     determines whether the geometry defined by item contains multiple geometries
@@ -656,8 +659,12 @@ class Layer(ClassAlgebra):
     
     def bounding_box_coords(self):
         '''compute the lower left hand and upper right coordinates for computing a bounding box of the layer'''
-        a = numpy.array([vertex for path in self.get_paths() for vertex in path])
-        box = [tuple(a.min(0)),tuple(a.max(0))]
+        try:
+            a = numpy.array([vertex for path in self.get_paths() for vertex in path])
+            box = [tuple(a.min(0)),tuple(a.max(0))]
+        except ValueError as e:
+            print(e.args)
+            raise NoGeoms
         return box
 
     def bounding_box(self):
@@ -699,6 +706,9 @@ class Layer(ClassAlgebra):
         from foldable_robotics.laminate import Laminate
         laminate = Laminate(*([self]*value))
         return laminate
+    
+    def is_null(self):
+        return not self.geoms
 
     def contains(self,*args):
         geom = from_layer_to_shapely(self)

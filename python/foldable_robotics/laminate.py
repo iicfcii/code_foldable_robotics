@@ -71,6 +71,10 @@ class Laminate(Iterable,ClassAlgebra):
         new = cls(*[Layer.import_dict(item) for item in d['layers']])
         new.id = d['id']
         return new
+    
+    def is_null(self):
+        results = [item.is_null() for item in self]
+        return all(results)
 
     def plot(self,new=False):
         '''
@@ -117,32 +121,35 @@ class Laminate(Iterable,ClassAlgebra):
         return self.make_svg()
 
     def make_svg(self):
-        repr_height = foldable_robotics.display_height
-        line_width=foldable_robotics.line_width
-        fill_opacity = foldable_robotics.fill_opacity
-
-        hh = repr_height-line_width
-        
-        colors = self.gen_colors()
-
-        min1,max1 = self.bounding_box_coords()
-        min1=numpy.array(min1)
-        width,height = self.get_dimensions()
-
-        self = self.translate(*(-min1))
-        self = self.scale(1,-1)
-        self = self.scale(hh/height,hh/height)
-        self = self.translate(line_width/2,hh+line_width/2)
-
-        paths = []        
-        for layer,color in zip(self,colors):
-            fill_color = fj.color_tuple_to_hex(color[:3])
-            paths.append(layer.make_svg_path(line_width,fill_opacity,fill_color))
-        paths = '\n'.join(paths)
-
-        width,height = self.get_dimensions()
-
-        svg_string = fj.make_svg(paths,width+line_width,height+line_width)
+        try:
+            repr_height = foldable_robotics.display_height
+            line_width=foldable_robotics.line_width
+            fill_opacity = foldable_robotics.fill_opacity
+    
+            hh = repr_height-line_width
+            
+            colors = self.gen_colors()
+    
+            min1,max1 = self.bounding_box_coords()
+            min1=numpy.array(min1)
+            width,height = self.get_dimensions()
+    
+            self = self.translate(*(-min1))
+            self = self.scale(1,-1)
+            self = self.scale(hh/height,hh/height)
+            self = self.translate(line_width/2,hh+line_width/2)
+    
+            paths = []        
+            for layer,color in zip(self,colors):
+                fill_color = fj.color_tuple_to_hex(color[:3])
+                paths.append(layer.make_svg_path(line_width,fill_opacity,fill_color))
+            paths = '\n'.join(paths)
+    
+            width,height = self.get_dimensions()
+    
+            svg_string = fj.make_svg(paths,width+line_width,height+line_width)
+        except foldable_robotics.layer.NoGeoms:
+            svg_string = None
         return svg_string
 
     def get_dimensions(self):
@@ -469,7 +476,8 @@ class Laminate(Iterable,ClassAlgebra):
         '''compute the lower left hand and upper right coordinates for computing a bounding box of the layer'''
         import foldable_robotics.manufacturing
         l = foldable_robotics.manufacturing.unary_union(self)
-        return l.bounding_box_coords()
+        val = l.bounding_box_coords()
+        return val
 
     def unary_union(self,*others):
         l = [len(item) for item in [self]+list(others)]
