@@ -139,6 +139,35 @@ def bounding_box(laminate):
     new_lam  = Laminate(*result)
     return new_lam 
 
+def calc_projection_up(laminate):
+    '''find the projection of the laminate up'''
+    layer1 = Layer()
+    laminate1 = Laminate(*([Layer()]*len(laminate)))
+    for ii,layer in enumerate(laminate):
+        layer1|=layer
+        laminate1[ii] = layer1
+    return laminate1
+
+def calc_projection_down(laminate):
+    '''find the projection of the laminate up'''
+    pu = calc_projection_up(laminate[::-1])
+    pd = pu[::-1]
+    return pd
+
+def modify_keepout(laminate,is_adhesive):
+    '''is this better than other algorithms'''
+    #TODO:determine if this is the same as modify_up
+    
+    for ii,(test,layer) in enumerate(zip(laminate,is_adhesive)):
+        if test:
+            l = laminate[ii]
+            if ii>0:
+                l |= laminate[ii-1]
+            if ii<(len(laminate)-1):
+                l |= laminate[ii+1]
+            laminate[ii]=l
+    return laminate
+
 def not_removable_up(laminate,is_adhesive):
     """This function computes the non-removable material in the up direction for a given laminate.  
     
@@ -154,6 +183,7 @@ def not_removable_up(laminate,is_adhesive):
         result|=layer
         results.append(result.copy())
     new_lam = Laminate(*results)
+    #TODO: does is_adhesive need to be flipped?
     new_lam = modify_up(new_lam,is_adhesive)    
     new_lam = new_lam[::-1]
 
