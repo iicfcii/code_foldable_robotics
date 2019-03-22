@@ -210,4 +210,17 @@ if __name__=='__main__':
     tris = data.cells['triangle']
     points = data.points
     face_colors = numpy.array([(1,0,0,.5) for item in tris])
-    idealab_tools.plot_tris.plot_tris(points,tris,face_colors=face_colors,drawEdges=True, edgeColor = (0,0,0,1))
+#    idealab_tools.plot_tris.plot_tris(points,tris,face_colors=face_colors,drawEdges=True, edgeColor = (0,0,0,1))
+
+#    centroid = points[quads].sum(1)
+#    ii = (centroid[:,2]<1).nonzero()[0]
+    tet_z_values = points[quads][:,:,2]
+    ii=(((tet_z_values>=1)*(tet_z_values<=2)).sum(1)==4).nonzero()[0]
+    tri_filt = numpy.array([[0,1,2],[1,2,3],[2,3,0],[3,0,1]])
+    tris2 = quads[ii,:]
+    tris2 = tris2[:,tri_filt]
+    tris2 = tris2.reshape((-1,3))
+    face_colors2 = numpy.array([(1,0,0,.5) for item in tris2])
+#
+    idealab_tools.plot_tris.plot_tris(points,tris2,face_colors=face_colors2,drawEdges=True, edgeColor = (0,0,0,1))
+    
