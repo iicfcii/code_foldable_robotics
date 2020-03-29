@@ -84,15 +84,17 @@ class Laminate(Iterable,ClassAlgebra):
         :type new: boolean
         '''   
         colors = self.gen_colors(.25)
-        
-        if new:
-            plt.figure()
-        for layer,color in zip(self.layers,colors):
-            layer.plot(color = color)
-        d,e=self.bounding_box_coords()
-        ax = plt.gca()
-        ax.axis([d[0],e[0],d[1],e[1]])
-            
+
+        try:
+            d,e=self.bounding_box_coords()
+            if new:
+                plt.figure()
+            for layer,color in zip(self.layers,colors):
+                layer.plot(color = color)
+            ax = plt.gca()
+            ax.axis([d[0],e[0],d[1],e[1]])
+        except foldable_robotics.layer.NoGeoms:
+            pass
     def gen_colors(self,alpha=None):
         import matplotlib.cm
         cm = matplotlib.cm.plasma
