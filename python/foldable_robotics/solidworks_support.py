@@ -16,9 +16,12 @@ import foldable_robotics.dxf
 
 class obj(object):
     pass
+    
+from idealab_tools.data_exchange.generic_data import GenericData
 
 def objectify(var):
     if isinstance(var,dict):
+#        new_var = GenericData(**var)
         new_var = obj()
         for key,value in var.items():
             setattr(new_var,key,objectify(value))
@@ -157,11 +160,11 @@ def process(filename,output_file_name,prescale,round_digits):
     
 if __name__=='__main__':
     user_path = os.path.abspath(os.path.expanduser('~'))
-    folder = os.path.join(user_path,'class_foldable_robotics/cad/spherical_example')
+    folder = os.path.join(user_path,'C:/Users/danaukes/projects/papers_2019_foldable_textbook/_cad/spherical_example')
     filename = os.path.normpath(os.path.join(folder,'spherical - Sheet1_Drawing View2.yaml'))
     
     output_file_name = os.path.join(user_path,'desktop','design.dxf')
     
     
     round_digits = 2
-    process(filename,output_file_name,round_digits)
+    process(filename,output_file_name,1,round_digits)
