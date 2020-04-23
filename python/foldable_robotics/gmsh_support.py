@@ -232,5 +232,5 @@ if __name__=='__main__':
 #    tris2 = tris2.reshape((-1,3))
 #    face_colors2 = numpy.array([(1,0,0,.5) for item in tris2])
 ##
-#    idealab_tools.plot_tris.plot_tris(points,tris2,face_colors=face_colors2,drawEdges=True, edgeColor = (0,0,0,1))
+#    idealab_tools.plot_tris.plot_tris(points,tris2,face_colors=face_colors2,draw_edges=True, edge_color = (0,0,0,1))
 #    
