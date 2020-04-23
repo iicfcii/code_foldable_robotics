@@ -492,6 +492,13 @@ class Laminate(Iterable,ClassAlgebra):
             layer = self[ii].unary_union(*other_ii)
             layers.append(layer)
         return type(self)(*layers)
+
+    def to_mesh(self,layer_thickness,characteristic_len_min = None,characteristic_len_max = None):
+        '''create a mesh object with gmsh'''
+        import foldable_robotics.gmsh_support as gs
+        geofile= gs.laminate_to_geo(self,layer_thickness,characteristic_len_min,characteristic_len_max)
+        mesh_data = geofile.make_mesh()
+        return mesh_data
         
 
 if __name__=='__main__':

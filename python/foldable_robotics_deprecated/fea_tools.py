@@ -15,7 +15,7 @@ Created on Tue Nov 13 09:51:18 2018
 import idealab_tools.text_to_polygons
 from foldable_robotics.layer import Layer
 import shapely.geometry as sg
-import idealab_tools.fea_tetra.fea as fea
+import pyfea.fea as fea
 import idealab_tools.matplotlib_tools
 import numpy
 import pygmsh as pg
@@ -77,12 +77,12 @@ def poly_2_flat_mesh(layer,thickness,lcar=.5):
     
     geom.extrude(poly,translation_axis=axis,rotation_axis=axis,point_on_axis=[0, 0, 0], angle=theta)
     
-    points, cells, point_data, cell_data, field_data = pg.generate_mesh(geom)
+    mo = pg.generate_mesh(geom)
 
-    triangles_outer = cells['triangle']
+    triangles_outer = mo.cells['triangle']
 
-    coordinates = points[:]
-    elements = cells['tetra']
+    coordinates = mo.points[:]
+    elements = mo.cells['tetra']
     
     used_elements = fea.find_used_elements(elements,triangles_outer)
     coordinates,mapping = fea.coord_reduce(coordinates,used_elements)

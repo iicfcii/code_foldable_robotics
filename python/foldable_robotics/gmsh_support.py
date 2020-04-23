@@ -113,23 +113,32 @@ class GeoFile(object):
     SetFactory("OpenCASCADE");
     Geometry.LineNumbers = 0;
     Geometry.SurfaceNumbers = 0;
-    '''
-    def __init__(self):
+'''
+    def __init__(self,characteristic_len_min = None,characteristic_len_max = None):
         self.points = []
         self.lines = []
         self.loops = []
         self.surfaces = []
         self.extrusions= []
         self.layer_coherence = []
+        self.characteristic_len_min = characteristic_len_min
+        self.characteristic_len_max = characteristic_len_max
         
     def string(self):
+        a=''
+        if not not self.characteristic_len_min:
+            a += '    Mesh.CharacteristicLengthMin = {0:f};\n'.format(self.characteristic_len_min)
+            
+        if not not self.characteristic_len_max:
+            a += '    Mesh.CharacteristicLengthMax = {0:f};\n'.format(self.characteristic_len_max)
+    
         b = ''.join([point.string() for point in self.points])
         c = ''.join([line.string() for line in self.lines])
         d = ''.join([loop.string() for loop in self.loops])
         e = ''.join([surface.string() for surface in self.surfaces])
         f = ''.join([extrusion.string() for extrusion in self.extrusions])
         g = ''.join([item.string() for item in self.layer_coherence])
-        return self.template+b+c+d+e+f+g
+        return self.template+a+b+c+d+e+f+g
     
     def point_tuples(self):
         return [item.comp() for item in self.points]
@@ -139,6 +148,7 @@ class GeoFile(object):
             f.writelines(self.string())
         
         string = 'gmsh output.geo -3 -format msh'
+#        p = subprocess.Popen(string,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         p = subprocess.Popen(string)
         p.wait()
         mesh_file = 'output.msh'
@@ -149,13 +159,13 @@ class GeoFile(object):
         return data
 
 
-def laminate_to_geo(lam):
+def laminate_to_geo(lam,layer_thickness,characteristic_len_min = None,characteristic_len_max = None):
     z=0
-    t = 1
-    geofile = GeoFile()
+#    t = 1
+    geofile = GeoFile(characteristic_len_min,characteristic_len_max)
     extrusions_by_layer = []
     
-    for layer in lam:
+    for layer,t in zip(lam,layer_thickness):
         extrusions = []
         for geo in layer.geoms:
             if isinstance(geo,sg.Polygon):
@@ -199,7 +209,7 @@ if __name__=='__main__':
     lam.plot(new=True)
 
         
-    geofile = laminate_to_geo(lam)
+    geofile = laminate_to_geo(lam,[.1,.1],.05,.05)
     data = geofile.make_mesh()
 
                 
@@ -210,17 +220,17 @@ if __name__=='__main__':
     tris = data.cells['triangle']
     points = data.points
     face_colors = numpy.array([(1,0,0,.5) for item in tris])
-#    idealab_tools.plot_tris.plot_tris(points,tris,face_colors=face_colors,drawEdges=True, edgeColor = (0,0,0,1))
+    idealab_tools.plot_tris.plot_tris(points,tris,face_colors=face_colors,draw_edges=True, edge_color= (0,0,0,1))
 
-#    centroid = points[quads].sum(1)
-#    ii = (centroid[:,2]<1).nonzero()[0]
-    tet_z_values = points[quads][:,:,2]
-    ii=(((tet_z_values>=1)*(tet_z_values<=2)).sum(1)==4).nonzero()[0]
-    tri_filt = numpy.array([[0,1,2],[1,2,3],[2,3,0],[3,0,1]])
-    tris2 = quads[ii,:]
-    tris2 = tris2[:,tri_filt]
-    tris2 = tris2.reshape((-1,3))
-    face_colors2 = numpy.array([(1,0,0,.5) for item in tris2])
-#
-    idealab_tools.plot_tris.plot_tris(points,tris2,face_colors=face_colors2,drawEdges=True, edgeColor = (0,0,0,1))
-    
+##    centroid = points[quads].sum(1)
+##    ii = (centroid[:,2]<1).nonzero()[0]
+#    tet_z_values = points[quads][:,:,2]
+#    ii=(((tet_z_values>=1)*(tet_z_values<=2)).sum(1)==4).nonzero()[0]
+#    tri_filt = numpy.array([[0,1,2],[1,2,3],[2,3,0],[3,0,1]])
+#    tris2 = quads[ii,:]
+#    tris2 = tris2[:,tri_filt]
+#    tris2 = tris2.reshape((-1,3))
+#    face_colors2 = numpy.array([(1,0,0,.5) for item in tris2])
+##
+#    idealab_tools.plot_tris.plot_tris(points,tris2,face_colors=face_colors2,drawEdges=True, edgeColor = (0,0,0,1))
+#    
