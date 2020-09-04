@@ -41,7 +41,7 @@ class Face(object):
 def create_loops(filename,prescale):
 #    plt.figure()
     with open(filename) as f:
-        data1 = yaml.load(f)
+        data1 = yaml.load(f,Loader=yaml.FullLoader)
     data = objectify(data1)
     global_transform = numpy.array(data.transform)
     components = []
