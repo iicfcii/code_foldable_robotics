@@ -12,6 +12,8 @@ from foldable_robotics.laminate import Laminate
 import shapely.geometry as sg
 from math import tan,pi
 import foldable_robotics.plotter_support as ps
+import serial
+
 
 length = 4
 width = 2
@@ -65,6 +67,10 @@ lam2-=smallcut_lam.translate(width,2*length)
 lam2-=smallcut_lam.translate(width,3*length)
 lam2-=smallcut_lam.translate(width,4*length)
 
+lay3 = Layer(sg.box(0,0,width,-1))
+lam3 = Laminate(lay3,Layer(),Layer())
+lam2 |= lam3
+
 lam2.plot(new=True)
 
 lam2.export_dxf('test.dxf')
@@ -72,4 +78,17 @@ lam2.export_dxf('test.dxf')
 # path_string = ps.path_string(layer1.get_paths()[0])
 # print(path_string)
 s = ps.layer_string(layer1)
+bs = s.encode()
 print(s)
+
+with serial.Serial(port = 'COM3',
+                    baudrate=9600,
+                    bytesize=serial.EIGHTBITS,
+                    parity=serial.PARITY_NONE,
+                    stopbits=serial.STOPBITS_ONE,
+                    timeout=None,
+                    xonxoff=False,
+                    rtscts=True,) as ser:
+    print(ser.name)         # check which port was really used
+    ser.write(bs)     # write a string
+    # ser.close()             # close port

@@ -32,7 +32,7 @@ def path_string(path):
     return s
 
 def layer_string(layer):
-    layer = layer.scale(ppi)
+    layer = layer.scale(ppi,ppi)
     s = start_string
     for path in layer.get_paths():
         s+=path_string(path)
