@@ -12,11 +12,11 @@ Created on Wed Feb  7 17:24:29 2018
 @author: danaukes
 """
 
-
-ppi = 100
+import math
+ppi = 1000
 
 start_string = 'IN;PA;VS30;'
-end_string = 'PU0,0;!PG;'
+end_string = 'PU;PU0,0;!PG;'
 
 def path_string(path):
     first = True
@@ -28,10 +28,11 @@ def path_string(path):
         else:
             s+='PD{0:d},{1:d};'.format(int(point[0]),int(point[1]))
         first = False
-    s+='PU;'
+    # s+='PU;'
     return s
 
 def layer_string(layer):
+    layer = layer.rotate(-90)
     layer = layer.scale(ppi,ppi)
     s = start_string
     for path in layer.get_paths():

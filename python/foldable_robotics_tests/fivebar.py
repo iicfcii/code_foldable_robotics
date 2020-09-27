@@ -13,6 +13,7 @@ import shapely.geometry as sg
 from math import tan,pi
 import foldable_robotics.plotter_support as ps
 import serial
+import time
 
 
 length = 4
@@ -57,7 +58,8 @@ lam2 = lam.copy()
 lam2 |= lam.translate(0,length)
 lam2 |= lam.translate(0,2*length)
 lam2 |= lam.translate(0,3*length)
-lam2 |= lam.scale(-1,1).translate(width,4*length)
+lam2 |= lam.translate(0,4*length)
+# lam2 |= lam.scale(-1,1).translate(width,4*length)
 
 smallcut = Layer(sg.LineString([(0,0),(topwidth,0)]))
 smallcut <<= .01
@@ -71,15 +73,26 @@ lay3 = Layer(sg.box(0,0,width,-1))
 lam3 = Laminate(lay3,Layer(),Layer())
 lam2 |= lam3
 
+lam2 = lam2.scale(.5,.5)
+(minx,miny),(maxx,maxy) = lam2.bounding_box_coords()
+lam2 = lam2.translate(-maxx,-miny)
+# lam2 = lam2.rotate(90)
 lam2.plot(new=True)
 
-lam2.export_dxf('test.dxf')
+# lam2.export_dxf('test.dxf')
 
 # path_string = ps.path_string(layer1.get_paths()[0])
 # print(path_string)
-s = ps.layer_string(layer1)
+s = ps.layer_string(lam2[0])
 bs = s.encode()
 print(s)
+
+s2 = ps.layer_string(lam2[1])
+bs2 = s2.encode()
+print(s2)
+s3 = ps.layer_string(lam2[2])
+bs3 = s3.encode()
+print(s3)
 
 with serial.Serial(port = 'COM3',
                     baudrate=9600,
@@ -87,8 +100,20 @@ with serial.Serial(port = 'COM3',
                     parity=serial.PARITY_NONE,
                     stopbits=serial.STOPBITS_ONE,
                     timeout=None,
-                    xonxoff=False,
-                    rtscts=True,) as ser:
+                    xonxoff=True,
+                    rtscts=False,) as ser:
+    input('set pressure high:')
     print(ser.name)         # check which port was really used
     ser.write(bs)     # write a string
-    # ser.close()             # close port
+    ser.write(bs)     # write a string
+    ser.write(bs)     # write a string
+    time.sleep(1)    
+    input('set pressure low:')
+    ser.write(bs2)     # write a string
+    ser.write(bs3)     # write a string
+    time.sleep(1)    
+
+    # # ser.close()             # close port
+
+
+
