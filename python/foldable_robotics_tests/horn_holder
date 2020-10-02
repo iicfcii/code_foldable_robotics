@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Oct  2 11:59:13 2020
+
+@author: danaukes
+"""
+
+
+from foldable_robotics.layer import Layer
+from foldable_robotics.laminate import Laminate
+import shapely.geometry as sg
+# from math import tan,pi
+# import foldable_robotics.plotter_support as ps
+# import serial
+# import time
+
+lw = .75
+tab_w = .25
+
+tw = (lw*(2+2**.5))
+dx = (lw+lw/2)
+b = sg.box(0,0,tw,2)
+tab = sg.box(0,0,tab_w,2)
+tab = Layer(tab)
+
+material = Layer(b)
+material |= tab.translate(-tab_w,0)
+material |= tab.translate(tw,0)
+material = material.translate(-dx,-1)
+
+cut = Layer(sg.Point(.1,.33))
+cut <<= .02
+cut |= Layer(sg.LineString([(0,.33),(.1,.33)]))
+cut = (cut << .01)>>.009
+cut |= cut.scale(-1,1)
+cut |= cut.scale(1,-1)
+
+cut2 = Layer(sg.Point(.2,.075))
+cut2 <<= .02
+cut2 |= Layer(sg.LineString([(.2,0),(.2,.075)]))
+cut2 = (cut2 << .01)>>.009
+cut2 |= cut2.scale(1,-1)
+cut2 |= cut2.scale(-1,1)
+
+material -=cut
+hole = Layer(sg.Point(0,0))
+hole<<=.125
+material -= hole
+material -= cut2
+
+# material.plot()
+
+slit = Layer(sg.LineString([(0,0),(0,2)]))
+slits = slit.translate(-3*lw/2,-1) | slit.translate(-lw/2,-1) | slit.translate(lw/2,-1) | slit.translate(lw*(.5+(2**.5)),-1) 
+
+lam = Laminate(material,slits)
+# slits = slit | slit.translate(h,0) | slit.translate(l+h,0)
+
+# place_line = [(l,0),(l,w)]
+# joint = sg.LineString(place_line)
+# joint = Layer(joint)
+# # slits= Layer(sg.LineString([(0,0),(1,0)]),sg.LineString([(.25,.5),(.75,.5)]))
+
+# cut = sg.LineString([(0,0),(l+h,0)])
+# cut = Layer(cut)
+# cuts = cut | cut.translate(0,w)
+
+# lam = Laminate(material,Layer(),slits,cuts,joint)
+
+# # lam = Laminate(*lam,Layer(sg.LineString([(.25,0),(.75,0)])))
+# # hole = Laminate(Layer(sg.LineString([(.25,0),(.75,0)])))
+
+# # hole = Laminate(Layer(sg.LineString([(.25,0),(.75,0)])))
+# # 
+# # (hole<<.01).plot()
+
+if __name__=='__main__':
+
+    lam.plot()
+

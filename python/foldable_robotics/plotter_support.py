@@ -39,3 +39,6 @@ def layer_string(layer):
         s+=path_string(path)
     s += end_string
     return s
+
+class Plotter(object):
+    pass

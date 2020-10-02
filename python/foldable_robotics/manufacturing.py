@@ -370,7 +370,101 @@ def map_line_stretch(self,p1,p2,p3,p4):
     laminate = laminate.rotate((post_rotate)*180/math.pi,origin=(0,0))
     laminate = laminate.translate(*p3)
     return laminate    
+
+def map_line_scale(self,p1,p2,p3,p4):
+    '''
+    Transforms a layer or laminate by using the translation and rotation between two lines to compute the stretch, scale, and rotation. 
     
+    :param self: input shape
+    :type self: Layer or Laminate
+    :param p1: point 1 of line 1 in (x,y) format
+    :type p1: tuple
+    :param p1: point 2 of line 1 in (x,y) format
+    :type p1: tuple
+    :param p1: point 1 of line 2 in (x,y) format
+    :type p1: tuple
+    :param p1: point 2 of line 2 in (x,y) format
+    :type p1: tuple
+    :param kwargs: unused
+    :type kwargs: dict
+    :rtype: Layer or Laminate
+    '''   
+
+    import math
+    import numpy
+    import foldable_robotics.geometry as geometry
+    
+    p1 = numpy.array(p1)
+    p2 = numpy.array(p2)
+    p3 = numpy.array(p3)
+    p4 = numpy.array(p4)
+
+    x_axis = numpy.array([1,0])
+
+    v1 = p2-p1
+#    pre_rotate = geometry.angle(x_axis,p2-p1)
+    pre_rotate = math.atan2(*v1[::-1])
+
+    v2 = p4-p3
+    post_rotate = geometry.total_angle(x_axis,p4-p3)
+    post_rotate = math.atan2(*v2[::-1])
+
+    scale = geometry.length(p4-p3)/geometry.length(p2-p1)
+
+    laminate = self.translate(*(-p1))
+    laminate = laminate.rotate(-pre_rotate*180/math.pi,origin=(0,0))
+    laminate = laminate.affine_transform([scale,0,0,scale,0,0])
+    laminate = laminate.rotate((post_rotate)*180/math.pi,origin=(0,0))
+    laminate = laminate.translate(*p3)
+    return laminate    
+
+def map_line_place(self,p1,p2,p3,p4):
+    '''
+    Transforms a layer or laminate by using the translation and rotation between two lines to compute the stretch, scale, and rotation. 
+    
+    :param self: input shape
+    :type self: Layer or Laminate
+    :param p1: point 1 of line 1 in (x,y) format
+    :type p1: tuple
+    :param p1: point 2 of line 1 in (x,y) format
+    :type p1: tuple
+    :param p1: point 1 of line 2 in (x,y) format
+    :type p1: tuple
+    :param p1: point 2 of line 2 in (x,y) format
+    :type p1: tuple
+    :param kwargs: unused
+    :type kwargs: dict
+    :rtype: Layer or Laminate
+    '''   
+
+    import math
+    import numpy
+    import foldable_robotics.geometry as geometry
+    
+    p1 = numpy.array(p1)
+    p2 = numpy.array(p2)
+    p3 = numpy.array(p3)
+    p4 = numpy.array(p4)
+
+    x_axis = numpy.array([1,0])
+
+    v1 = p2-p1
+#    pre_rotate = geometry.angle(x_axis,p2-p1)
+    pre_rotate = math.atan2(*v1[::-1])
+
+    v2 = p4-p3
+    post_rotate = geometry.total_angle(x_axis,p4-p3)
+    post_rotate = math.atan2(*v2[::-1])
+
+    # scale = geometry.length(p4-p3)/geometry.length(p2-p1)
+
+    laminate = self.translate(*(-p1))
+    laminate = laminate.rotate(-pre_rotate*180/math.pi,origin=(0,0))
+    laminate = laminate.affine_transform([1,0,0,1,0,0])
+    laminate = laminate.rotate((post_rotate)*180/math.pi,origin=(0,0))
+    laminate = laminate.translate(*p3)
+    return laminate    
+
 def modify_device(device,custom_support_line,support_width,support_gap,hole_buffer):
     '''
     From a list of two-coordinate tuples, creates shapely lines.

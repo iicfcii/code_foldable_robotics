@@ -378,6 +378,32 @@ class Laminate(Iterable,ClassAlgebra):
         '''
         import foldable_robotics.manufacturing
         return foldable_robotics.manufacturing.map_line_stretch(self,*args,**kwargs)
+    def map_line_scale(self,*args,**kwargs):
+        '''
+        transform the laminate based on two lines.
+        see foldable_robotics.manufacturing.map_line_stretch for arguments and keyword-arguments
+        
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
+        :rtype: Laminate
+        '''
+        import foldable_robotics.manufacturing
+        return foldable_robotics.manufacturing.map_line_scale(self,*args,**kwargs)
+    def map_line_place(self,*args,**kwargs):
+        '''
+        transform the laminate based on two lines.
+        see foldable_robotics.manufacturing.map_line_stretch for arguments and keyword-arguments
+        
+        :param args: tuple of arguments passed to subfunction
+        :type args: tuple
+        :param kwargs: keyword arguments passed to subfunction
+        :type kwargs: dict
+        :rtype: Laminate
+        '''
+        import foldable_robotics.manufacturing
+        return foldable_robotics.manufacturing.map_line_place(self,*args,**kwargs)
         
     def export_dxf(self,name):
         '''
