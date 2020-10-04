@@ -13,6 +13,9 @@ import shapely.geometry as sg
 
 import support_tab
 import motor_housing
+import foldable_robotics.plotter_support as ps
+import serial
+import time
 
 motor_l = .72
 motor_w = .9
@@ -84,5 +87,47 @@ lam |=housing
 # (hole<<.01).plot()
 
 
-lam.plot()
 
+(minx,miny),(maxx,maxy) = lam.bounding_box_coords()
+lam = lam.translate(-maxx,-miny)
+
+if __name__=='__main__':
+    # lam.plot()
+    
+    
+    s = ps.layer_string(lam[0])
+    bs = s.encode()
+    print(s)
+    
+    s2 = ps.layer_string(lam[2])
+    bs2 = s2.encode()
+    print(s2)
+    s3 = ps.layer_string(lam[3])
+    bs3 = s3.encode()
+    print(s3)
+    
+    with serial.Serial(port = 'COM3',
+                        baudrate=9600,
+                        bytesize=serial.EIGHTBITS,
+                        parity=serial.PARITY_NONE,
+                        stopbits=serial.STOPBITS_ONE,
+                        timeout=None,
+                        xonxoff=True,
+                        rtscts=False,) as ser:
+        input('set pressure high:')
+        print(ser.name)         # check which port was really used
+        ser.write(bs)     # write a string
+        ser.write(bs)     # write a string
+        ser.write(bs)     # write a string
+        time.sleep(1)    
+        input('set pressure low:')
+        ser.write(bs2)     # write a string
+        ser.write(bs3)     # write a string
+        ser.write(bs3)     # write a string
+        ser.write(bs3)     # write a string
+        time.sleep(1)    
+    
+        # ser.close()             # close port
+    
+    
+    
