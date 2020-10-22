@@ -11,7 +11,9 @@ plt.ion()
 import numpy
 
 #Here goes the file name of the dxf.
-dwg = ezdxf.readfile("test.dxf")
+
+filename = r'C:\Users\danaukes\Dropbox (Personal)\projects\2020-10-16 Ben Pumpkin\ben_pumpkin.dxf'
+dwg = ezdxf.readfile(filename)
 modelspace = dwg.modelspace()
 
 hinge_lines = []
