@@ -35,23 +35,24 @@ material = material.translate(-dx,-.75)
 
 # cut = Layer(sg.Point(.1,.33))
 # cut <<= .02
-cut = Layer(sg.LineString([(0,.45),(.06,.45)]))
-cut = (cut << .04)
+cut = Layer(sg.LineString([(0,.47),(.06,.47)]))
+cut = (cut << .045)
 cut |= cut.scale(-1,1)
 cut |= cut.scale(1,-1)
 
 # cut2 = Layer(sg.Point(.2,.075))
 # cut2 <<= .02
-cut2 = Layer(sg.LineString([(.2,0),(.2,.06)]))
-cut2 = (cut2 << .04)
-cut2 |= cut2.scale(1,-1)
-cut2 |= cut2.scale(-1,1)
+
+# cut2 = Layer(sg.LineString([(.2,0),(.2,.06)]))
+# cut2 = (cut2 << .04)
+# cut2 |= cut2.scale(1,-1)
+# cut2 |= cut2.scale(-1,1)
 
 material -=cut
 hole = Layer(sg.Point(0,0))
-hole<<=.125
+hole <<= .28/2
 material -= hole
-material -= cut2
+# material -= cut2
 
 # material.plot()
 
@@ -112,17 +113,17 @@ if __name__=='__main__':
                         timeout=None,
                         xonxoff=True,
                         rtscts=False,) as ser:
+        # input('set pressure low:')
+        # ser.write(bs2)     # write a string
+        # ser.write(bs3)     # write a string
+        # ser.write(bs3)     # write a string
+        # ser.write(bs3)     # write a string
+        # time.sleep(1)    
         input('set pressure high:')
         print(ser.name)         # check which port was really used
         ser.write(bs)     # write a string
-        ser.write(bs)     # write a string
-        ser.write(bs)     # write a string
-        time.sleep(1)    
-        input('set pressure low:')
-        ser.write(bs2)     # write a string
-        # ser.write(bs3)     # write a string
-        # ser.write(bs3)     # write a string
-        # ser.write(bs3)     # write a string
+        # ser.write(bs)     # write a string
+        # ser.write(bs)     # write a string
         time.sleep(1)    
     
         # ser.close()             # close port
