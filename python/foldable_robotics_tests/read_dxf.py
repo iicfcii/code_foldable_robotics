@@ -9,9 +9,12 @@ import ezdxf
 import matplotlib.pyplot as plt
 plt.ion()
 import numpy
+import foldable_robotics.geometry as fg
 
 #Here goes the file name of the dxf.
-dwg = ezdxf.readfile("test.dxf")
+
+filename = r'C:\Users\danaukes\Dropbox (Personal)\projects\2020-10-16 Ben Pumpkin\ben_pumpkin.dxf'
+dwg = ezdxf.readfile(filename)
 modelspace = dwg.modelspace()
 
 hinge_lines = []
@@ -51,4 +54,12 @@ for item in exteriors:
     item = numpy.array(item)
     plt.plot(item[:,0],item[:,1],'k-', linewidth = 3)
     
+
+    
 plt.axis('equal')
+
+polylines = fg.heal_polylines(list(other_lines))
+
+f = plt.figure()
+for item in polylines:
+    plt.plot(*(item.T))

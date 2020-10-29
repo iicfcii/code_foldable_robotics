@@ -7,6 +7,12 @@ Please see LICENSE for full license.
 import numpy
 import math
 
+
+def distance(p1,p2):
+    p1 = numpy.array(p1)
+    p2 = numpy.array(p2)
+    v = p2-p1
+    return(length(v))
 def length(v1):
     '''
     finds the length of a vector
@@ -68,3 +74,29 @@ def total_angle(v1,v2,v3=None):
         neg=1
     theta = math.atan2(neg*l_sintheta,costheta)
     return theta    
+
+def heal_polylines(lines, tolerance=1e-3):
+    polylines=[]
+    while len(lines)>0:
+        polyline = []
+        polyline.append(lines.pop(0))
+        finding = True
+        while finding:
+            finding = False
+            for ii in range(len(lines)):
+                item = lines[ii]
+                if distance(polyline[-1][1],item[0])<tolerance:
+                    polyline.append(item)
+                    lines.pop(ii)
+                    finding = True
+                    break
+                elif  distance(polyline[-1][1],item[-1])<tolerance:
+                    polyline.append(item[::-1])
+                    lines.pop(ii)
+                    finding = True
+                    break
+        polyline2 = numpy.array([item[0] for item in polyline]+[polyline[-1][-1]])
+        # polyline = numpy.array([item for segment in polyline for item in segment])
+        polylines.append(polyline2)
+        print(len(lines))
+    return polylines
