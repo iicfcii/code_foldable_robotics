@@ -13,7 +13,8 @@ import foldable_robotics.geometry as fg
 
 #Here goes the file name of the dxf.
 
-filename = r'C:\Users\danaukes\Dropbox (Personal)\projects\2020-10-16 Ben Pumpkin\ben_pumpkin.dxf'
+# filename = r'C:\Users\danaukes\Dropbox (Personal)\projects\2020-10-16 Ben Pumpkin\ben_pumpkin.dxf'
+filename = r'C:\Users\danaukes\Dropbox (Personal)\projects\2020-10-16 Ben Pumpkin\ben-bat-1.dxf'
 dwg = ezdxf.readfile(filename)
 modelspace = dwg.modelspace()
 
@@ -63,3 +64,6 @@ polylines = fg.heal_polylines(list(other_lines))
 f = plt.figure()
 for item in polylines:
     plt.plot(*(item.T))
+    
+plt.axis('equal')
+    
