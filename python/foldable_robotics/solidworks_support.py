@@ -141,7 +141,7 @@ def process(filename,output_file_name,prescale,round_digits):
     layers = [component_to_layer(item) for item in components]
     layer2 = Layer()
     layer2 = layer2.unary_union(*layers)
-#    layer2.plot(new=True)
+    # layer2.plot(new=True)
     
     segments = get_joints(*layers,round_digits=round_digits)
     segments = filter_segments(segments,round_digits)
@@ -155,16 +155,30 @@ def process(filename,output_file_name,prescale,round_digits):
     elements.append(({'name':'joints','dxfattribs':{'color': foldable_robotics.dxf.to_index[0x0000ff]}},joints))
     
     create_layered_dxf(elements,output_file_name)
-    return layer2,joints
+    return layer2,joints,components
        
     
 if __name__=='__main__':
     user_path = os.path.abspath(os.path.expanduser('~'))
-    folder = os.path.join(user_path,'C:/Users/danaukes/projects/papers_2019_foldable_textbook/_cad/spherical_example')
-    filename = os.path.normpath(os.path.join(folder,'spherical - Sheet1_Drawing View2.yaml'))
+    # folder = os.path.join(user_path,'C:/Users/danaukes/projects/papers_2019_foldable_textbook/_cad/spherical_example')
+
+    # folder=r'C:\Users\danaukes\Dropbox (Personal)\projects\2020-12-06 Knife holder'
+    # filename='knife_holder - Sheet1_Drawing View1.yaml'
+
+    folder = r'C:\Users\danaukes\Dropbox (Personal)\projects\2019-12-27 silverware'
+    filename = 're-assembled - Sheet1_Drawing View1.yaml'
+
+    filename_simple = os.path.splitext(filename)[0]
+    full_path = os.path.normpath(os.path.join(folder,filename))
     
-    output_file_name = os.path.join(user_path,'desktop','design.dxf')
+    # output_file_name = os.path.join(user_path,'desktop','design.dxf')
+    output_file_name = os.path.join(folder,filename_simple+'.dxf')
     
     
     round_digits = 2
-    process(filename,output_file_name,1,round_digits)
+    a,b,c = process(full_path,output_file_name,1,round_digits)
+
+    for item in c:
+        component_to_layer(item).plot(new=True)
+        
+    a.plot(new=True)
