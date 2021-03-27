@@ -8,10 +8,39 @@ Created on Fri Dec 29 13:06:11 2017
 import numpy
 import shapely.geometry as sg
 
-svg_template = '''
-<svg width="{width:f}" height="{height:f}">
-{paths}</svg>
-'''    
+svg_template = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="{width:f}"
+   height="{height:f}"
+   viewBox="-0.04 -0.04 1.08 1.08"
+   preserveAspectRatio="xMinYMin meet"
+   version="1.1"
+   id="svg1015">
+  <metadata
+     id="metadata1021">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1019" />
+  <g
+     transform="matrix(1,0,0,-1,0,1.0)"
+     id="g1013">
+    {paths}
+  </g>
+</svg>'''
 
 style_template ='''
 opacity:1;
