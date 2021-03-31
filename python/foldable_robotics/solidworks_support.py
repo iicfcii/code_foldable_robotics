@@ -165,8 +165,11 @@ if __name__=='__main__':
     # folder=r'C:\Users\danaukes\Dropbox (Personal)\projects\2020-12-06 Knife holder'
     # filename='knife_holder - Sheet1_Drawing View1.yaml'
 
-    folder = r'C:\Users\danaukes\Dropbox (Personal)\projects\2019-12-27 silverware'
-    filename = 're-assembled - Sheet1_Drawing View1.yaml'
+    # folder = r'C:\Users\danaukes\Dropbox (Personal)\projects\2019-12-27 silverware'
+    # filename = 're-assembled - Sheet1_Drawing View1.yaml'
+
+    folder = r'C:\Users\danaukes\Desktop\test1'
+    filename = 'fivebar - Sheet1_Drawing View1.yaml'
 
     filename_simple = os.path.splitext(filename)[0]
     full_path = os.path.normpath(os.path.join(folder,filename))
