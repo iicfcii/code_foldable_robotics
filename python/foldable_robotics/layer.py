@@ -10,7 +10,7 @@ Please see LICENSE for full license.
 import shapely.geometry
 import shapely.geometry as sg
 import shapely.affinity as sa
-from .class_algebra import ClassAlgebra
+from foldable_robotics.class_algebra import ClassAlgebra
 import shapely.ops as so
 import shapely.wkt as sw
 import matplotlib.pyplot as plt
@@ -327,35 +327,49 @@ class Layer(ClassAlgebra):
             ax.axis([d[0],e[0],d[1],e[1]])
 
     def _repr_svg_(self):
-        return self.make_svg()
-
-    def make_svg_path(self,*args):
-        paths = [fj.make_svg_path(item,*args) for item in self.geoms]
-        paths = '\n'.join(paths)
-        return paths
-
-    def make_svg(self):
-        repr_height = foldable_robotics.display_height
-        line_width=foldable_robotics.line_width
+        """SVG representation for iPython notebook"""
+        svg_top = '<svg xmlns="http://www.w3.org/2000/svg" ' \
+            'xmlns:xlink="http://www.w3.org/1999/xlink" '
+        if not self.geoms:
+            return svg_top + '/>'
+        else:
+            # Establish SVG canvas that will fit all the data + small space
+            (xmin, ymin), (xmax, ymax) = self.bounding_box_coords()
+            if xmin == xmax and ymin == ymax:
+                # This is a point; buffer using an arbitrary size
+                (xmin, ymin), (xmax, ymax) = self.buffer(1).bounds
+            else:
+                # Expand bounds by a fraction of the data ranges
+                expand = 0.04  # or 4%, same as R plots
+                widest_part = max([xmax - xmin, ymax - ymin])
+                expand_amount = widest_part * expand
+                xmin -= expand_amount
+                ymin -= expand_amount
+                xmax += expand_amount
+                ymax += expand_amount
+            dx = xmax - xmin
+            dy = ymax - ymin
+            width = min([max([100., dx]), 300])
+            height = min([max([100., dy]), 300])
+            try:
+                scale_factor = max([dx, dy]) / max([width, height])
+            except ZeroDivisionError:
+                scale_factor = 1.
+            view_box = "{} {} {} {}".format(xmin, ymin, dx, dy)
+            transform = "matrix(1,0,0,-1,0,{})".format(ymax + ymin)
+            return svg_top + ('width="{1}" height="{2}" viewBox="{0}" ' 'preserveAspectRatio="xMinYMin meet">' '<g transform="{3}">{4}</g></svg>').format(view_box, width, height, transform,self.svg(scale_factor))
+                         
+    def svg(self, scale_factor=1.):
+        '''
+        returns the svg
+        '''
         fill_color=foldable_robotics.layer_fill_color
-        hh = repr_height-line_width
-        
-        min1,max1 = self.bounding_box_coords()
-        min1=numpy.array(min1)
-        width,height = self.get_dimensions()
 
-        self = self.translate(*(-min1))
-        self = self.scale(1,-1)
-        self = self.scale(hh/height,hh/height)
-        self = self.translate(line_width/2,hh+line_width/2)
-        
-        fill_opacity = 1
-        paths = self.make_svg_path(line_width,fill_opacity,fill_color)
-
-        width,height = self.get_dimensions()
-
-        svg_string = fj.make_svg(paths,width+line_width,height+line_width)
-        return svg_string
+        if not self.geoms:
+            return '<g />'
+        return '<g>' + \
+            ''.join(g.svg(scale_factor, fill_color) for g in self.geoms) + '</g>'        
+    
     
     def create_material_property(self,color=None):
         from foldable_robotics.dynamics_info import MaterialProperty

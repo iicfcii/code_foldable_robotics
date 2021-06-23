@@ -120,39 +120,51 @@ class Laminate(Iterable,ClassAlgebra):
             geom.plot(color = color)
 
     def _repr_svg_(self):
-        return self.make_svg()
-
-    def make_svg(self):
-        try:
-            repr_height = foldable_robotics.display_height
-            line_width=foldable_robotics.line_width
-            fill_opacity = foldable_robotics.fill_opacity
-    
-            hh = repr_height-line_width
-            
-            colors = self.gen_colors()
-    
-            min1,max1 = self.bounding_box_coords()
-            min1=numpy.array(min1)
-            width,height = self.get_dimensions()
-    
-            self = self.translate(*(-min1))
-            self = self.scale(1,-1)
-            self = self.scale(hh/height,hh/height)
-            self = self.translate(line_width/2,hh+line_width/2)
-    
-            paths = []        
-            for layer,color in zip(self,colors):
-                fill_color = fj.color_tuple_to_hex(color[:3])
-                paths.append(layer.make_svg_path(line_width,fill_opacity,fill_color))
-            paths = '\n'.join(paths)
-    
-            width,height = self.get_dimensions()
-    
-            svg_string = fj.make_svg(paths,width+line_width,height+line_width)
-        except foldable_robotics.layer.NoGeoms:
-            svg_string = None
-        return svg_string
+        """SVG representation for iPython notebook"""
+        
+        svg_top = '<svg xmlns="http://www.w3.org/2000/svg" ' \
+            'xmlns:xlink="http://www.w3.org/1999/xlink" '
+        if all([not item.geoms for item in self.layers]):
+            return svg_top + '/>'
+        else:
+            (xmin, ymin), (xmax, ymax) = self.bounding_box_coords()
+            if xmin == xmax and ymin == ymax:
+                (xmin, ymin), (xmax, ymax) = self.buffer(1).bounds
+            else:
+                expand = 0.04
+                widest_part = max([xmax - xmin, ymax - ymin])
+                expand_amount = widest_part * expand
+                xmin -= expand_amount
+                ymin -= expand_amount
+                xmax += expand_amount
+                ymax += expand_amount
+            dx = xmax - xmin
+            dy = ymax - ymin
+            width = min([max([100., dx]), 300])
+            height = min([max([100., dy]), 300])
+            try:
+                scale_factor = max([dx, dy]) / max([width, height])
+            except ZeroDivisionError:
+                scale_factor = 1.
+            view_box = "{} {} {} {}".format(xmin, ymin, dx, dy)
+            transform = "matrix(1,0,0,-1,0,{})".format(ymax + ymin)
+            return svg_top + ('width="{1}" height="{2}" viewBox="{0}" ' 'preserveAspectRatio="xMinYMin meet">' '<g transform="{3}">{4}</g></svg>').format(view_box, width, height, transform,self.svg(scale_factor))
+                         
+    def svg(self, scale_factor=1.):
+        '''
+        returns the svg
+        '''
+        
+        if all([not layer.geoms for layer in self.layers]):
+            return '<g />'
+        
+        s = '<g>'
+        for layer,color in zip(self.layers,self.gen_colors()):
+            c = fj.color_tuple_to_hex(color)
+            for geom in layer.geoms:
+                s+=geom.svg(scale_factor, c)
+        s+='</g>'        
+        return s
 
     def get_dimensions(self):
         min1,max1 = self.bounding_box_coords()
