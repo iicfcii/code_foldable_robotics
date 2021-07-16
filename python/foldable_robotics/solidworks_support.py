@@ -84,29 +84,37 @@ def component_to_layer(component):
             component_new|=item
         return component_new
             
-def get_joints(*component_layers,round_digits):
+def get_joints(*layers,tolerance=1e-5):
     segments = []
-    for layer in component_layers:
-        segments.extend(layer.get_segments())
+    errors = []
     
-    segments = [tuple(sorted(item)) for item in segments]
-    segment_array = numpy.array(segments)
-    segment_array = segment_array.round(round_digits)
-    segments2 = [(tuple(a),tuple(b)) for a,b in segment_array.tolist()]    
-    segments3 = list(set(segments2))
     
-    ii = [segments3.index(item) for item in segments2]
-    jj = list(set(ii))
-    kk = [ii.count(item) for item in jj]
-    ll = [segments3[aa] for aa,bb in zip(jj,kk) if bb>1]
-
-    mm = []
-    for item in ll:
-        mm.append(segments2.index(item))
-        
-    nn = [segments[ii] for ii in mm]
     
-    return nn
+    for ll,layer1 in enumerate(layers):
+        segments_a = layer1.get_segments()
+        for mm,layer2 in enumerate(layers[ll+1:]):
+            segments_b = layer2.get_segments()
+            for sega in segments_a:
+                for segb in segments_b:
+                    ni1 = foldable_robotics.geometry.slope_intercept(*sega)
+                    ni2 = foldable_robotics.geometry.slope_intercept(*segb)
+                    e1 = foldable_robotics.geometry.length(numpy.array(ni1[0])-numpy.array(ni2[0]))
+                    e2 = foldable_robotics.geometry.length(numpy.array(ni1[0])+numpy.array(ni2[0]))
+                    error = min(e1,e2)
+                    
+                    e3 = foldable_robotics.geometry.length(numpy.array(ni1[1])-numpy.array(ni2[1]))
+                    e4 = foldable_robotics.geometry.length(numpy.array(ni1[1])+numpy.array(ni2[1]))
+                    error += min(e3,e4)
+            
+                    errors.append(error)
+                    if error<tolerance:
+            
+                        interiors = foldable_robotics.geometry.colinear_segment_interior_points(sega,segb,tolerance=tolerance)
+                        # print(interiors)
+                        
+                        if not not interiors:
+                            segments.append(interiors)
+    return segments
 
 def length(segment):
     segment = numpy.array(segment)
@@ -114,10 +122,10 @@ def length(segment):
     l=((v**2).sum())**.5
     return l
 
-def filter_segments(segments,round_digits):
-    lengths = [length(item) for item in segments]
-    segments = [item for item,l in zip(segments,lengths) if l>(10**(-round_digits))]
-    return segments
+# def filter_segments(segments,round_digits):
+#     lengths = [length(item) for item in segments]
+#     segments = [item for item,l in zip(segments,lengths) if l>(10**(-round_digits))]
+#     return segments
 
 def create_layered_dxf(elements,filename):
     import ezdxf
@@ -135,27 +143,30 @@ def create_layered_dxf(elements,filename):
         
     dwg.saveas(filename)     
 
-def process(filename,output_file_name,prescale,round_digits):
+def process(input_filename,output_file_name,prescale,round_digits,body_prebuffer=-.001,joint_tolerance=1e-5):
 
-    components = create_loops(filename,prescale)
-    layers = [component_to_layer(item) for item in components]
-    layer2 = Layer()
-    layer2 = layer2.unary_union(*layers)
-    # layer2.plot(new=True)
+    components = create_loops(input_filename,prescale)
+    layers_orig = [component_to_layer(item) for item in components]
     
-    segments = get_joints(*layers,round_digits=round_digits)
-    segments = filter_segments(segments,round_digits)
+    body_layers= [item.buffer(body_prebuffer) for item in layers_orig]
+    body_layer = Layer()
+    body_layer = body_layer.unary_union(*body_layers)
+    
+    body_layer.plot(new=True)
+    
+    segments = foldable_robotics.solidworks_support.get_joints(*layers_orig,tolerance=joint_tolerance)
     
     linestrings = [sg.LineString(item) for item in segments]
     joints = Layer(*linestrings)
-#    joints.plot()
+    joints.plot()
     
     elements = []
-    elements.append(({'name':'body','dxfattribs':{'color': foldable_robotics.dxf.to_index[0xff0000]}},layer2))
+    elements.append(({'name':'body','dxfattribs':{'color': foldable_robotics.dxf.to_index[0xff0000]}},body_layer))
     elements.append(({'name':'joints','dxfattribs':{'color': foldable_robotics.dxf.to_index[0x0000ff]}},joints))
     
-    create_layered_dxf(elements,output_file_name)
-    return layer2,joints,components
+    foldable_robotics.solidworks_support.create_layered_dxf(elements,output_file_name)
+    
+    return body_layer,joints,components
        
     
 if __name__=='__main__':
