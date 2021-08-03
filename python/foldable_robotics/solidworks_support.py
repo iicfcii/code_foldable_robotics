@@ -17,11 +17,8 @@ import foldable_robotics.dxf
 class obj(object):
     pass
     
-from idealab_tools.data_exchange.generic_data import GenericData
-
 def objectify(var):
     if isinstance(var,dict):
-#        new_var = GenericData(**var)
         new_var = obj()
         for key,value in var.items():
             setattr(new_var,key,objectify(value))
