@@ -121,7 +121,14 @@ def plot_poly(poly,color = None,edgecolor = None, facecolor =None, linewidth = .
     color = list(color)
     if isinstance(poly,sg.Polygon):
         exterior = list(poly.exterior.coords)
-        interiors = [list(interior.coords) for interior in poly.interiors]
+        if poly.exterior.is_ccw:
+            exterior = exterior[::-1]
+        interiors = []
+        for interior in poly.interiors:
+            item = list(interior.coords)
+            if interior.is_ccw:
+                item=item[::-1]
+            interiors.append(item)
         for item in [exterior]+interiors:
             vertices.extend(item+[(0,0)])
             codes.extend([Path.MOVETO]+([Path.LINETO]*(len(item)-1))+[Path.CLOSEPOLY])
@@ -689,11 +696,13 @@ class Layer(ClassAlgebra):
         return l
         
     def exteriors(self):
-        '''return the exterior coordinates of all closed shapes in the layer'''
+        '''return the clockwise exterior coordinates of all closed shapes in the layer'''
         paths = []
         for geom in self.geoms:
             if isinstance(geom,sg.Polygon):
                 exterior = list(geom.exterior.coords)
+                if geom.exterior.is_ccw:
+                    exterior = exterior[::-1]
                 paths.extend([exterior])
         return paths
 
