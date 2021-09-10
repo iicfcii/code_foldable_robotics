@@ -102,24 +102,29 @@ def read_circles(filename,color = None,layer = None):
     dwg = ezdxf.readfile(filename)
     modelspace = dwg.modelspace()
     circles= []
+
+    def append_circle(e):
+        center = e.get_dxf_attrib('center')
+        radius = e.get_dxf_attrib('radius')
+
+        extrusion = e.get_dxf_attrib('extrusion')
+        if numpy.abs(extrusion[2]-(-1)) < 0.001: # Flip around x if extrusion of z is -1 instead of 1
+            center = ezdxf.math.Vec3(-center[0],center[1],center[2])
+
+        circles.append((center,radius))
+
     for e in modelspace:
         if e.dxftype() == 'CIRCLE':
             if color is not None:
                 if e.get_dxf_attrib('color')==color:
-                    center = e.get_dxf_attrib('center')
-                    radius = e.get_dxf_attrib('radius')
-                    circles.append((center,radius))
+                    append_circle(e)
             elif layer is not None:
                 if e.get_dxf_attrib('layer')==layer:
-                    center = e.get_dxf_attrib('center')
-                    radius = e.get_dxf_attrib('radius')
-                    circles.append((center,radius))
+                    append_circle(e)
             else:
-                    center = e.get_dxf_attrib('center')
-                    radius = e.get_dxf_attrib('radius')
-                    circles.append((center,radius))
+                append_circle(e)
     return circles
-            
+
 def read_text(filename,color=None,layer=None):
     '''
     Reads a dxf file searching for text objects,
@@ -134,7 +139,7 @@ def read_text(filename,color=None,layer=None):
     modelspace = dwg.modelspace()
     elements = []
     for item in modelspace:
-        if item.dxftype() == 'TEXT':    
+        if item.dxftype() == 'TEXT':
             if color is not None:
                 if e.get_dxf_attrib('color')==color:
                     h = item.get_dxf_attrib('height')
@@ -157,7 +162,7 @@ def read_text(filename,color=None,layer=None):
                 elements.append(((x,y),text,h,r))
 
     return elements
-            
+
 
 def calc_circle(p1,p2,bulge,arc_approx=0):
     '''
@@ -176,17 +181,17 @@ def calc_circle(p1,p2,bulge,arc_approx=0):
 
     import math
     from foldable_robotics.layer import Layer
-    
-    
+
+
     v = p2 - p1
-    
+
     l = ((v*v)**.5).sum()
     n =v/l
     R = numpy.array([[0,-1],[1,0]])
     n_p = R.dot(n)
-    
+
     p3 = p1+v/2+n_p*-bulge*l/2
-    
+
     x1_0 = p1[0]
     x1_1 = p1[1]
     x2_0 = p2[0]
@@ -197,19 +202,19 @@ def calc_circle(p1,p2,bulge,arc_approx=0):
 
     v = p-p1
     r = (v.dot(v))**.5
-    
+
     v1=(p1-p)
     v2=(p2-p)
     t1 = math.atan2(v1[1],v1[0])
     t2 = math.atan2(v2[1],v2[0])
-    
+
     if bulge<0:
         if t2>t1:
             t2 = t2 - 2* math.pi
-    
+
     t = numpy.r_[t1:t2:(arc_approx+2)*1j]
     points = r*numpy.c_[numpy.cos(t),numpy.sin(t)] +p
-    
+
     return [p1]+points[1:-1].tolist()
 
 def list_attrib(filename,attrib):
@@ -221,7 +226,7 @@ def list_attrib(filename,attrib):
     :param attrib: attribute you wish to search.
     :type attrib: string
     '''
-    
+
     dwg = ezdxf.readfile(filename)
     modelspace = dwg.modelspace()
     attrib_list =[]
@@ -232,7 +237,7 @@ def list_attrib(filename,attrib):
             attrib_list.append(None)
     return attrib_list
 
-def get_types(filename,model_type):    
+def get_types(filename,model_type):
     '''
     return all of the dxf items of type "type"
 
@@ -241,7 +246,7 @@ def get_types(filename,model_type):
     :param model_type: model type you are looking for.  ex: 'LWPOLYLINE'
     :type model_type: string
     '''
-    
+
     dwg = ezdxf.readfile(filename)
     modelspace = dwg.modelspace()
     items = list(modelspace.query(model_type))
@@ -524,22 +529,21 @@ if __name__=='__main__':
     modelspace = dwg.modelspace()
     hinge_lines = read_lines(filename)
     exteriors = read_lwpolylines(filename,arc_approx=10)
-    
-    
+
+
     #turn lists into arrays
     hinge_lines = numpy.array(hinge_lines)
-    
+
     for item in hinge_lines:
         plt.plot(item[:,0],item[:,1],'r--')
-    
+
     for item in exteriors:
         item = numpy.array(item)
         plt.plot(item[:,0],item[:,1],'k-', linewidth = 3)
-        
+
     plt.axis('equal')
 #    print(list_attrib(filename,'closed'))
     items = get_types(filename,'LWPOLYLINE')
 #    c  = approx_lwpoly(exteriors[0])
 #    for item in c:
 #        item.plot()
-    
